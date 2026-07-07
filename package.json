@@ -1,0 +1,21 @@
+{
+  "name": "yapp",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "vansh rathor",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node backend/server.js"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^3.36.0",
+    "@emotion/react": "^11.14.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.7.3",
+    "nodemon": "^3.1.14",
+    "react-router-dom": "^7.18.1"
+  }
+}
