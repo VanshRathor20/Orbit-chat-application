@@ -1,41 +1,58 @@
-import { Box, Container, Text,Tabs } from '@chakra-ui/react'
+import { Box, Container, Text, Tabs } from '@chakra-ui/react'
+import { useState } from 'react'
 import Login from '../components/Authentication/Login'
 import Signup from '../components/Authentication/Signup'
-import React from 'react'
 
 const Home = () => {
+  const [tab, setTab] = useState('members')
+
   return (
-    <Container maxW='xl' centerContent>
-        <Box d='flex' justifyContent='center' alignItems='center' p={3} bg='transparent' w='100%' m='40px 0 15px 0' borderRadius='lg' borderWidth='1px' >
-          <Text fontSize='4xl' fontWeight='bold' fontFamily='work-sans' color='white' textAlign='center' w='100%' >
-                Yapp
-            </Text>
+    <Container maxW='xl' minH='100vh' display='flex' justifyContent='center' pt='20'>
+      <Box w='100%'>
+        <Box
+          display='flex'
+          justifyContent='center'
+          alignItems='center'
+          p={3}
+          mb={4}
+          h='80px'
+          bg='translucent'
+          w='100%'
+          borderRadius='lg'
+          borderWidth='1px'
+        >
+          <Text fontSize='4xl' fontWeight='bold' fontFamily='work-sans' color='white' textAlign='center' w='100%'>
+            Yapp
+          </Text>
         </Box>
-        <Box bg='transparent' w='100%' p={4} borderRadius='lg' color='white' borderWidth='1px'>
 
-    <Tabs.Root
-      defaultValue="members"
-      variant="plain"
-      css={{
-        "--tabs-indicator-bg": "colors.gray.subtle",
-        "--tabs-indicator-shadow": "shadows.xs",
-        "--tabs-trigger-radius": "radii.full",
-      }}
-    >
-      <Tabs.List mb='1em' justifyContent='center' w='100%'>
-        <Tabs.Trigger value="members" w='50%'  justifyContent='center'>Login</Tabs.Trigger>
-        <Tabs.Trigger value="projects" w='50%' justifyContent='center'>Sign Up</Tabs.Trigger>
-      </Tabs.List>
-      {/* login content */}
-      <Tabs.Content value="members">
-        <Login />
-      </Tabs.Content>
-      <Tabs.Content value="projects">
-        <Signup />
-      </Tabs.Content>
-    </Tabs.Root>
+        <Box bg='translucent' w='100%' p={4} borderRadius='lg' color='white' borderWidth='1px'>
+          <Tabs.Root
+            value={tab}
+            onValueChange={(details) => setTab(details.value)}
+            variant='plain'
+            css={{
+              '--tabs-indicator-bg': 'colors.gray.subtle',
+              '--tabs-indicator-shadow': 'shadows.xs',
+              '--tabs-trigger-radius': 'radii.full',
+            }}
+          >
+            <Tabs.List mb='1em' justifyContent='center' w='100%'>
+              <Tabs.Trigger value='members' w='50%' justifyContent='center' color='white'>
+                Login
+              </Tabs.Trigger>
+              <Tabs.Trigger value='projects' w='50%' justifyContent='center' color='white'>
+                Sign Up
+              </Tabs.Trigger>
+              <Tabs.Indicator />
+            </Tabs.List>
 
+            <Box key={tab} animation='panelFadeIn 240ms ease-out'>
+              {tab === 'members' ? <Login /> : <Signup />}
+            </Box>
+          </Tabs.Root>
         </Box>
+      </Box>
     </Container>
   )
 }
