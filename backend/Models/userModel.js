@@ -6,7 +6,6 @@ const userModel = mongoose.Schema({
   password: { type: String, required: true },
   pic: {
     type: String,
-    required: true,
     default: "backend/Models/userProfileIcon.png",
   }
 }, {
