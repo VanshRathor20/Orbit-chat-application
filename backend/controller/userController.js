@@ -1,3 +1,4 @@
+const generateToken=require("../config/generateToken");
 const asyncHandler = require("express-async-handler");
 const user=require("../Models/userModel");
 const registerUser=asyncHandler(async()=>{
@@ -23,7 +24,8 @@ const registerUser=asyncHandler(async()=>{
             _id:userCreated._id,
             name:userCreated.name,
             email:userCreated.email,
-            pic:userCreated.pic
+            pic:userCreated.pic,
+            token:generateToken(userCreated._id) 
         })
     }else{
         res.status(400);
