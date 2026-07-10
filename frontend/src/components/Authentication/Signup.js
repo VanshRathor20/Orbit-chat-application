@@ -4,6 +4,7 @@ import { LuEye, LuEyeOff } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toaster } from "../ui/toaster"; 
+import { ChatState } from "../../Context/ChatProvider";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +16,7 @@ const Signup = () => {
   const [picLoading, setPicLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { setUser } = ChatState();
 
   const postDetails = (pics) => {
     setPicLoading(true);
@@ -91,6 +93,7 @@ const Signup = () => {
         type: "success",
       });
 
+      setUser(data);
       localStorage.setItem("userInfo", JSON.stringify(data));
       setPicLoading(false);
       navigate("/chat");
@@ -194,7 +197,7 @@ const Signup = () => {
       </Box>
 
       <Button
-        colorScheme="gray"
+        colorPalette="gray"
         width="100%"
         mt="3"
         onClick={handleSubmit}
