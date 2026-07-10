@@ -109,7 +109,7 @@ const Login = () => {
       </Box>
 
       <Button
-        colorScheme="gray"
+        colorPalette="gray"
         width="100%"
         mt="3"
         onClick={submitHandler}
@@ -120,7 +120,7 @@ const Login = () => {
 
       <Button
         variant="solid"
-        colorScheme="gray"
+        colorPalette="gray"
         width="100%"
         onClick={() => {
           setEmail("guest@example.com");
