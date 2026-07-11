@@ -4,8 +4,9 @@ import { getSender, getSenderFull } from "../config/ChatLogics";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { LuX } from "react-icons/lu";
 
-const RightProfilePanel = ({ onClose }) => {
+const RightProfilePanel = ({ isOpen, onClose }) => {
   const { user, setUser, selectedChat } = ChatState();
   const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
@@ -30,7 +31,7 @@ const RightProfilePanel = ({ onClose }) => {
   if (!selectedChat) {
     return (
       <Box
-        display={{ base: "none", xl: "flex" }}
+        display={{ base: "none", md: isOpen ? "flex" : "none" }}
         flexDir="column"
         w="280px"
         h="100%"
@@ -66,20 +67,47 @@ const RightProfilePanel = ({ onClose }) => {
   );
 
   return (
-    <Box
-      display={{ base: "none", xl: "flex" }}
-      flexDir="column"
-      w="280px"
-      h="100%"
-      bg="var(--glass-bg)"
-      backdropFilter="var(--glass-blur)"
-      border="var(--glass-border)"
-      borderRadius="var(--glass-radius-lg)"
-      boxShadow="var(--glass-shadow)"
-      p={6}
-      color="var(--text-primary)"
-    >
-      <Box display="flex" flexDir="column" alignItems="center" mb={8}>
+    <>
+      {/* Mobile Overlay */}
+      <Box
+        display={{ base: "block", md: "none" }}
+        position="fixed"
+        inset={0}
+        bg="rgba(0,0,0,0.5)"
+        backdropFilter="blur(4px)"
+        zIndex={1200}
+        opacity={isOpen ? 1 : 0}
+        pointerEvents={isOpen ? "auto" : "none"}
+        transition="opacity 0.3s ease-out"
+        onClick={onClose}
+      />
+
+      {/* Main Drawer/Panel */}
+      <Box
+        display={{ base: "flex", md: isOpen ? "flex" : "none" }}
+        position={{ base: "fixed", md: "relative" }}
+        top={{ base: 0, md: "auto" }}
+        right={{ base: 0, md: "auto" }}
+        zIndex={{ base: 1201, md: 1 }}
+        w={{ base: "85%", sm: "320px", md: "280px" }}
+        h="100%"
+        transform={{ base: isOpen ? "translateX(0)" : "translateX(100%)", md: "none" }}
+        transition="transform 0.3s ease-out"
+        flexDir="column"
+        bg="var(--glass-bg)"
+        backdropFilter="var(--glass-blur)"
+        border="var(--glass-border)"
+        borderRadius={{ base: "var(--glass-radius-lg) 0 0 var(--glass-radius-lg)", md: "var(--glass-radius-lg)" }}
+        boxShadow="var(--glass-shadow)"
+        p={6}
+        color="var(--text-primary)"
+      >
+        <Box justifyContent="flex-end" display={{ base: "flex", md: "none" }} mb={2} mt={-2} mr={-2}>
+          <Button variant="ghost" size="sm" onClick={onClose} color="var(--text-secondary)">
+            <LuX size={20} />
+          </Button>
+        </Box>
+        <Box display="flex" flexDir="column" alignItems="center" mb={8}>
         <Avatar.Root size="2xl" mb={4}>
           <Avatar.Fallback name={chatName} />
           {chatPic && <Avatar.Image src={chatPic} />}
@@ -123,6 +151,7 @@ const RightProfilePanel = ({ onClose }) => {
         Logout
       </Button>
     </Box>
+    </>
   );
 };
 

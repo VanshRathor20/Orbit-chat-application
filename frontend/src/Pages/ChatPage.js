@@ -12,6 +12,14 @@ const Chatpage = () => {
   const { user, selectedChat } = ChatState();
   const navigate = useNavigate();
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   useEffect(() => {
     if (!user) {
       navigate("/");
@@ -22,6 +30,31 @@ const Chatpage = () => {
   useEffect(() => {
     setIsRightPanelOpen(false);
   }, [selectedChat]);
+
+  // Handle history state (back button) and body scroll lock for mobile drawer
+  useEffect(() => {
+    if (isRightPanelOpen && isMobile) {
+      document.body.style.overflow = "hidden";
+      window.history.pushState({ panelOpen: true }, "");
+
+      const handlePopState = () => {
+        setIsRightPanelOpen(false);
+      };
+
+      window.addEventListener("popstate", handlePopState);
+      
+      return () => {
+        document.body.style.overflow = "auto";
+        window.removeEventListener("popstate", handlePopState);
+      };
+    } else {
+      document.body.style.overflow = "auto";
+      // If closed manually or via chat switch, pop the stale history state
+      if (window.history.state?.panelOpen) {
+         window.history.back();
+      }
+    }
+  }, [isRightPanelOpen, isMobile]);
 
   if (!user) {
     return null;
@@ -38,7 +71,10 @@ const Chatpage = () => {
           setIsRightPanelOpen={setIsRightPanelOpen}
         />
       </Box>
-      {isRightPanelOpen && <RightProfilePanel onClose={() => setIsRightPanelOpen(false)} />}
+      <RightProfilePanel 
+        isOpen={isRightPanelOpen} 
+        onClose={() => setIsRightPanelOpen(false)} 
+      />
     </Box>
   );
 };
