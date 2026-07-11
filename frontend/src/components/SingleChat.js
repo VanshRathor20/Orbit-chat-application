@@ -180,7 +180,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
           fontFamily="Work sans"
           color="var(--text-muted)"
           textAlign="center"
-          maxW="md"
+          maxW={{ base: "md", md: "md", xl: "none" }}
+          whiteSpace={{ base: "normal", md: "normal", xl: "nowrap" }}
         >
           Select a chat to start messaging
         </Text>
