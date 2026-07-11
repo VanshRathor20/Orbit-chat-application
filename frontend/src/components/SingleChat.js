@@ -7,9 +7,10 @@ import {
   Text,
   Image,
 } from "@chakra-ui/react";
+import EmojiPicker from "emoji-picker-react";
 import axios from "axios";
 import { useEffect, useState, useRef } from "react";
-import { LuCamera, LuPaperclip, LuSendHorizontal, LuImage, LuX, LuInfo } from "react-icons/lu";
+import { LuCamera, LuPaperclip, LuSendHorizontal, LuImage, LuX, LuInfo, LuSmile } from "react-icons/lu";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { ChatState } from "../Context/ChatProvider";
 import { toaster } from "./ui/toaster";
@@ -22,11 +23,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [isAttachmentOpen, setIsAttachmentOpen] = useState(false);
+  const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
 
   const cameraRef = useRef();
   const galleryRef = useRef();
+  const inputRef = useRef(null);
 
   const { user, selectedChat, setSelectedChat } = ChatState();
 
@@ -52,6 +55,23 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
       });
       setLoading(false);
     }
+  };
+
+  const handleEmojiClick = (emojiObject) => {
+    const cursor = inputRef.current?.selectionStart || newMessage.length;
+    const textBefore = newMessage.slice(0, cursor);
+    const textAfter = newMessage.slice(cursor);
+    setNewMessage(textBefore + emojiObject.emoji + textAfter);
+    setIsEmojiPickerOpen(false);
+
+    // Optional: restore cursor position after render
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.selectionStart = cursor + emojiObject.emoji.length;
+        inputRef.current.selectionEnd = cursor + emojiObject.emoji.length;
+        inputRef.current.focus();
+      }
+    }, 10);
   };
 
   const sendMessage = async () => {
@@ -301,6 +321,39 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
           <input type="file" accept="image/*" capture="environment" style={{ display: "none" }} ref={cameraRef} onChange={handleImageUpload} />
           <input type="file" accept="image/*" style={{ display: "none" }} ref={galleryRef} onChange={handleImageUpload} />
           
+          {isEmojiPickerOpen && (
+            <>
+              <Box position="fixed" inset={0} zIndex={10} onClick={() => setIsEmojiPickerOpen(false)} />
+              <Box
+                position="absolute"
+                bottom="100%"
+                left={0}
+                mb={2}
+                zIndex={11}
+                boxShadow="var(--glass-shadow)"
+                borderRadius="lg"
+                overflow="hidden"
+                border="var(--glass-border)"
+              >
+                <EmojiPicker theme="dark" onEmojiClick={handleEmojiClick} />
+              </Box>
+            </>
+          )}
+
+          <Box 
+            position="absolute" 
+            left={4} 
+            top="50%" 
+            transform="translateY(-50%)" 
+            zIndex={2} 
+            cursor="pointer" 
+            onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)} 
+            color="var(--text-muted)" 
+            _hover={{ color: "var(--text-primary)" }}
+          >
+            <LuSmile size={20} />
+          </Box>
+
           {isAttachmentOpen && (
             <>
               <Box position="fixed" inset={0} zIndex={10} onClick={() => setIsAttachmentOpen(false)} />
@@ -354,6 +407,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
           )}
 
           <Input
+            ref={inputRef}
             placeholder="Message..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
@@ -362,7 +416,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
             border="var(--glass-border)"
             borderRadius="full"
             color="var(--text-primary)"
-            pl={6}
+            pl={12}
             pr={12}
             h="46px"
             _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
