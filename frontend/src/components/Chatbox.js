@@ -3,7 +3,7 @@ import "./styles.css";
 import SingleChat from "./SingleChat";
 import { ChatState } from "../Context/ChatProvider";
 
-const Chatbox = ({ fetchAgain, setFetchAgain }) => {
+const Chatbox = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPanelOpen }) => {
   const { selectedChat } = ChatState();
 
   return (
@@ -11,13 +11,21 @@ const Chatbox = ({ fetchAgain, setFetchAgain }) => {
       display={{ base: selectedChat ? "flex" : "none", md: "flex" }}
       alignItems="center"
       flexDir="column"
-      p={3}
-      bg="white"
-      w={{ base: "100%", md: "68%" }}
-      borderRadius="lg"
-      borderWidth="1px"
+      w="100%"
+      h="100%"
+      bg="var(--glass-bg)"
+      backdropFilter="var(--glass-blur)"
+      border="var(--glass-border)"
+      borderRadius="var(--glass-radius-lg)"
+      boxShadow="var(--glass-shadow)"
+      color="var(--text-primary)"
     >
-      <SingleChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+      <SingleChat 
+        fetchAgain={fetchAgain} 
+        setFetchAgain={setFetchAgain} 
+        isRightPanelOpen={isRightPanelOpen}
+        setIsRightPanelOpen={setIsRightPanelOpen}
+      />
     </Box>
   );
 };

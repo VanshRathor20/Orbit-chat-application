@@ -4,11 +4,8 @@
 .App{
     min-height: 100vh;
     display: flex;
-    background-image: url("../public/background.png");
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    color: black;
+    background: radial-gradient(circle at top right, #1e1e36, #0b0b0e 70%);
+    color: var(--text-primary);
 }
 
 @keyframes panelFadeIn {

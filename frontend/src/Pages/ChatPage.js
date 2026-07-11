@@ -2,13 +2,14 @@ import { Box, Flex } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Chatbox from "../components/Chatbox";
-import MyChats from "../components/MyChats";
-import SideDrawer from "../components/miscellaneous/SideDrawer";
+import LeftSidebar from "../components/LeftSidebar";
+import RightProfilePanel from "../components/RightProfilePanel";
 import { ChatState } from "../Context/ChatProvider";
 
 const Chatpage = () => {
   const [fetchAgain, setFetchAgain] = useState(false);
-  const { user } = ChatState();
+  const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
+  const { user, selectedChat } = ChatState();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,17 +18,27 @@ const Chatpage = () => {
     }
   }, [user, navigate]);
 
+  // Close right panel when changing chats
+  useEffect(() => {
+    setIsRightPanelOpen(false);
+  }, [selectedChat]);
+
   if (!user) {
     return null;
   }
 
   return (
-    <Box w="100%">
-      <SideDrawer />
-      <Flex justifyContent="space-between" w="100%" h="91.5vh" p="10px" gap={4}>
-        <MyChats fetchAgain={fetchAgain} />
-        <Chatbox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
-      </Flex>
+    <Box w="100%" h="100vh" p={4} display="flex" gap={4} overflow="hidden">
+      <LeftSidebar fetchAgain={fetchAgain} />
+      <Box flex="1" display="flex" overflow="hidden">
+        <Chatbox 
+          fetchAgain={fetchAgain} 
+          setFetchAgain={setFetchAgain} 
+          isRightPanelOpen={isRightPanelOpen}
+          setIsRightPanelOpen={setIsRightPanelOpen}
+        />
+      </Box>
+      {isRightPanelOpen && <RightProfilePanel onClose={() => setIsRightPanelOpen(false)} />}
     </Box>
   );
 };

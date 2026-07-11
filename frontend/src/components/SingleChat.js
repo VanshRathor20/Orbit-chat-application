@@ -90,7 +90,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         h="100%"
         w="100%"
       >
-        <Text fontSize="3xl" fontFamily="Work sans" color="gray.400">
+        <Text fontSize="2xl" fontFamily="Work sans" color="var(--text-muted)">
           Select a chat to start messaging
         </Text>
       </Box>
