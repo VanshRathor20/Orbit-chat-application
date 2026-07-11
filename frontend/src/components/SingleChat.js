@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState, useRef } from "react";
-import { LuCamera, LuPaperclip, LuSendHorizontal, LuImage, LuX } from "react-icons/lu";
+import { LuCamera, LuPaperclip, LuSendHorizontal, LuImage, LuX, LuInfo } from "react-icons/lu";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { ChatState } from "../Context/ChatProvider";
 import { toaster } from "./ui/toaster";
@@ -210,10 +210,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
         <Button
           variant="ghost"
           onClick={() => setIsRightPanelOpen(!isRightPanelOpen)}
-          color="var(--text-primary)"
-          _hover={{ bg: "whiteAlpha.200" }}
+          color="rgba(255, 255, 255, 0.9)"
+          _hover={{ bg: "whiteAlpha.200", color: "white" }}
+          p={2}
         >
-          ⓘ
+          <LuInfo size={22} strokeWidth={2.5} />
         </Button>
       </Box>
 
@@ -361,8 +362,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
             border="var(--glass-border)"
             borderRadius="full"
             color="var(--text-primary)"
-            pl={4}
-            pr={10}
+            pl={6}
+            pr={12}
+            h="46px"
             _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
           />
 
@@ -389,8 +391,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
           onClick={() => sendMessage()}
           loading={sending}
           px={{ base: 4, md: 6 }}
+          h="46px"
         >
-          <LuSendHorizontal size={18} />
+          <LuSendHorizontal size={20} style={{ transform: "rotate(-35deg) translate(2px, -2px)" }} />
           {/* <Text display={{ base: "none", md: "block" }} ml={2}></Text> */}
         </Button>
       </Box>
