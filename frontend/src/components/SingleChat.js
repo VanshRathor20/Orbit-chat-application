@@ -5,9 +5,11 @@ import {
   Input,
   Spinner,
   Text,
+  Image,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { LuCamera, LuPaperclip, LuSendHorizontal, LuImage, LuX } from "react-icons/lu";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { ChatState } from "../Context/ChatProvider";
 import { toaster } from "./ui/toaster";
@@ -19,6 +21,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
+  const [isAttachmentOpen, setIsAttachmentOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+
+  const cameraRef = useRef();
+  const galleryRef = useRef();
 
   const { user, selectedChat, setSelectedChat } = ChatState();
 
@@ -47,23 +55,59 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
   };
 
   const sendMessage = async () => {
-    if (!newMessage.trim() || !selectedChat) return;
+    if (!newMessage.trim() && !selectedImage) return;
 
     try {
       setSending(true);
+      let imageUrl = null;
+
+      if (selectedImage) {
+        const data = new FormData();
+        data.append("file", selectedImage);
+        data.append("upload_preset", "yapp-chat-app");
+        data.append("cloud_name", "itcli5ya");
+
+        const res = await fetch("https://api.cloudinary.com/v1_1/itcli5ya/image/upload", {
+          method: "post",
+          body: data,
+        });
+        const uploadData = await res.json();
+        imageUrl = uploadData.url.toString();
+      }
+
       const config = {
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${user?.token}`,
         },
       };
-      const { data } = await axios.post(
-        "/api/message",
-        { content: newMessage, chatId: selectedChat._id },
-        config
-      );
-      setMessages([...messages, data]);
+
+      let sentMessages = [];
+
+      // Send image message if exists
+      if (imageUrl) {
+        const { data: imgData } = await axios.post(
+          "/api/message",
+          { content: imageUrl, chatId: selectedChat._id },
+          config
+        );
+        sentMessages.push(imgData);
+      }
+
+      // Send text message (caption) if exists
+      if (newMessage.trim()) {
+        const { data: txtData } = await axios.post(
+          "/api/message",
+          { content: newMessage, chatId: selectedChat._id },
+          config
+        );
+        sentMessages.push(txtData);
+      }
+
+      setMessages((prev) => [...prev, ...sentMessages]);
       setNewMessage("");
+      setSelectedImage(null);
+      setImagePreviewUrl(null);
       setFetchAgain(!fetchAgain);
       setSending(false);
     } catch (error) {
@@ -74,6 +118,26 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
       });
       setSending(false);
     }
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/gif") {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      toaster.create({
+        title: "Please Select an Image!",
+        type: "warning",
+      });
+    }
+    e.target.value = null;
   };
 
   useEffect(() => {
@@ -91,9 +155,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
         w="100%"
         px={6}
       >
-        <Text 
-          fontSize={{ base: "xl", md: "2xl", xl: "3xl" }} 
-          fontFamily="Work sans" 
+        <Text
+          fontSize={{ base: "xl", md: "2xl", xl: "3xl" }}
+          fontFamily="Work sans"
           color="var(--text-muted)"
           textAlign="center"
           maxW="md"
@@ -143,8 +207,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
             </Box>
           )}
         </Text>
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           onClick={() => setIsRightPanelOpen(!isRightPanelOpen)}
           color="var(--text-primary)"
           _hover={{ bg: "whiteAlpha.200" }}
@@ -189,37 +253,148 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
                 <Text fontSize="xs" fontWeight="bold" mb={1} color={m.sender._id === user._id ? "rgba(255,255,255,0.8)" : "var(--text-secondary)"}>
                   {m.sender.name}
                 </Text>
-                <Text fontSize="sm">{m.content}</Text>
+                {m.content && (m.content.match(/\.(jpeg|jpg|gif|png)$/i) || m.content.includes("res.cloudinary.com")) ? (
+                  <Image src={m.content} alt="chat media" maxW="100%" borderRadius="md" mt={1} />
+                ) : (
+                  <Text fontSize="sm">{m.content}</Text>
+                )}
               </Box>
             </Box>
           ))
         )}
       </Box>
 
-      <Box display="flex" w="100%" gap={2} mt={2}>
-        <Input
-          placeholder="Send a message..."
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          bg="rgba(255, 255, 255, 0.05)"
-          border="var(--glass-border)"
-          borderRadius="full"
-          color="var(--text-primary)"
-          _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
-        />
-        <Button 
+      <Box display="flex" flexDir="column" w="100%" mt={2}>
+        {imagePreviewUrl && (
+          <Box position="relative" mb={2} w="fit-content" alignSelf="flex-start">
+            <Image 
+              src={imagePreviewUrl} 
+              alt="Preview" 
+              maxH="150px" 
+              borderRadius="md" 
+              border="var(--glass-border)" 
+              boxShadow="var(--glass-shadow)"
+            />
+            <Box 
+              position="absolute" 
+              top={-2} 
+              right={-2} 
+              bg="rgba(0,0,0,0.6)" 
+              borderRadius="full" 
+              p={1} 
+              cursor="pointer"
+              backdropFilter="blur(4px)"
+              onClick={() => {
+                setSelectedImage(null);
+                setImagePreviewUrl(null);
+              }}
+              _hover={{ bg: "rgba(0,0,0,0.8)" }}
+            >
+              <LuX size={16} color="white" />
+            </Box>
+          </Box>
+        )}
+        
+        <Box display="flex" w="100%" gap={2} alignItems="center">
+        <Box position="relative" flex="1">
+          <input type="file" accept="image/*" capture="environment" style={{ display: "none" }} ref={cameraRef} onChange={handleImageUpload} />
+          <input type="file" accept="image/*" style={{ display: "none" }} ref={galleryRef} onChange={handleImageUpload} />
+          
+          {isAttachmentOpen && (
+            <>
+              <Box position="fixed" inset={0} zIndex={10} onClick={() => setIsAttachmentOpen(false)} />
+              <Box
+                position="absolute"
+                bottom="100%"
+                right={0}
+                mb={2}
+                p={2}
+                bg="var(--glass-bg)"
+                backdropFilter="var(--glass-blur)"
+                border="var(--glass-border)"
+                borderRadius="var(--glass-radius-lg)"
+                boxShadow="var(--glass-shadow)"
+                zIndex={11}
+                display="flex"
+                gap={2}
+              >
+                <Box
+                  display="flex"
+                  flexDir="column"
+                  alignItems="center"
+                  justifyContent="center"
+                  p={3}
+                  bg="rgba(255, 255, 255, 0.05)"
+                  borderRadius="md"
+                  cursor="pointer"
+                  _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
+                  onClick={() => { setIsAttachmentOpen(false); cameraRef.current.click(); }}
+                >
+                  <LuCamera size={24} color="var(--text-primary)" />
+                  <Text fontSize="xs" mt={1} color="var(--text-secondary)">Camera</Text>
+                </Box>
+                <Box
+                  display="flex"
+                  flexDir="column"
+                  alignItems="center"
+                  justifyContent="center"
+                  p={3}
+                  bg="rgba(255, 255, 255, 0.05)"
+                  borderRadius="md"
+                  cursor="pointer"
+                  _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
+                  onClick={() => { setIsAttachmentOpen(false); galleryRef.current.click(); }}
+                >
+                  <LuImage size={24} color="var(--text-primary)" />
+                  <Text fontSize="xs" mt={1} color="var(--text-secondary)">Gallery</Text>
+                </Box>
+              </Box>
+            </>
+          )}
+
+          <Input
+            placeholder="Message..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            bg="rgba(255, 255, 255, 0.05)"
+            border="var(--glass-border)"
+            borderRadius="full"
+            color="var(--text-primary)"
+            pl={4}
+            pr={10}
+            _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
+          />
+
+          <Box 
+            position="absolute" 
+            right={3} 
+            top="50%" 
+            transform="translateY(-50%)" 
+            zIndex={2} 
+            cursor="pointer" 
+            onClick={() => setIsAttachmentOpen(!isAttachmentOpen)} 
+            color="var(--text-muted)" 
+            _hover={{ color: "var(--text-primary)" }}
+          >
+            <LuPaperclip size={20} />
+          </Box>
+        </Box>
+
+        <Button
           bg="var(--accent-gradient)"
           color="white"
           borderRadius="full"
           _hover={{ opacity: 0.9 }}
-          onClick={sendMessage} 
+          onClick={() => sendMessage()}
           loading={sending}
-          px={6}
+          px={{ base: 4, md: 6 }}
         >
-          Send
+          <LuSendHorizontal size={18} />
+          {/* <Text display={{ base: "none", md: "block" }} ml={2}></Text> */}
         </Button>
       </Box>
+    </Box>
     </Box>
   );
 };
