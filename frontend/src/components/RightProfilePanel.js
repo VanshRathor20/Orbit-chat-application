@@ -31,7 +31,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
   if (!selectedChat) {
     return (
       <Box
-        display={{ base: "none", md: isOpen ? "flex" : "none" }}
+        display={{ base: "none", xl: isOpen ? "flex" : "none" }}
         flexDir="column"
         w="280px"
         h="100%"
@@ -70,7 +70,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
     <>
       {/* Mobile Overlay */}
       <Box
-        display={{ base: "block", md: "none" }}
+        display={{ base: "block", xl: "none" }}
         position="fixed"
         inset={0}
         bg="rgba(0,0,0,0.5)"
@@ -84,44 +84,54 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
 
       {/* Main Drawer/Panel */}
       <Box
-        display={{ base: "flex", md: isOpen ? "flex" : "none" }}
-        position={{ base: "fixed", md: "relative" }}
-        top={{ base: 0, md: "auto" }}
-        right={{ base: 0, md: "auto" }}
-        zIndex={{ base: 1201, md: 1 }}
-        w={{ base: "85%", sm: "320px", md: "280px" }}
+        display={{ base: "flex", xl: isOpen ? "flex" : "none" }}
+        position={{ base: "fixed", xl: "relative" }}
+        top={{ base: 0, xl: "auto" }}
+        right={{ base: 0, xl: "auto" }}
+        zIndex={{ base: 1201, xl: 1 }}
+        w={{ base: "85%", sm: "320px", md: "60%", lg: "65%", xl: "280px" }}
         h="100%"
-        transform={{ base: isOpen ? "translateX(0)" : "translateX(100%)", md: "none" }}
+        transform={{ base: isOpen ? "translateX(0)" : "translateX(100%)", xl: "none" }}
         transition="transform 0.3s ease-out"
         flexDir="column"
         bg="var(--glass-bg)"
         backdropFilter="var(--glass-blur)"
         border="var(--glass-border)"
-        borderRadius={{ base: "var(--glass-radius-lg) 0 0 var(--glass-radius-lg)", md: "var(--glass-radius-lg)" }}
+        borderRadius={{ base: "var(--glass-radius-lg) 0 0 var(--glass-radius-lg)", xl: "var(--glass-radius-lg)" }}
         boxShadow="var(--glass-shadow)"
         p={6}
         color="var(--text-primary)"
       >
-        <Box justifyContent="flex-end" display={{ base: "flex", md: "none" }} mb={2} mt={-2} mr={-2}>
+        <Box justifyContent="flex-end" display={{ base: "flex", xl: "none" }} mb={2} mt={-2} mr={-2}>
           <Button variant="ghost" size="sm" onClick={onClose} color="var(--text-secondary)">
             <LuX size={20} />
           </Button>
         </Box>
-        <Box display="flex" flexDir="column" alignItems="center" mb={8}>
-        <Avatar.Root size="2xl" mb={4}>
-          <Avatar.Fallback name={chatName} />
+        <Box display="flex" flexDir="column" alignItems="center" mb={{ base: 8, md: 12, xl: 8 }}>
+        <Avatar.Root 
+          w={{ base: "80px", md: "115px", xl: "80px" }} 
+          h={{ base: "80px", md: "115px", xl: "80px" }} 
+          border={{ base: "2px solid rgba(255, 255, 255, 0.1)", md: "3px solid rgba(255, 255, 255, 0.2)", xl: "2px solid rgba(255, 255, 255, 0.1)" }}
+          mb={{ base: 4, md: 6, xl: 4 }}
+        >
+          <Avatar.Fallback name={chatName} fontSize={{ base: "2xl", md: "4xl", xl: "2xl" }} />
           {chatPic && <Avatar.Image src={chatPic} />}
         </Avatar.Root>
-        <Text fontSize="xl" fontWeight="bold" textAlign="center">
+        <Text 
+          fontSize={{ base: "xl", md: "2xl", xl: "xl" }} 
+          fontWeight="bold" 
+          textAlign="center"
+          mb={{ base: 1, md: 2, xl: 1 }}
+        >
           {chatName}
         </Text>
-        <Text fontSize="sm" color="var(--text-secondary)" textAlign="center">
+        <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" textAlign="center">
           {chatEmail}
         </Text>
       </Box>
 
       <Box flex="1" overflowY="auto">
-        <Text fontSize="sm" color="var(--text-secondary)" fontWeight="bold" mb={3}>
+        <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={{ base: 3, md: 5, xl: 3 }}>
           Media
         </Text>
         {loading ? (
@@ -135,7 +145,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
             ))}
           </SimpleGrid>
         ) : (
-          <Text fontSize="xs" color="var(--text-muted)">No media shared</Text>
+          <Text fontSize={{ base: "xs", md: "sm", xl: "xs" }} color="var(--text-muted)">No media shared</Text>
         )}
       </Box>
 

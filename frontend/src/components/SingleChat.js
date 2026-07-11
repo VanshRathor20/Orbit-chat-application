@@ -89,8 +89,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
         justifyContent="center"
         h="100%"
         w="100%"
+        px={6}
       >
-        <Text fontSize="2xl" fontFamily="Work sans" color="var(--text-muted)">
+        <Text 
+          fontSize={{ base: "xl", md: "2xl", xl: "3xl" }} 
+          fontFamily="Work sans" 
+          color="var(--text-muted)"
+          textAlign="center"
+          maxW="md"
+        >
           Select a chat to start messaging
         </Text>
       </Box>
