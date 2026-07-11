@@ -17,9 +17,12 @@ const LeftSidebar = ({ fetchAgain }) => {
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
 
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
   const {
     setSelectedChat,
     user,
+    setUser,
     chats,
     setChats,
     selectedChat,
@@ -29,6 +32,7 @@ const LeftSidebar = ({ fetchAgain }) => {
 
   const logoutHandler = () => {
     localStorage.removeItem("userInfo");
+    setUser(null);
     navigate("/");
   };
 
@@ -138,23 +142,30 @@ const LeftSidebar = ({ fetchAgain }) => {
           </Text>
         </Box>
         <Box display="flex" alignItems="center" gap={2}>
-          <Menu.Root>
+          <Menu.Root 
+            positioning={{ placement: "bottom-end" }}
+            onSelect={(e) => {
+              if (e.value === "profile") setIsProfileOpen(true);
+              if (e.value === "logout") logoutHandler();
+            }}
+          >
             <Menu.Trigger asChild>
               <Button variant="ghost" size="sm" position="relative" color="var(--text-primary)" _hover={{ bg: "whiteAlpha.200" }}>
                 <LuEllipsisVertical size={20} />
               </Button>
             </Menu.Trigger>
             <Menu.Positioner>
-              <Menu.Content bg="var(--glass-bg)" backdropFilter="var(--glass-blur)" border="var(--glass-border)" color="var(--text-primary)">
-                <ProfileModal user={user}>
-                  <Menu.Item value="profile" _hover={{ bg: "var(--accent-primary)" }}>Edit Profile</Menu.Item>
-                </ProfileModal>
-                <Menu.Item value="logout" onClick={logoutHandler} _hover={{ bg: "var(--accent-primary)" }}>
+              <Menu.Content bg="var(--glass-bg)" backdropFilter="var(--glass-blur)" border="var(--glass-border)" color="var(--text-primary)" zIndex={1400}>
+                <Menu.Item value="profile" _hover={{ bg: "var(--accent-primary)" }}>
+                  Edit Profile
+                </Menu.Item>
+                <Menu.Item value="logout" _hover={{ bg: "var(--accent-primary)" }}>
                   Logout
                 </Menu.Item>
               </Menu.Content>
             </Menu.Positioner>
           </Menu.Root>
+          <ProfileModal user={user} isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
         </Box>
       </Box>
 

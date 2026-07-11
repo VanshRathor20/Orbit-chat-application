@@ -14,7 +14,7 @@ import { toaster } from "./ui/toaster";
 import ProfileModal from "./miscellaneous/ProfileModal";
 import "./styles.css";
 
-const SingleChat = ({ fetchAgain, setFetchAgain }) => {
+const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPanelOpen }) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
@@ -106,7 +106,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         justifyContent="space-between"
         pb={3}
         px={2}
-        borderBottomWidth="1px"
+        borderBottom="var(--glass-border)"
       >
         <Text
           fontSize={{ base: "28px", md: "30px" }}
@@ -115,41 +115,48 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           onClick={() => setSelectedChat("")}
         >
           {!selectedChat.isGroupChat ? (
-            <>
-              {getSender(user, selectedChat.users)}
-              <ProfileModal user={getSenderFull(user, selectedChat.users)}>
-                <Avatar.Root size="sm" ml={2} display="inline-flex">
-                  <Avatar.Fallback
-                    name={getSender(user, selectedChat.users)}
-                  />
-                  <Avatar.Image
-                    src={getSenderFull(user, selectedChat.users)?.pic}
-                  />
-                </Avatar.Root>
-              </ProfileModal>
-            </>
+            <Box display="flex" alignItems="center" gap={3}>
+              <Avatar.Root size="sm" display="inline-flex">
+                <Avatar.Fallback
+                  name={getSender(user, selectedChat.users)}
+                />
+                <Avatar.Image
+                  src={getSenderFull(user, selectedChat.users)?.pic}
+                />
+              </Avatar.Root>
+              <Text>{getSender(user, selectedChat.users)}</Text>
+            </Box>
           ) : (
-            <>
-              {selectedChat.chatName.toUpperCase()}
-              <ProfileModal user={user}>
-                <Avatar.Root size="sm" ml={2} display="inline-flex">
-                  <Avatar.Fallback name={user.name} />
-                  <Avatar.Image src={user.pic} />
-                </Avatar.Root>
-              </ProfileModal>
-            </>
+            <Box display="flex" alignItems="center" gap={3}>
+              <Avatar.Root size="sm" display="inline-flex">
+                <Avatar.Fallback name={user.name} />
+                <Avatar.Image src={user.pic} />
+              </Avatar.Root>
+              <Text>{selectedChat.chatName.toUpperCase()}</Text>
+            </Box>
           )}
         </Text>
+        <Button 
+          variant="ghost" 
+          onClick={() => setIsRightPanelOpen(!isRightPanelOpen)}
+          color="var(--text-primary)"
+          _hover={{ bg: "whiteAlpha.200" }}
+        >
+          ⓘ
+        </Button>
       </Box>
 
       <Box
         className="messages"
         flex="1"
         p={3}
-        bg="#E8E8E8"
         w="100%"
         borderRadius="lg"
-        overflowY="hidden"
+        overflowY="auto"
+        sx={{
+          "&::-webkit-scrollbar": { width: "4px" },
+          "&::-webkit-scrollbar-thumb": { background: "var(--text-muted)", borderRadius: "24px" },
+        }}
       >
         {loading ? (
           <Spinner size="xl" display="flex" mx="auto" mt={12} />
@@ -164,14 +171,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               mb={2}
             >
               <Box
-                bg={m.sender._id === user._id ? "#BEE3F8" : "#B9F5D0"}
-                color="black"
-                borderRadius="lg"
+                bg={m.sender._id === user._id ? "var(--accent-gradient)" : "rgba(255, 255, 255, 0.05)"}
+                border={m.sender._id !== user._id ? "var(--glass-border)" : "none"}
+                color="white"
+                borderRadius="var(--glass-radius-sm)"
                 px={4}
                 py={2}
                 maxW="75%"
               >
-                <Text fontSize="xs" fontWeight="bold" mb={1}>
+                <Text fontSize="xs" fontWeight="bold" mb={1} color={m.sender._id === user._id ? "rgba(255,255,255,0.8)" : "var(--text-secondary)"}>
                   {m.sender.name}
                 </Text>
                 <Text fontSize="sm">{m.content}</Text>
@@ -183,12 +191,25 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
       <Box display="flex" w="100%" gap={2} mt={2}>
         <Input
-          placeholder="Enter a message..."
+          placeholder="Send a message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          bg="rgba(255, 255, 255, 0.05)"
+          border="var(--glass-border)"
+          borderRadius="full"
+          color="var(--text-primary)"
+          _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
         />
-        <Button colorPalette="teal" onClick={sendMessage} loading={sending}>
+        <Button 
+          bg="var(--accent-gradient)"
+          color="white"
+          borderRadius="full"
+          _hover={{ opacity: 0.9 }}
+          onClick={sendMessage} 
+          loading={sending}
+          px={6}
+        >
           Send
         </Button>
       </Box>

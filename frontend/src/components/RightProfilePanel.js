@@ -1,11 +1,31 @@
-import { Avatar, Box, Button, SimpleGrid, Text } from "@chakra-ui/react";
+import { Avatar, Box, Button, SimpleGrid, Text, Spinner, Image } from "@chakra-ui/react";
 import { ChatState } from "../Context/ChatProvider";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const RightProfilePanel = ({ onClose }) => {
-  const { user, selectedChat } = ChatState();
+  const { user, setUser, selectedChat } = ChatState();
   const navigate = useNavigate();
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (!selectedChat) return;
+      try {
+        setLoading(true);
+        const config = { headers: { Authorization: `Bearer ${user?.token}` } };
+        const { data } = await axios.get(`/api/message/${selectedChat._id}`, config);
+        setMessages(data);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+      }
+    };
+    fetchMessages();
+  }, [selectedChat, user]);
 
   if (!selectedChat) {
     return (
@@ -36,8 +56,14 @@ const RightProfilePanel = ({ onClose }) => {
 
   const logoutHandler = () => {
     localStorage.removeItem("userInfo");
+    setUser(null);
     navigate("/");
   };
+
+  // Filter messages that look like images (simple URL check for this demo)
+  const mediaMessages = messages.filter((m) => 
+    m.content && (m.content.match(/\.(jpeg|jpg|gif|png)$/i) || m.content.includes("res.cloudinary.com"))
+  );
 
   return (
     <Box
@@ -70,17 +96,19 @@ const RightProfilePanel = ({ onClose }) => {
         <Text fontSize="sm" color="var(--text-secondary)" fontWeight="bold" mb={3}>
           Media
         </Text>
-        <SimpleGrid columns={3} gap={2}>
-          {/* Placeholder grid items */}
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Box
-              key={i}
-              aspectRatio="1"
-              bg="rgba(255, 255, 255, 0.1)"
-              borderRadius="md"
-            />
-          ))}
-        </SimpleGrid>
+        {loading ? (
+          <Spinner size="sm" />
+        ) : mediaMessages.length > 0 ? (
+          <SimpleGrid columns={3} gap={2}>
+            {mediaMessages.map((m) => (
+              <Box key={m._id} aspectRatio="1" borderRadius="md" overflow="hidden">
+                <Image src={m.content} alt="media" objectFit="cover" w="100%" h="100%" />
+              </Box>
+            ))}
+          </SimpleGrid>
+        ) : (
+          <Text fontSize="xs" color="var(--text-muted)">No media shared</Text>
+        )}
       </Box>
 
       <Button

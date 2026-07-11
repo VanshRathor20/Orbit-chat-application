@@ -13,6 +13,7 @@ const Chatbox = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPanelO
       flexDir="column"
       w="100%"
       h="100%"
+      p={4}
       bg="var(--glass-bg)"
       backdropFilter="var(--glass-blur)"
       border="var(--glass-border)"
