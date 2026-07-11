@@ -6,7 +6,7 @@ import {
   Portal,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChatState } from "../../Context/ChatProvider";
 import { toaster } from "../ui/toaster";
 import UserListItem from "../userAvatar/UserListItem";
@@ -21,15 +21,15 @@ const GroupChatModal = ({ children }) => {
 
   const { user, chats, setChats } = ChatState();
 
-  const handleSearch = async () => {
-    if (!search) return;
+  const handleSearch = async (query) => {
+    if (!query) return;
 
     try {
       setLoading(true);
       const config = {
         headers: { Authorization: `Bearer ${user?.token}` },
       };
-      const { data } = await axios.get(`/api/user?search=${search}`, config);
+      const { data } = await axios.get(`/api/user?search=${query}`, config);
       setSearchResult(data);
       setLoading(false);
     } catch (error) {
@@ -41,6 +41,18 @@ const GroupChatModal = ({ children }) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (search) {
+        handleSearch(search);
+      } else {
+        setSearchResult([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const handleSubmit = async () => {
     if (!groupChatName || selectedUsers.length < 2) {
@@ -109,26 +121,34 @@ const GroupChatModal = ({ children }) => {
         size="lg"
       >
         <Portal>
-          <Dialog.Backdrop />
+          <Dialog.Backdrop bg="rgba(0, 0, 0, 0.5)" backdropFilter="blur(16px)" />
           <Dialog.Positioner>
-            <Dialog.Content>
-              <Dialog.Header>
+            <Dialog.Content
+              bg="var(--glass-bg)" 
+              border="var(--glass-border)" 
+              borderRadius="var(--glass-radius-lg)"
+              boxShadow="var(--glass-shadow)"
+              color="var(--text-primary)"
+              p={6}
+            >
+              <Dialog.Header px={0} pt={0}>
                 <Dialog.Title>Create Group Chat</Dialog.Title>
                 <Dialog.CloseTrigger />
               </Dialog.Header>
-              <Dialog.Body>
-                <Box display="flex" w="100%" flexWrap="wrap" gap={2} mb={3}>
+              <Dialog.Body px={0} display="flex" flexDir="column" gap={4}>
+                <Box display="flex" w="100%" flexWrap="wrap" gap={2}>
                   {selectedUsers.map((u) => (
                     <Box
                       key={u._id}
                       display="flex"
                       alignItems="center"
                       gap={1}
-                      bg="teal.500"
+                      bg="var(--accent-primary)"
+                      opacity={0.85}
                       color="white"
-                      px={2}
+                      px={3}
                       py={1}
-                      borderRadius="lg"
+                      borderRadius="var(--glass-radius-sm)"
                       fontSize="sm"
                     >
                       {u.name}
@@ -136,6 +156,7 @@ const GroupChatModal = ({ children }) => {
                         size="xs"
                         variant="ghost"
                         color="white"
+                        _hover={{ bg: "whiteAlpha.300" }}
                         onClick={() => handleDelete(u)}
                       >
                         x
@@ -145,19 +166,23 @@ const GroupChatModal = ({ children }) => {
                 </Box>
                 <Input
                   placeholder="Chat Name"
-                  mb={3}
                   value={groupChatName}
                   onChange={(e) => setGroupChatName(e.target.value)}
+                  bg="rgba(255, 255, 255, 0.05)"
+                  border="var(--glass-border)"
+                  color="var(--text-primary)"
+                  _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
                 />
-                <Box display="flex" gap={2} mb={3}>
+                <Box display="flex" gap={2}>
                   <Input
                     placeholder="Add users by name or email"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
+                    bg="rgba(255, 255, 255, 0.05)"
+                    border="var(--glass-border)"
+                    color="var(--text-primary)"
+                    _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
                   />
-                  <Button onClick={handleSearch} loading={loading}>
-                    Search
-                  </Button>
                 </Box>
                 {searchResult.slice(0, 4).map((u) => (
                   <UserListItem
@@ -167,8 +192,15 @@ const GroupChatModal = ({ children }) => {
                   />
                 ))}
               </Dialog.Body>
-              <Dialog.Footer>
-                <Button colorPalette="teal" onClick={handleSubmit}>
+              <Dialog.Footer px={0} pb={0}>
+                <Button 
+                  w="100%"
+                  bg="var(--accent-gradient)"
+                  color="white"
+                  borderRadius="full"
+                  _hover={{ opacity: 0.9 }}
+                  onClick={handleSubmit}
+                >
                   Create Chat
                 </Button>
               </Dialog.Footer>
