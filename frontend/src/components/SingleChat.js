@@ -10,7 +10,7 @@ import {
 import EmojiPicker from "emoji-picker-react";
 import axios from "axios";
 import { useEffect, useState, useRef } from "react";
-import { LuCamera, LuPaperclip, LuSendHorizontal, LuImage, LuX, LuInfo, LuSmile } from "react-icons/lu";
+import { LuCamera, LuPaperclip, LuSendHorizontal, LuImage, LuX, LuInfo, LuSmile, LuArrowLeft } from "react-icons/lu";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { ChatState } from "../Context/ChatProvider";
 import { toaster } from "./ui/toaster";
@@ -199,12 +199,25 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
         px={2}
         borderBottom="var(--glass-border)"
       >
-        <Text
-          fontSize={{ base: "28px", md: "30px" }}
-          fontFamily="Work sans"
-          cursor="pointer"
-          onClick={() => setSelectedChat("")}
-        >
+        <Box display="flex" alignItems="center" gap={1}>
+          <Button
+            display={{ base: "flex", md: "none" }}
+            variant="ghost"
+            onClick={() => setSelectedChat(null)}
+            color="rgba(255, 255, 255, 0.9)"
+            _hover={{ bg: "whiteAlpha.200", color: "white" }}
+            p={2}
+            mr={1}
+          >
+            <LuArrowLeft size={22} strokeWidth={2.5} />
+          </Button>
+          
+          <Text
+            fontSize={{ base: "28px", md: "30px" }}
+            fontFamily="Work sans"
+            cursor="pointer"
+            onClick={() => setSelectedChat(null)}
+          >
           {!selectedChat.isGroupChat ? (
             <Box display="flex" alignItems="center" gap={3}>
               <Avatar.Root size="sm" display="inline-flex">
@@ -226,7 +239,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
               <Text>{selectedChat.chatName.toUpperCase()}</Text>
             </Box>
           )}
-        </Text>
+          </Text>
+        </Box>
         <Button
           variant="ghost"
           onClick={() => setIsRightPanelOpen(!isRightPanelOpen)}

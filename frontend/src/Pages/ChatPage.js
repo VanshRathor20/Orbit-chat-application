@@ -1,5 +1,5 @@
 import { Box, Flex, useBreakpointValue } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Chatbox from "../components/Chatbox";
 import LeftSidebar from "../components/LeftSidebar";
@@ -9,9 +9,10 @@ import { ChatState } from "../Context/ChatProvider";
 const Chatpage = () => {
   const [fetchAgain, setFetchAgain] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
-  const { user, selectedChat } = ChatState();
+  const { user, selectedChat, setSelectedChat } = ChatState();
   const navigate = useNavigate();
   const isMobile = useBreakpointValue({ base: true, xl: false });
+  const programmaticPopRef = useRef(false);
 
   useEffect(() => {
     if (!user) {
@@ -24,27 +25,79 @@ const Chatpage = () => {
     setIsRightPanelOpen(false);
   }, [selectedChat]);
 
-  // Handle history state (back button) and body scroll lock for mobile drawer
+  // Desktop Esc key to deselect chat or close profile panel
   useEffect(() => {
-    if (isRightPanelOpen && isMobile) {
-      document.body.style.overflow = "hidden";
-      window.history.pushState({ panelOpen: true }, "");
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        // Ignore if user is inside an input/textarea
+        if (
+          document.activeElement.tagName === "INPUT" ||
+          document.activeElement.tagName === "TEXTAREA" ||
+          document.activeElement.isContentEditable
+        ) {
+          return;
+        }
 
-      const handlePopState = () => {
+        if (isRightPanelOpen) {
+          setIsRightPanelOpen(false);
+        } else if (selectedChat) {
+          setSelectedChat(null);
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isRightPanelOpen, selectedChat, setSelectedChat]);
+
+  // Handle history state (back button) for mobile
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const handlePopState = (e) => {
+      if (programmaticPopRef.current) {
+        programmaticPopRef.current = false;
+        return;
+      }
+      const state = e.state;
+      if (isRightPanelOpen && !state?.panelOpen) {
         setIsRightPanelOpen(false);
-      };
+      } else if (selectedChat && !state?.chatOpen) {
+        setSelectedChat(null);
+      }
+    };
 
-      window.addEventListener("popstate", handlePopState);
-      
-      return () => {
-        document.body.style.overflow = "auto";
-        window.removeEventListener("popstate", handlePopState);
-      };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [isMobile, isRightPanelOpen, selectedChat, setSelectedChat]);
+
+  // Push/Pop for selectedChat
+  useEffect(() => {
+    if (!isMobile) return;
+    if (selectedChat) {
+      if (!window.history.state?.chatOpen) {
+        window.history.pushState({ chatOpen: true }, "");
+      }
+    } else {
+      if (window.history.state?.chatOpen) {
+        programmaticPopRef.current = true;
+        window.history.back();
+      }
+    }
+  }, [selectedChat, isMobile]);
+
+  // Push/Pop for right panel
+  useEffect(() => {
+    if (!isMobile) return;
+    if (isRightPanelOpen) {
+      document.body.style.overflow = "hidden";
+      if (!window.history.state?.panelOpen) {
+        window.history.pushState({ chatOpen: true, panelOpen: true }, "");
+      }
     } else {
       document.body.style.overflow = "auto";
-      // If closed manually or via chat switch, pop the stale history state
       if (window.history.state?.panelOpen) {
-         window.history.back();
+        programmaticPopRef.current = true;
+        window.history.back();
       }
     }
   }, [isRightPanelOpen, isMobile]);
