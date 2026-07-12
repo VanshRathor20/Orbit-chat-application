@@ -132,13 +132,38 @@ const LeftSidebar = ({ fetchAgain }) => {
     >
       {/* Header Row */}
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-        <Box display="flex" alignItems="center" gap={3}>
-          <Avatar.Root size="sm">
-            <Avatar.Fallback name={user.name} />
-            <Avatar.Image src={user.pic} />
-          </Avatar.Root>
-          <Text fontSize="xl" fontWeight="bold">
-            Orbit
+        <Box display="flex" alignItems="center" gap={0}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            w="68px"
+            h="68px"
+            borderRadius="50%"
+            border="3px solid #FE6306"
+            overflow="hidden"
+            bg="rgba(255, 255, 255, 0.05)"
+            p="3px"
+            cursor="pointer"
+            onClick={() => setIsProfileOpen(true)}
+            _hover={{ opacity: 0.8 }}
+          >
+            <Avatar.Root style={{ width: "100%", height: "100%", borderRadius: "50%" }}>
+              <Avatar.Fallback name={user.name} fontSize="26px" fontWeight="bold" />
+              {user.pic && user.pic !== "backend/Models/userProfileIcon.png" && (
+                <Avatar.Image src={user.pic} />
+              )}
+            </Avatar.Root>
+          </Box>
+          <Text
+            fontFamily="'Pacifico', cursive"
+            fontSize="48px"
+            color="white"
+            lineHeight="1"
+            ml="2px"
+            mt="-6px"
+          >
+            rbit
           </Text>
         </Box>
         <Box display="flex" alignItems="center" gap={2}>
