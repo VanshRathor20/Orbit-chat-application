@@ -217,7 +217,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
             fontSize={{ base: "28px", md: "30px" }}
             fontFamily="Work sans"
             cursor="pointer"
-            onClick={() => setSelectedChat(null)}
+            onClick={() => setIsRightPanelOpen(!isRightPanelOpen)}
           >
           {!selectedChat.isGroupChat ? (
             <Box display="flex" alignItems="center" gap={3}>
