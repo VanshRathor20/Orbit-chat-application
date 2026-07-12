@@ -124,7 +124,7 @@ function SideDrawer() {
           </Button>
         </Tooltip>
         <Text fontSize="2xl" fontFamily="Work sans">
-          Yapp
+          Orbit
         </Text>
         <Box display="flex" alignItems="center" gap={2}>
           <Menu.Root>

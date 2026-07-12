@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { LuX } from "react-icons/lu";
+import { Avatar } from "@chakra-ui/react";
 
-const ImagePreviewModal = ({ src, isOpen, onClose }) => {
+const ImagePreviewModal = ({ src, name, isOpen, onClose }) => {
   // Handle escape key to close modal
   useEffect(() => {
     if (!isOpen) return;
@@ -22,6 +23,8 @@ const ImagePreviewModal = ({ src, isOpen, onClose }) => {
   }, [isOpen, onClose]);
 
   if (!isOpen || !src) return null;
+
+  const isCustomPic = src && src !== "backend/Models/userProfileIcon.png";
 
   return createPortal(
     <div
@@ -63,18 +66,46 @@ const ImagePreviewModal = ({ src, isOpen, onClose }) => {
         }}
         onClick={(e) => e.stopPropagation()} // Click on the image container doesn't close the modal
       >
-        <img
-          src={src}
-          alt="Preview"
-          style={{
-            maxHeight: "85vh",
-            maxWidth: "85vw",
-            objectFit: "contain",
-            borderRadius: "var(--glass-radius-sm)",
-            boxShadow: "0 12px 40px rgba(0, 0, 0, 0.6)",
-            border: "1px solid rgba(255, 255, 255, 0.15)",
-          }}
-        />
+        {isCustomPic ? (
+          <img
+            src={src}
+            alt="Preview"
+            style={{
+              maxHeight: "85vh",
+              maxWidth: "85vw",
+              objectFit: "contain",
+              borderRadius: "var(--glass-radius-sm)",
+              boxShadow: "0 12px 40px rgba(0, 0, 0, 0.6)",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+            }}
+          />
+        ) : (
+          <Avatar.Root
+            style={{
+              width: "min(60vh, 60vw)",
+              height: "min(60vh, 60vw)",
+              borderRadius: "50%",
+              boxShadow: "0 12px 40px rgba(0, 0, 0, 0.6)",
+              border: "2px solid rgba(255, 255, 255, 0.15)",
+            }}
+          >
+            <Avatar.Fallback 
+              name={name}
+              style={{
+                fontSize: "min(18vh, 18vw)",
+                fontWeight: "bold",
+                color: "#ffffff",
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "50%",
+                background: "var(--accent-gradient)",
+              }}
+            />
+          </Avatar.Root>
+        )}
 
         {/* Close Button */}
         <button

@@ -32,7 +32,7 @@ const Home = () => {
           borderWidth='1px'
         >
           <Text fontSize='4xl' fontWeight='bold' fontFamily='work-sans' color='white' textAlign='center' w='100%'>
-            Yapp
+            Orbit
           </Text>
         </Box>
 

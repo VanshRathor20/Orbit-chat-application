@@ -13,7 +13,10 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
+  const [previewName, setPreviewName] = useState("");
   const [loadingChat, setLoadingChat] = useState(false);
+
+  const isCustomPic = (pic) => pic && pic !== "backend/Models/userProfileIcon.png";
 
   const accessChat = async (userId) => {
     if (userId === user._id) return;
@@ -139,12 +142,15 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
           h={{ base: "80px", md: "115px", xl: "80px" }} 
           border={{ base: "2px solid rgba(255, 255, 255, 0.1)", md: "3px solid rgba(255, 255, 255, 0.2)", xl: "2px solid rgba(255, 255, 255, 0.1)" }}
           mb={{ base: 4, md: 6, xl: 4 }}
-          cursor={chatPic ? "pointer" : "default"}
-          _hover={chatPic ? { opacity: 0.8 } : undefined}
-          onClick={chatPic ? () => setPreviewUrl(chatPic) : undefined}
+          cursor="pointer"
+          _hover={{ opacity: 0.8 }}
+          onClick={() => {
+            setPreviewUrl(chatPic || "backend/Models/userProfileIcon.png");
+            setPreviewName(chatName);
+          }}
         >
           <Avatar.Fallback name={chatName} fontSize={{ base: "2xl", md: "4xl", xl: "2xl" }} />
-          {chatPic && <Avatar.Image src={chatPic} />}
+          {isCustomPic(chatPic) && <Avatar.Image src={chatPic} />}
         </Avatar.Root>
         <Text 
           fontSize={{ base: "xl", md: "2xl", xl: "xl" }} 
@@ -176,7 +182,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
             >
               <Stack gap={2}>
                 {selectedChat.users.map((u) => {
-                  const hasCustomPic = u.pic && u.pic !== "backend/Models/userProfileIcon.png";
+                  const hasCustomPic = isCustomPic(u.pic);
                   const isCurrentUser = u._id === user._id;
 
                   return (
@@ -195,16 +201,13 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                     >
                       <Avatar.Root 
                         size="sm"
-                        cursor={hasCustomPic ? "pointer" : (!isCurrentUser ? "pointer" : "default")}
-                        _hover={hasCustomPic ? { opacity: 0.8 } : undefined}
-                        onClick={
-                          hasCustomPic 
-                            ? (e) => {
-                                e.stopPropagation();
-                                setPreviewUrl(u.pic);
-                              } 
-                            : undefined
-                        }
+                        cursor="pointer"
+                        _hover={{ opacity: 0.8 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPreviewUrl(u.pic || "backend/Models/userProfileIcon.png");
+                          setPreviewName(u.name);
+                        }}
                       >
                         <Avatar.Fallback name={u.name} />
                         {hasCustomPic && <Avatar.Image src={u.pic} />}
@@ -261,8 +264,12 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
       </Button>
       <ImagePreviewModal 
         src={previewUrl} 
+        name={previewName}
         isOpen={Boolean(previewUrl)} 
-        onClose={() => setPreviewUrl("")} 
+        onClose={() => {
+          setPreviewUrl("");
+          setPreviewName("");
+        }} 
       />
     </Box>
     </>
