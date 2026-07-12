@@ -8,6 +8,10 @@ const userSchema = mongoose.Schema({
   pic: {
     type: String,
     default: "backend/Models/userProfileIcon.png",
+  },
+  bio: {
+    type: String,
+    default: "",
   }
 }, {
   timestamps: true

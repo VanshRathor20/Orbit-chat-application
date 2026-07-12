@@ -25,6 +25,7 @@ const registerUser=asyncHandler(async(req,res)=>{
             name:userCreated.name,
             email:userCreated.email,
             pic:userCreated.pic,
+            bio:userCreated.bio,
             token:generateToken(userCreated._id) 
         })
     }else{
@@ -42,6 +43,7 @@ const authUser=asyncHandler(async(req,res)=>{
             name:userFound.name,
             email:userFound.email,
             pic:userFound.pic,
+            bio:userFound.bio,
             token:generateToken(userFound._id)
         })
     }else{
@@ -63,5 +65,35 @@ const allUsers = asyncHandler(async (req, res) => {
     const users = await user.find(keyword).find({ _id: { $ne: req.user._id } });
     res.send(users);
   });
+
+const updateUserProfile = asyncHandler(async (req, res) => {
+  const userToUpdate = await user.findById(req.user._id);
+
+  if (userToUpdate) {
+    userToUpdate.name = req.body.name || userToUpdate.name;
+    userToUpdate.pic = req.body.pic || userToUpdate.pic;
+    if (req.body.bio !== undefined) {
+      userToUpdate.bio = req.body.bio;
+    }
+
+    if (req.body.password) {
+      userToUpdate.password = req.body.password;
+    }
+
+    const updatedUser = await userToUpdate.save();
+
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      pic: updatedUser.pic,
+      bio: updatedUser.bio,
+      token: generateToken(updatedUser._id),
+    });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
   
-module.exports={registerUser,authUser,allUsers}; 
+module.exports={registerUser,authUser,allUsers,updateUserProfile}; 
