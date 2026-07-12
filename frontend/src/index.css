@@ -33,3 +33,73 @@ code {
   --text-secondary: rgba(255, 255, 255, 0.7);
   --text-muted: rgba(255, 255, 255, 0.5);
 }
+
+/* Mobile overlay blur */
+.glass-overlay-mobile {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ========================================== */
+/* Standardized Modal Design System Styles    */
+/* ========================================== */
+
+/* Shared Modal Container Card */
+.app-modal-card {
+  width: 100% !important;
+  max-width: 440px !important; /* Fixed width between 420-450px */
+  background: var(--glass-bg) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: var(--glass-border) !important;
+  border-radius: var(--glass-radius-lg) !important;
+  box-shadow: var(--glass-shadow) !important;
+  padding: 24px !important; /* Standard outer padding */
+  color: var(--text-primary) !important;
+  overflow: hidden !important;
+  position: relative;
+}
+
+/* Modal sheen overlay */
+.app-modal-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 40%);
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 0;
+}
+
+/* Standardized Modal Title */
+.app-modal-title {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  margin-bottom: 12px !important;
+  color: var(--text-primary) !important;
+}
+
+/* Standardized Primary Modal Action Button */
+.app-modal-btn {
+  width: 100% !important;
+  height: 46px !important; /* Standardized height */
+  background: var(--accent-gradient) !important;
+  color: white !important;
+  border-radius: 9999px !important; /* Full border-radius */
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: opacity 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.app-modal-btn:hover {
+  opacity: 0.9 !important;
+}

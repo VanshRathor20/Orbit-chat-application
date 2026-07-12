@@ -126,19 +126,11 @@ const ProfileModal = ({ user, isOpen, onClose }) => {
   return (
     <Dialog.Root open={isOpen} onOpenChange={(details) => !details.open && onClose()}>
       <Portal>
-        <Dialog.Backdrop bg="rgba(0, 0, 0, 0.5)" backdropFilter="blur(16px)" />
+        <Dialog.Backdrop className="glass-backdrop" />
         <Dialog.Positioner>
-          <Dialog.Content 
-            bg="var(--glass-bg)" 
-            border="var(--glass-border)" 
-            borderRadius="var(--glass-radius-lg)"
-            boxShadow="var(--glass-shadow)"
-            color="var(--text-primary)"
-            p={6}
-            maxW="md"
-          >
+          <Dialog.Content className="app-modal-card">
             <Dialog.Header px={0} pt={0}>
-              <Dialog.Title>Profile details</Dialog.Title>
+              <Dialog.Title className="app-modal-title">Profile details</Dialog.Title>
               <Dialog.CloseTrigger />
             </Dialog.Header>
             <Dialog.Body px={0} pb={0} display="flex" flexDir="column" gap={4}>
@@ -195,12 +187,7 @@ const ProfileModal = ({ user, isOpen, onClose }) => {
               />
 
               <Button
-                w="100%"
-                bg="var(--accent-gradient)"
-                color="white"
-                borderRadius="full"
-                _hover={{ opacity: 0.9 }}
-                mt={2}
+                className="app-modal-btn"
                 onClick={handleSave}
                 loading={picLoading}
               >

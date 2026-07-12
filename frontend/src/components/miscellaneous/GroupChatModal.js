@@ -121,18 +121,11 @@ const GroupChatModal = ({ children }) => {
         size="lg"
       >
         <Portal>
-          <Dialog.Backdrop bg="rgba(0, 0, 0, 0.5)" backdropFilter="blur(16px)" />
+          <Dialog.Backdrop className="glass-backdrop" />
           <Dialog.Positioner>
-            <Dialog.Content
-              bg="var(--glass-bg)" 
-              border="var(--glass-border)" 
-              borderRadius="var(--glass-radius-lg)"
-              boxShadow="var(--glass-shadow)"
-              color="var(--text-primary)"
-              p={6}
-            >
+            <Dialog.Content className="app-modal-card">
               <Dialog.Header px={0} pt={0}>
-                <Dialog.Title>Create Group Chat</Dialog.Title>
+                <Dialog.Title className="app-modal-title">Create Group Chat</Dialog.Title>
                 <Dialog.CloseTrigger />
               </Dialog.Header>
               <Dialog.Body px={0} display="flex" flexDir="column" gap={4}>
@@ -191,19 +184,13 @@ const GroupChatModal = ({ children }) => {
                     handleFunction={() => handleAddUser(u)}
                   />
                 ))}
-              </Dialog.Body>
-              <Dialog.Footer px={0} pb={0}>
                 <Button 
-                  w="100%"
-                  bg="var(--accent-gradient)"
-                  color="white"
-                  borderRadius="full"
-                  _hover={{ opacity: 0.9 }}
+                  className="app-modal-btn"
                   onClick={handleSubmit}
                 >
                   Create Chat
                 </Button>
-              </Dialog.Footer>
+              </Dialog.Body>
             </Dialog.Content>
           </Dialog.Positioner>
         </Portal>
