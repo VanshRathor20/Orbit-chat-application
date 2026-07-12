@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, SimpleGrid, Text, Spinner, Image } from "@chakra-ui/react";
+import { Avatar, Box, Button, SimpleGrid, Text, Spinner, Image, Stack } from "@chakra-ui/react";
 import { ChatState } from "../Context/ChatProvider";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { useNavigate } from "react-router-dom";
@@ -8,11 +8,35 @@ import { LuX } from "react-icons/lu";
 import ImagePreviewModal from "./miscellaneous/ImagePreviewModal";
 
 const RightProfilePanel = ({ isOpen, onClose }) => {
-  const { user, setUser, selectedChat } = ChatState();
+  const { user, setUser, selectedChat, setSelectedChat, chats, setChats } = ChatState();
   const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
+  const [loadingChat, setLoadingChat] = useState(false);
+
+  const accessChat = async (userId) => {
+    if (userId === user._id) return;
+    try {
+      setLoadingChat(true);
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${user?.token}`,
+        },
+      };
+      const { data } = await axios.post(`/api/chat`, { userId }, config);
+
+      if (!chats.find((c) => c._id === data._id)) {
+        setChats([data, ...chats]);
+      }
+      setSelectedChat(data);
+      setLoadingChat(false);
+    } catch (error) {
+      console.error(error);
+      setLoadingChat(false);
+    }
+  };
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -55,7 +79,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
   const isGroup = selectedChat.isGroupChat;
   const chatName = isGroup ? selectedChat.chatName : getSender(user, selectedChat.users);
   const chatPic = isGroup ? "" : getSenderFull(user, selectedChat.users)?.pic;
-  const chatEmail = isGroup ? `${selectedChat.users.length} members` : getSenderFull(user, selectedChat.users)?.email;
+  const chatEmail = isGroup ? "Group Chat" : getSenderFull(user, selectedChat.users)?.email;
 
   const logoutHandler = () => {
     localStorage.removeItem("userInfo");
@@ -136,29 +160,91 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
       </Box>
 
       <Box flex="1" overflowY="auto">
-        <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={{ base: 3, md: 5, xl: 3 }}>
-          Media
-        </Text>
-        {loading ? (
-          <Spinner size="sm" />
-        ) : mediaMessages.length > 0 ? (
-          <SimpleGrid columns={3} gap={2}>
-            {mediaMessages.map((m) => (
-              <Box 
-                key={m._id} 
-                aspectRatio="1" 
-                borderRadius="md" 
-                overflow="hidden"
-                cursor="pointer"
-                _hover={{ opacity: 0.8 }}
-                onClick={() => setPreviewUrl(m.content)}
-              >
-                <Image src={m.content} alt="media" objectFit="cover" w="100%" h="100%" />
-              </Box>
-            ))}
-          </SimpleGrid>
+        {isGroup ? (
+          <>
+            <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={3}>
+              Group Members ({selectedChat.users.length})
+            </Text>
+            <Box 
+              maxH="340px" 
+              overflowY="auto" 
+              pr={1}
+              sx={{
+                "&::-webkit-scrollbar": { width: "4px" },
+                "&::-webkit-scrollbar-thumb": { background: "var(--text-muted)", borderRadius: "24px" },
+              }}
+            >
+              <Stack gap={2}>
+                {selectedChat.users.map((u) => {
+                  const hasCustomPic = u.pic && u.pic !== "backend/Models/userProfileIcon.png";
+                  const isCurrentUser = u._id === user._id;
+
+                  return (
+                    <Box 
+                      key={u._id} 
+                      display="flex" 
+                      alignItems="center" 
+                      gap={3}
+                      px={3}
+                      py={2}
+                      borderRadius="var(--glass-radius-sm)"
+                      _hover={!isCurrentUser ? { bg: "rgba(255, 255, 255, 0.05)" } : undefined}
+                      cursor={!isCurrentUser ? "pointer" : "default"}
+                      onClick={!isCurrentUser ? () => accessChat(u._id) : undefined}
+                      color="var(--text-primary)"
+                    >
+                      <Avatar.Root 
+                        size="sm"
+                        cursor={hasCustomPic ? "pointer" : (!isCurrentUser ? "pointer" : "default")}
+                        _hover={hasCustomPic ? { opacity: 0.8 } : undefined}
+                        onClick={
+                          hasCustomPic 
+                            ? (e) => {
+                                e.stopPropagation();
+                                setPreviewUrl(u.pic);
+                              } 
+                            : undefined
+                        }
+                      >
+                        <Avatar.Fallback name={u.name} />
+                        {hasCustomPic && <Avatar.Image src={u.pic} />}
+                      </Avatar.Root>
+                      <Text fontSize="sm" fontWeight="medium" noOfLines={1}>
+                        {u.name}{isCurrentUser ? " (You)" : ""}
+                      </Text>
+                    </Box>
+                  );
+                })}
+              </Stack>
+            </Box>
+          </>
         ) : (
-          <Text fontSize={{ base: "xs", md: "sm", xl: "xs" }} color="var(--text-muted)">No media shared</Text>
+          <>
+            <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={{ base: 3, md: 5, xl: 3 }}>
+              Media
+            </Text>
+            {loading ? (
+              <Spinner size="sm" />
+            ) : mediaMessages.length > 0 ? (
+              <SimpleGrid columns={3} gap={2}>
+                {mediaMessages.map((m) => (
+                  <Box 
+                    key={m._id} 
+                    aspectRatio="1" 
+                    borderRadius="md" 
+                    overflow="hidden"
+                    cursor="pointer"
+                    _hover={{ opacity: 0.8 }}
+                    onClick={() => setPreviewUrl(m.content)}
+                  >
+                    <Image src={m.content} alt="media" objectFit="cover" w="100%" h="100%" />
+                  </Box>
+                ))}
+              </SimpleGrid>
+            ) : (
+              <Text fontSize={{ base: "xs", md: "sm", xl: "xs" }} color="var(--text-muted)">No media shared</Text>
+            )}
+          </>
         )}
       </Box>
 
