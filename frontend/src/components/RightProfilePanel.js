@@ -5,12 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { LuX } from "react-icons/lu";
+import ImagePreviewModal from "./miscellaneous/ImagePreviewModal";
 
 const RightProfilePanel = ({ isOpen, onClose }) => {
   const { user, setUser, selectedChat } = ChatState();
   const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState("");
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -113,6 +115,9 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
           h={{ base: "80px", md: "115px", xl: "80px" }} 
           border={{ base: "2px solid rgba(255, 255, 255, 0.1)", md: "3px solid rgba(255, 255, 255, 0.2)", xl: "2px solid rgba(255, 255, 255, 0.1)" }}
           mb={{ base: 4, md: 6, xl: 4 }}
+          cursor={chatPic ? "pointer" : "default"}
+          _hover={chatPic ? { opacity: 0.8 } : undefined}
+          onClick={chatPic ? () => setPreviewUrl(chatPic) : undefined}
         >
           <Avatar.Fallback name={chatName} fontSize={{ base: "2xl", md: "4xl", xl: "2xl" }} />
           {chatPic && <Avatar.Image src={chatPic} />}
@@ -139,7 +144,15 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         ) : mediaMessages.length > 0 ? (
           <SimpleGrid columns={3} gap={2}>
             {mediaMessages.map((m) => (
-              <Box key={m._id} aspectRatio="1" borderRadius="md" overflow="hidden">
+              <Box 
+                key={m._id} 
+                aspectRatio="1" 
+                borderRadius="md" 
+                overflow="hidden"
+                cursor="pointer"
+                _hover={{ opacity: 0.8 }}
+                onClick={() => setPreviewUrl(m.content)}
+              >
                 <Image src={m.content} alt="media" objectFit="cover" w="100%" h="100%" />
               </Box>
             ))}
@@ -160,6 +173,11 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
       >
         Logout
       </Button>
+      <ImagePreviewModal 
+        src={previewUrl} 
+        isOpen={Boolean(previewUrl)} 
+        onClose={() => setPreviewUrl("")} 
+      />
     </Box>
     </>
   );
