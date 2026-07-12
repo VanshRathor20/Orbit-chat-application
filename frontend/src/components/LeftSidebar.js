@@ -138,11 +138,11 @@ const LeftSidebar = ({ fetchAgain }) => {
             <Avatar.Image src={user.pic} />
           </Avatar.Root>
           <Text fontSize="xl" fontWeight="bold">
-            Yapp
+            Orbit
           </Text>
         </Box>
         <Box display="flex" alignItems="center" gap={2}>
-          <Menu.Root 
+          <Menu.Root
             positioning={{ placement: "bottom-end" }}
             onSelect={(e) => {
               if (e.value === "profile") setIsProfileOpen(true);
