@@ -108,14 +108,15 @@ const Chatpage = () => {
 
   return (
     <Box
-      w="100%"
-      h={{ base: "100vh", md: "calc(100vh - 48px)" }}
-      m={{ base: 0, md: "24px auto" }}
+      w={{ base: "100%", md: "94vw" }}
+      h={{ base: "100vh", md: "92vh" }}
+      m={{ base: 0, md: "auto" }}
       p={{ base: 0, md: 4 }}
       display="flex"
       gap={{ base: 0, md: 4 }}
       overflow="hidden"
-      maxW={{ base: "100%", md: "1400px" }}
+      maxW={{ base: "100%", md: "1700px" }}
+      maxH={{ base: "100vh", md: "950px" }}
       alignSelf="center"
     >
       <LeftSidebar fetchAgain={fetchAgain} />

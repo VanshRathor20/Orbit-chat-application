@@ -149,7 +149,7 @@ const LeftSidebar = ({ fetchAgain }) => {
     <Box
       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       flexDir="column"
-      w={{ base: "100%", md: "320px" }}
+      w={{ base: "100%", md: "320px", xl: "360px" }}
       h="100%"
       className="glass-panel"
       borderRadius="var(--glass-radius-lg)"
