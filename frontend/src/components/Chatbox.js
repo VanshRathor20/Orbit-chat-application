@@ -14,11 +14,8 @@ const Chatbox = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPanelO
       w="100%"
       h="100%"
       p={4}
-      bg="var(--glass-bg)"
-      backdropFilter="var(--glass-blur)"
-      border="var(--glass-border)"
+      className="glass-panel"
       borderRadius="var(--glass-radius-lg)"
-      boxShadow="var(--glass-shadow)"
       color="var(--text-primary)"
     >
       <SingleChat 

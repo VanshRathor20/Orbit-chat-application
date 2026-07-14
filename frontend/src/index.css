@@ -24,7 +24,7 @@ code {
   --glass-bg: rgba(20, 20, 30, 0.6);
   --glass-border: 1px solid rgba(255, 255, 255, 0.1);
   --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  --glass-blur: blur(20px);
+  --glass-blur: blur(28px);
   --glass-radius-lg: 24px;
   --glass-radius-sm: 12px;
   
@@ -38,6 +38,15 @@ code {
 .glass-overlay-mobile {
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+}
+
+/* Glassmorphism panel core style without border-radius */
+.glass-panel {
+  background: var(--glass-bg) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: var(--glass-border) !important;
+  box-shadow: var(--glass-shadow) !important;
 }
 
 /* ========================================== */

@@ -233,11 +233,8 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         flexDir="column"
         w="280px"
         h="100%"
-        bg="var(--glass-bg)"
-        backdropFilter="var(--glass-blur)"
-        border="var(--glass-border)"
+        className="glass-panel"
         borderRadius="var(--glass-radius-lg)"
-        boxShadow="var(--glass-shadow)"
         p={6}
         color="var(--text-primary)"
         alignItems="center"
@@ -287,11 +284,8 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         transform={{ base: isOpen ? "translateX(0)" : "translateX(100%)", xl: "none" }}
         transition="transform 0.3s ease-out"
         flexDir="column"
-        bg="var(--glass-bg)"
-        backdropFilter="var(--glass-blur)"
-        border="var(--glass-border)"
+        className="glass-panel"
         borderRadius={{ base: "var(--glass-radius-lg) 0 0 var(--glass-radius-lg)", xl: "var(--glass-radius-lg)" }}
-        boxShadow="var(--glass-shadow)"
         p={6}
         color="var(--text-primary)"
       >

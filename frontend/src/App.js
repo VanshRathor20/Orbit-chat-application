@@ -8,6 +8,7 @@ function App() {
   return (
     <>
       <div className="App">
+        <div className="watermark-bg" style={{ backgroundImage: 'radial-gradient(circle, rgba(254, 99, 6, 0.18) 0%, rgba(254, 99, 6, 0) 70%), url("/orbit_favicon-removebg-preview.png")' }}></div>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/chat" element={<ChatPage />} />

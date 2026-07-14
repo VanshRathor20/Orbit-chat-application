@@ -151,11 +151,8 @@ const LeftSidebar = ({ fetchAgain }) => {
       flexDir="column"
       w={{ base: "100%", md: "320px" }}
       h="100%"
-      bg="var(--glass-bg)"
-      backdropFilter="var(--glass-blur)"
-      border="var(--glass-border)"
+      className="glass-panel"
       borderRadius="var(--glass-radius-lg)"
-      boxShadow="var(--glass-shadow)"
       p={4}
       color="var(--text-primary)"
     >
@@ -209,7 +206,7 @@ const LeftSidebar = ({ fetchAgain }) => {
               </Button>
             </Menu.Trigger>
             <Menu.Positioner>
-              <Menu.Content bg="var(--glass-bg)" backdropFilter="var(--glass-blur)" border="var(--glass-border)" color="var(--text-primary)" zIndex={1400}>
+              <Menu.Content className="glass-panel" color="var(--text-primary)" zIndex={1400}>
                 <Menu.Item value="profile" _hover={{ bg: "var(--accent-primary)" }}>
                   Edit Profile
                 </Menu.Item>

@@ -2,10 +2,27 @@
 @import "tailwindcss";
 
 .App{
+    position: relative;
     min-height: 100vh;
     display: flex;
-    background: radial-gradient(circle at top right, #1e1e36, #0b0b0e 70%);
+    background: #0a0a0a;
     color: var(--text-primary);
+    overflow: hidden;
+}
+
+.watermark-bg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1100px;
+    height: 1100px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.2;
+    z-index: 0;
+    pointer-events: none;
 }
 
 @keyframes panelFadeIn {
