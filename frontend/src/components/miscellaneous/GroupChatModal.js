@@ -17,7 +17,6 @@ const GroupChatModal = ({ children }) => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   const { user, chats, setChats } = ChatState();
 
@@ -25,20 +24,17 @@ const GroupChatModal = ({ children }) => {
     if (!query) return;
 
     try {
-      setLoading(true);
       const config = {
         headers: { Authorization: `Bearer ${user?.token}` },
       };
       const { data } = await axios.get(`/api/user?search=${query}`, config);
       setSearchResult(data);
-      setLoading(false);
     } catch (error) {
       toaster.create({
         title: "Error Occurred!",
         description: "Failed to load search results",
         type: "error",
       });
-      setLoading(false);
     }
   };
 
@@ -52,6 +48,7 @@ const GroupChatModal = ({ children }) => {
     }, 300);
 
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   const handleSubmit = async () => {
@@ -184,7 +181,7 @@ const GroupChatModal = ({ children }) => {
                     handleFunction={() => handleAddUser(u)}
                   />
                 ))}
-                <Button 
+                <Button
                   className="app-modal-btn"
                   onClick={handleSubmit}
                 >

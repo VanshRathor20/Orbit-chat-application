@@ -59,6 +59,7 @@ const fetchChats = asyncHandler(async (req, res) => {
     Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
       .populate("users", "-password")
       .populate("groupAdmin", "-password")
+      .populate("createdBy", "name")
       .populate("latestMessage")
       .sort({ updatedAt: -1 })
       .then(async (results) => {
@@ -98,11 +99,13 @@ const createGroupChat = asyncHandler(async (req, res) => {
       users: users,
       isGroupChat: true,
       groupAdmin: req.user,
+      createdBy: req.user,
     });
 
     const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
       .populate("users", "-password")
-      .populate("groupAdmin", "-password");
+      .populate("groupAdmin", "-password")
+      .populate("createdBy", "name");
 
     res.status(200).json(fullGroupChat);
   } catch (error) {
@@ -127,7 +130,8 @@ const renameGroup = asyncHandler(async (req, res) => {
     }
   )
     .populate("users", "-password")
-    .populate("groupAdmin", "-password");
+    .populate("groupAdmin", "-password")
+    .populate("createdBy", "name");
 
   if (!updatedChat) {
     res.status(404);
@@ -155,7 +159,8 @@ const removeFromGroup = asyncHandler(async (req, res) => {
     }
   )
     .populate("users", "-password")
-    .populate("groupAdmin", "-password");
+    .populate("groupAdmin", "-password")
+    .populate("createdBy", "name");
 
   if (!removed) {
     res.status(404);
@@ -183,7 +188,8 @@ const addToGroup = asyncHandler(async (req, res) => {
     }
   )
     .populate("users", "-password")
-    .populate("groupAdmin", "-password");
+    .populate("groupAdmin", "-password")
+    .populate("createdBy", "name");
 
   if (!added) {
     res.status(404);

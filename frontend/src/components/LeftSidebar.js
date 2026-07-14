@@ -26,6 +26,8 @@ const LeftSidebar = ({ fetchAgain }) => {
     chats,
     setChats,
     selectedChat,
+    notification,
+    setNotification,
   } = ChatState();
 
   const navigate = useNavigate();
@@ -250,7 +252,10 @@ const LeftSidebar = ({ fetchAgain }) => {
             <Stack gap={2}>
               {chats.map((chat) => (
                 <Box
-                  onClick={() => setSelectedChat(chat)}
+                  onClick={() => {
+                    setSelectedChat(chat);
+                    setNotification(notification.filter((n) => n.chat._id !== chat._id));
+                  }}
                   cursor="pointer"
                   bg={selectedChat === chat ? "var(--accent-primary)" : "transparent"}
                   _hover={{ bg: selectedChat !== chat ? "rgba(255, 255, 255, 0.05)" : "var(--accent-primary)" }}
@@ -286,6 +291,24 @@ const LeftSidebar = ({ fetchAgain }) => {
                       </Text>
                     )}
                   </Box>
+                  {notification.filter((n) => n.chat._id === chat._id).length > 0 && (
+                    <Box
+                      bg="red.500"
+                      color="white"
+                      borderRadius="full"
+                      px={2}
+                      py={0.5}
+                      fontSize="10px"
+                      fontWeight="bold"
+                      minW="18px"
+                      h="18px"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      {notification.filter((n) => n.chat._id === chat._id).length}
+                    </Box>
+                  )}
                 </Box>
               ))}
             </Stack>

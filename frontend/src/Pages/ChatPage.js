@@ -1,4 +1,4 @@
-import { Box, Flex, useBreakpointValue } from "@chakra-ui/react";
+import { Box, useBreakpointValue } from "@chakra-ui/react";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Chatbox from "../components/Chatbox";

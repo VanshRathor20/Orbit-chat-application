@@ -1,11 +1,13 @@
-import { Avatar, Box, Button, SimpleGrid, Text, Spinner, Image, Stack } from "@chakra-ui/react";
+import { Avatar, Box, Button, SimpleGrid, Text, Spinner, Image, Stack, IconButton, Input, VStack } from "@chakra-ui/react";
 import { ChatState } from "../Context/ChatProvider";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { LuX } from "react-icons/lu";
+import { LuX, LuPencil, LuPlus, LuMessageSquare, LuVolumeX, LuVideo, LuLogOut } from "react-icons/lu";
 import ImagePreviewModal from "./miscellaneous/ImagePreviewModal";
+import AddMemberModal from "./miscellaneous/AddMemberModal";
+import { toaster } from "./ui/toaster";
 
 const RightProfilePanel = ({ isOpen, onClose }) => {
   const { user, setUser, selectedChat, setSelectedChat, chats, setChats } = ChatState();
@@ -14,14 +16,118 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
   const [previewName, setPreviewName] = useState("");
-  const [loadingChat, setLoadingChat] = useState(false);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState("");
+  const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
+
+  const isGroup = selectedChat?.isGroupChat;
+
+  useEffect(() => {
+    if (selectedChat) {
+      setEditedName(selectedChat.isGroupChat ? selectedChat.chatName : "");
+    }
+  }, [selectedChat]);
+
+  const handleRename = async () => {
+    if (!editedName.trim() || editedName === selectedChat.chatName) {
+      setIsEditingName(false);
+      return;
+    }
+
+    const oldName = selectedChat.chatName;
+
+    // Optimistic UI updates
+    const updatedSelectedChat = { ...selectedChat, chatName: editedName };
+    setSelectedChat(updatedSelectedChat);
+    setChats(chats.map((c) => (c._id === selectedChat._id ? updatedSelectedChat : c)));
+    setIsEditingName(false);
+
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${user?.token}`,
+        },
+      };
+      const { data } = await axios.patch(
+        `/api/groups/${selectedChat._id}/rename`,
+        { name: editedName },
+        config
+      );
+      
+      setSelectedChat(data);
+      setChats(chats.map((c) => (c._id === data._id ? data : c)));
+      
+      toaster.create({
+        title: "Group renamed successfully",
+        type: "success",
+      });
+    } catch (error) {
+      // Revert on failure
+      setSelectedChat({ ...selectedChat, chatName: oldName });
+      setChats(chats.map((c) => (c._id === selectedChat._id ? { ...c, chatName: oldName } : c)));
+      
+      toaster.create({
+        title: "Failed to rename group",
+        description: error.response?.data?.message || error.message,
+        type: "error",
+      });
+    }
+  };
+
+  const handleLeaveGroup = async () => {
+    if (!window.confirm("Are you sure you want to leave this group?")) return;
+
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${user?.token}` },
+      };
+      await axios.put(
+        "/api/chat/groupremove",
+        {
+          chatId: selectedChat._id,
+          userId: user._id,
+        },
+        config
+      );
+
+      toaster.create({
+        title: "You have left the group",
+        type: "success",
+      });
+      setSelectedChat(null);
+      setChats(chats.filter((c) => c._id !== selectedChat._id));
+      onClose();
+    } catch (error) {
+      toaster.create({
+        title: "Failed to leave group",
+        description: error.response?.data?.message || error.message,
+        type: "error",
+      });
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const datePart = new Intl.DateTimeFormat("en-US", {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+    }).format(date);
+    const timePart = new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }).format(date).toLowerCase();
+    return `${datePart} at ${timePart}`;
+  };
 
   const isCustomPic = (pic) => pic && pic !== "backend/Models/userProfileIcon.png";
 
   const accessChat = async (userId) => {
     if (userId === user._id) return;
     try {
-      setLoadingChat(true);
       const config = {
         headers: {
           "Content-type": "application/json",
@@ -34,10 +140,8 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         setChats([data, ...chats]);
       }
       setSelectedChat(data);
-      setLoadingChat(false);
     } catch (error) {
       console.error(error);
-      setLoadingChat(false);
     }
   };
 
@@ -79,10 +183,9 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
     );
   }
 
-  const isGroup = selectedChat.isGroupChat;
-  const chatName = isGroup ? selectedChat.chatName : getSender(user, selectedChat.users);
-  const chatPic = isGroup ? "" : getSenderFull(user, selectedChat.users)?.pic;
-  const chatEmail = isGroup ? "Group Chat" : getSenderFull(user, selectedChat.users)?.email;
+  const chatName = isGroup ? selectedChat?.chatName : getSender(user, selectedChat?.users || []);
+  const chatPic = isGroup ? "" : getSenderFull(user, selectedChat?.users || [])?.pic;
+  const chatEmail = isGroup ? "Group Chat" : getSenderFull(user, selectedChat?.users || [])?.email;
 
   const logoutHandler = () => {
     localStorage.removeItem("userInfo");
@@ -131,55 +234,155 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         p={6}
         color="var(--text-primary)"
       >
-        <Box justifyContent="flex-end" display={{ base: "flex", xl: "none" }} mb={2} mt={-2} mr={-2}>
+        <Box order={0} justifyContent="flex-end" display={{ base: "flex", xl: "none" }} mb={2} mt={-2} mr={-2}>
           <Button variant="ghost" size="sm" onClick={onClose} color="var(--text-secondary)">
             <LuX size={20} />
           </Button>
         </Box>
-        <Box display="flex" flexDir="column" alignItems="center" mb={{ base: 8, md: 12, xl: 8 }}>
-        <Avatar.Root 
-          w={{ base: "80px", md: "115px", xl: "80px" }} 
-          h={{ base: "80px", md: "115px", xl: "80px" }} 
-          border={{ base: "2px solid rgba(255, 255, 255, 0.1)", md: "3px solid rgba(255, 255, 255, 0.2)", xl: "2px solid rgba(255, 255, 255, 0.1)" }}
-          mb={{ base: 4, md: 6, xl: 4 }}
-          cursor="pointer"
-          _hover={{ opacity: 0.8 }}
-          onClick={() => {
-            setPreviewUrl(chatPic || "backend/Models/userProfileIcon.png");
-            setPreviewName(chatName);
+        
+        <Box order={1} display="flex" flexDir="column" alignItems="center" mb={{ base: 4, md: 6, xl: 4 }}>
+          <Avatar.Root 
+            w={{ base: "80px", md: "115px", xl: "80px" }} 
+            h={{ base: "80px", md: "115px", xl: "80px" }} 
+            border={{ base: "2px solid rgba(255, 255, 255, 0.1)", md: "3px solid rgba(255, 255, 255, 0.2)", xl: "2px solid rgba(255, 255, 255, 0.1)" }}
+            mb={{ base: 4, md: 6, xl: 4 }}
+            cursor="pointer"
+            _hover={{ opacity: 0.8 }}
+            onClick={() => {
+              setPreviewUrl(chatPic || "backend/Models/userProfileIcon.png");
+              setPreviewName(chatName);
+            }}
+          >
+            <Avatar.Fallback name={chatName} fontSize={{ base: "2xl", md: "4xl", xl: "2xl" }} />
+            {isCustomPic(chatPic) && <Avatar.Image src={chatPic} />}
+          </Avatar.Root>
+          
+          {isEditingName ? (
+            <Input
+              value={editedName}
+              onChange={(e) => setEditedName(e.target.value)}
+              onBlur={handleRename}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleRename();
+                if (e.key === "Escape") {
+                  setEditedName(selectedChat.chatName);
+                  setIsEditingName(false);
+                }
+              }}
+              autoFocus
+              size="sm"
+              textAlign="center"
+              bg="rgba(255, 255, 255, 0.05)"
+              border="var(--glass-border)"
+              color="var(--text-primary)"
+              _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
+              mb={2}
+            />
+          ) : (
+            <Box display="flex" alignItems="center" justifyContent="center" gap={2} mb={{ base: 1, md: 2, xl: 1 }}>
+              <Text 
+                fontSize={{ base: "xl", md: "2xl", xl: "xl" }} 
+                fontWeight="bold" 
+                textAlign="center"
+              >
+                {chatName}
+              </Text>
+              {isGroup && (
+                <IconButton
+                  aria-label="Rename Group"
+                  variant="ghost"
+                  size="xs"
+                  onClick={() => setIsEditingName(true)}
+                  color="var(--text-secondary)"
+                  _hover={{ bg: "whiteAlpha.200", color: "white" }}
+                >
+                  <LuPencil />
+                </IconButton>
+              )}
+            </Box>
+          )}
+          
+          <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" textAlign="center">
+            {chatEmail}
+          </Text>
+        </Box>
+
+        {isGroup && (
+          <SimpleGrid columns={4} gap={2} w="100%" my={4} order={{ base: 2, xl: 4 }}>
+            <VStack gap={1}>
+              <IconButton
+                aria-label="Message"
+                size="sm"
+                borderRadius="full"
+                bg="rgba(255, 255, 255, 0.1)"
+                color="white"
+                _hover={{ bg: "rgba(255, 255, 255, 0.2)" }}
+                onClick={onClose}
+              >
+                <LuMessageSquare size={16} />
+              </IconButton>
+              <Text fontSize="10px" color="var(--text-secondary)">Message</Text>
+            </VStack>
+            <VStack gap={1}>
+              <IconButton
+                aria-label="Mute"
+                size="sm"
+                borderRadius="full"
+                bg="rgba(255, 255, 255, 0.1)"
+                color="white"
+                _hover={{ bg: "rgba(255, 255, 255, 0.2)" }}
+                onClick={() => {
+                  toaster.create({ title: "Notifications Muted", type: "success" });
+                }}
+              >
+                <LuVolumeX size={16} />
+              </IconButton>
+              <Text fontSize="10px" color="var(--text-secondary)">Mute</Text>
+            </VStack>
+            <VStack gap={1}>
+              <IconButton
+                aria-label="Video Chat"
+                size="sm"
+                borderRadius="full"
+                bg="rgba(255, 255, 255, 0.1)"
+                color="white"
+                _hover={{ bg: "rgba(255, 255, 255, 0.2)" }}
+                onClick={() => {
+                  toaster.create({ title: "Starting Video Chat...", type: "success" });
+                }}
+              >
+                <LuVideo size={16} />
+              </IconButton>
+              <Text fontSize="10px" color="var(--text-secondary)">Video Chat</Text>
+            </VStack>
+            <VStack gap={1}>
+              <IconButton
+                aria-label="Exit"
+                size="sm"
+                borderRadius="full"
+                bg="rgba(255, 0, 0, 0.2)"
+                color="red.300"
+                _hover={{ bg: "rgba(255, 0, 0, 0.3)" }}
+                onClick={handleLeaveGroup}
+              >
+                <LuLogOut size={16} />
+              </IconButton>
+              <Text fontSize="10px" color="red.300">Exit</Text>
+            </VStack>
+          </SimpleGrid>
+        )}
+
+        <Box flex="1" overflowY="auto" order={3} w="100%" pr={1}
+          sx={{
+            "&::-webkit-scrollbar": { width: "4px" },
+            "&::-webkit-scrollbar-thumb": { background: "var(--text-muted)", borderRadius: "24px" },
           }}
         >
-          <Avatar.Fallback name={chatName} fontSize={{ base: "2xl", md: "4xl", xl: "2xl" }} />
-          {isCustomPic(chatPic) && <Avatar.Image src={chatPic} />}
-        </Avatar.Root>
-        <Text 
-          fontSize={{ base: "xl", md: "2xl", xl: "xl" }} 
-          fontWeight="bold" 
-          textAlign="center"
-          mb={{ base: 1, md: 2, xl: 1 }}
-        >
-          {chatName}
-        </Text>
-        <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" textAlign="center">
-          {chatEmail}
-        </Text>
-      </Box>
-
-      <Box flex="1" overflowY="auto">
-        {isGroup ? (
-          <>
-            <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={3}>
-              Group Members ({selectedChat.users.length})
-            </Text>
-            <Box 
-              maxH="340px" 
-              overflowY="auto" 
-              pr={1}
-              sx={{
-                "&::-webkit-scrollbar": { width: "4px" },
-                "&::-webkit-scrollbar-thumb": { background: "var(--text-muted)", borderRadius: "24px" },
-              }}
-            >
+          {isGroup ? (
+            <>
+              <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={3}>
+                Group Members ({selectedChat.users.length})
+              </Text>
               <Stack gap={2}>
                 {selectedChat.users.map((u) => {
                   const hasCustomPic = isCustomPic(u.pic);
@@ -219,59 +422,92 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                   );
                 })}
               </Stack>
-            </Box>
-          </>
-        ) : (
-          <>
-            <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={{ base: 3, md: 5, xl: 3 }}>
-              Media
-            </Text>
-            {loading ? (
-              <Spinner size="sm" />
-            ) : mediaMessages.length > 0 ? (
-              <SimpleGrid columns={3} gap={2}>
-                {mediaMessages.map((m) => (
-                  <Box 
-                    key={m._id} 
-                    aspectRatio="1" 
-                    borderRadius="md" 
-                    overflow="hidden"
-                    cursor="pointer"
-                    _hover={{ opacity: 0.8 }}
-                    onClick={() => setPreviewUrl(m.content)}
-                  >
-                    <Image src={m.content} alt="media" objectFit="cover" w="100%" h="100%" />
-                  </Box>
-                ))}
-              </SimpleGrid>
-            ) : (
-              <Text fontSize={{ base: "xs", md: "sm", xl: "xs" }} color="var(--text-muted)">No media shared</Text>
-            )}
-          </>
-        )}
-      </Box>
+            </>
+          ) : (
+            <>
+              <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={{ base: 3, md: 5, xl: 3 }}>
+                Media
+              </Text>
+              {loading ? (
+                <Spinner size="sm" />
+              ) : mediaMessages.length > 0 ? (
+                <SimpleGrid columns={3} gap={2}>
+                  {mediaMessages.map((m) => (
+                    <Box 
+                      key={m._id} 
+                      aspectRatio="1" 
+                      borderRadius="md" 
+                      overflow="hidden"
+                      cursor="pointer"
+                      _hover={{ opacity: 0.8 }}
+                      onClick={() => setPreviewUrl(m.content)}
+                    >
+                      <Image src={m.content} alt="media" objectFit="cover" w="100%" h="100%" />
+                    </Box>
+                  ))}
+                </SimpleGrid>
+              ) : (
+                <Text fontSize={{ base: "xs", md: "sm", xl: "xs" }} color="var(--text-muted)">No media shared</Text>
+              )}
+            </>
+          )}
+        </Box>
 
-      <Button
-        mt={4}
-        w="100%"
-        bg="var(--accent-gradient)"
-        color="white"
-        borderRadius="full"
-        _hover={{ opacity: 0.9 }}
-        onClick={logoutHandler}
-      >
-        Logout
-      </Button>
-      <ImagePreviewModal 
-        src={previewUrl} 
-        name={previewName}
-        isOpen={Boolean(previewUrl)} 
-        onClose={() => {
-          setPreviewUrl("");
-          setPreviewName("");
-        }} 
-      />
-    </Box>
+        {isGroup && (
+          <Box borderTop="var(--glass-border)" pt={4} pb={2} order={5} w="100%">
+            <Text fontSize="xs" color="var(--text-muted)" textAlign="center">
+              Group created by {selectedChat.createdBy?.name || selectedChat.groupAdmin?.name || "Unknown"}{selectedChat.createdAt ? ` on ${formatDate(selectedChat.createdAt)}` : ""}
+            </Text>
+          </Box>
+        )}
+
+        <Button
+          mt={4}
+          w="100%"
+          bg="var(--accent-gradient)"
+          color="white"
+          borderRadius="full"
+          _hover={{ opacity: 0.9 }}
+          onClick={logoutHandler}
+          order={6}
+        >
+          Logout
+        </Button>
+        
+        {isGroup && (
+          <IconButton
+            aria-label="Add Member"
+            position="absolute"
+            bottom="80px"
+            right="24px"
+            borderRadius="full"
+            bg="var(--accent-gradient)"
+            color="white"
+            _hover={{ opacity: 0.9 }}
+            boxShadow="0 4px 12px rgba(0, 0, 0, 0.4)"
+            onClick={() => setIsAddMemberOpen(true)}
+            size="md"
+            zIndex={10}
+          >
+            <LuPlus size={20} />
+          </IconButton>
+        )}
+
+        <ImagePreviewModal 
+          src={previewUrl} 
+          name={previewName}
+          isOpen={Boolean(previewUrl)} 
+          onClose={() => {
+            setPreviewUrl("");
+            setPreviewName("");
+          }} 
+        />
+
+        <AddMemberModal 
+          isOpen={isAddMemberOpen} 
+          onClose={() => setIsAddMemberOpen(false)} 
+        />
+      </Box>
     </>
   );
 };

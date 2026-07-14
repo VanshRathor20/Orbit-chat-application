@@ -4,7 +4,12 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const messageRoutes = require("./routes/messageRoutes");
+const groupRoutes = require("./routes/groupRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
+const http = require("http");
+const { Server } = require("socket.io");
+
 dotenv.config();
 connectDB();
 
@@ -16,15 +21,67 @@ app.get("/", (req, res) => {
   res.send("Server is running");
 });
 
-app.use('/api/user',userRoutes ); 
-app.use('/api/chat',chatRoutes ); 
-
+app.use('/api/user', userRoutes); 
+app.use('/api/chat', chatRoutes); 
+app.use('/api/message', messageRoutes);
+app.use('/api/groups', groupRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  },
+});
+
+app.set("socketio", io);
+
+io.on("connection", (socket) => {
+  console.log("Connected to socket.io");
+
+  socket.on("setup", (userData) => {
+    if (userData && userData._id) {
+      socket.join(userData._id);
+      socket.emit("connected");
+    }
+  });
+
+  socket.on("join chat", (room) => {
+    socket.join(room);
+    console.log("User Joined Room: " + room);
+  });
+
+  socket.on("typing", (room) => {
+    socket.in(room).emit("typing", room);
+  });
+  
+  socket.on("stop typing", (room) => {
+    socket.in(room).emit("stop typing", room);
+  });
+
+  socket.on("new message", (newMessageReceived) => {
+    var chat = newMessageReceived.chat;
+
+    if (!chat.users) return console.log("chat.users not defined");
+
+    chat.users.forEach((userItem) => {
+      if (userItem._id === newMessageReceived.sender._id) return;
+      socket.in(userItem._id).emit("message received", newMessageReceived);
+    });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("USER DISCONNECTED");
+  });
+});
+
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

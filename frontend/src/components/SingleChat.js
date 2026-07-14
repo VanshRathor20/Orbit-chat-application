@@ -14,11 +14,10 @@ import { LuCamera, LuPaperclip, LuSendHorizontal, LuImage, LuX, LuInfo, LuSmile,
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { ChatState } from "../Context/ChatProvider";
 import { toaster } from "./ui/toaster";
-import ProfileModal from "./miscellaneous/ProfileModal";
 import "./styles.css";
 
 const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPanelOpen }) => {
-  const [messages, setMessages] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
@@ -31,7 +30,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
   const galleryRef = useRef();
   const inputRef = useRef(null);
 
-  const { user, selectedChat, setSelectedChat } = ChatState();
+  const { user, selectedChat, setSelectedChat, setChats, socket, messages, setMessages } = ChatState();
+  const [socketConnected, setSocketConnected] = useState(false);
+  const [typing, setTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
@@ -124,12 +126,37 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
         sentMessages.push(txtData);
       }
 
+      if (socket && selectedChat) {
+        socket.emit("stop typing", selectedChat._id);
+        setTyping(false);
+      }
+
       setMessages((prev) => [...prev, ...sentMessages]);
       setNewMessage("");
       setSelectedImage(null);
       setImagePreviewUrl(null);
-      setFetchAgain(!fetchAgain);
       setSending(false);
+
+      const lastMsg = sentMessages[sentMessages.length - 1];
+      if (lastMsg) {
+        setChats((prevChats) => {
+          const chatExists = prevChats.some((c) => c._id === selectedChat._id);
+          if (chatExists) {
+            const updatedChats = prevChats.map((c) => {
+              if (c._id === selectedChat._id) {
+                return { ...c, latestMessage: lastMsg };
+              }
+              return c;
+            });
+            const targetChat = updatedChats.find((c) => c._id === selectedChat._id);
+            const remainingChats = updatedChats.filter((c) => c._id !== selectedChat._id);
+            return [targetChat, ...remainingChats];
+          } else {
+            const newChat = { ...selectedChat, latestMessage: lastMsg };
+            return [newChat, ...prevChats];
+          }
+        });
+      }
     } catch (error) {
       toaster.create({
         title: "Error Occurred!",
@@ -160,10 +187,64 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
     e.target.value = null;
   };
 
+  const typingHandler = (e) => {
+    setNewMessage(e.target.value);
+
+    if (!socketConnected) return;
+
+    if (!typing) {
+      setTyping(true);
+      socket.emit("typing", selectedChat._id);
+    }
+    let lastTypingTime = new Date().getTime();
+    var timerLength = 3000;
+    setTimeout(() => {
+      var timeNow = new Date().getTime();
+      var timeDiff = timeNow - lastTypingTime;
+      if (timeDiff >= timerLength && typing) {
+        socket.emit("stop typing", selectedChat._id);
+        setTyping(false);
+      }
+    }, timerLength);
+  };
+
+  useEffect(() => {
+    if (socket) {
+      setSocketConnected(true);
+    }
+  }, [socket]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("typing", (room) => {
+      if (room === selectedChat?._id) {
+        setIsTyping(true);
+      }
+    });
+
+    socket.on("stop typing", (room) => {
+      if (room === selectedChat?._id) {
+        setIsTyping(false);
+      }
+    });
+
+    return () => {
+      socket.off("typing");
+      socket.off("stop typing");
+    };
+  }, [socket, selectedChat]);
+
+
+
   useEffect(() => {
     fetchMessages();
+    
+    if (socket && selectedChat) {
+      socket.emit("join chat", selectedChat._id);
+    }
     // eslint-disable-next-line
-  }, [selectedChat]);
+  }, [selectedChat, socket]);
 
   if (!selectedChat) {
     return (
@@ -421,11 +502,19 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
             </>
           )}
 
+          {isTyping && (
+            <Box position="absolute" bottom="100%" left={4} mb={1} zIndex={2}>
+              <Text fontSize="xs" color="var(--text-muted)" fontStyle="italic">
+                typing...
+              </Text>
+            </Box>
+          )}
+
           <Input
             ref={inputRef}
             placeholder="Message..."
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            onChange={typingHandler}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             bg="rgba(255, 255, 255, 0.05)"
             border="var(--glass-border)"
