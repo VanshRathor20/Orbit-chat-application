@@ -4,7 +4,7 @@ import { getSender, getSenderFull } from "../config/ChatLogics";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { LuX, LuPencil, LuPlus, LuMessageSquare, LuVolumeX, LuVideo, LuLogOut } from "react-icons/lu";
+import { LuX, LuPencil, LuPlus, LuMessageSquare, LuVolumeX, LuVideo, LuLogOut, LuUserPlus } from "react-icons/lu";
 import ImagePreviewModal from "./miscellaneous/ImagePreviewModal";
 import AddMemberModal from "./miscellaneous/AddMemberModal";
 import { toaster } from "./ui/toaster";
@@ -308,7 +308,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         </Box>
 
         {isGroup && (
-          <SimpleGrid columns={2} gap={2} w="100%" my={4} order={{ base: 2, xl: 4 }}>
+          <SimpleGrid columns={3} gap={2} w="100%" my={4} order={{ base: 2, xl: 4 }}>
             <VStack gap={1}>
               <IconButton
                 aria-label="Message"
@@ -322,6 +322,20 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                 <LuMessageSquare size={16} />
               </IconButton>
               <Text fontSize="10px" color="var(--text-secondary)">Message</Text>
+            </VStack>
+            <VStack gap={1}>
+              <IconButton
+                aria-label="Add Member"
+                size="sm"
+                borderRadius="full"
+                bg="rgba(255, 255, 255, 0.1)"
+                color="white"
+                _hover={{ bg: "rgba(255, 255, 255, 0.2)" }}
+                onClick={() => setIsAddMemberOpen(true)}
+              >
+                <LuUserPlus size={16} />
+              </IconButton>
+              <Text fontSize="10px" color="var(--text-secondary)">Add Member</Text>
             </VStack>
             <VStack gap={1}>
               <IconButton
@@ -442,24 +456,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
           Logout
         </Button>
         
-        {isGroup && (
-          <IconButton
-            aria-label="Add Member"
-            position="absolute"
-            bottom="80px"
-            right="24px"
-            borderRadius="full"
-            bg="var(--accent-gradient)"
-            color="white"
-            _hover={{ opacity: 0.9 }}
-            boxShadow="0 4px 12px rgba(0, 0, 0, 0.4)"
-            onClick={() => setIsAddMemberOpen(true)}
-            size="md"
-            zIndex={10}
-          >
-            <LuPlus size={20} />
-          </IconButton>
-        )}
+
 
         <ImagePreviewModal 
           src={previewUrl} 
