@@ -254,24 +254,7 @@ const LeftSidebar = ({ fetchAgain }) => {
       <Box
         flex="1"
         overflowY="auto"
-        css={{
-          scrollbarWidth: "thin",
-          scrollbarColor: "transparent transparent",
-          "&:hover": {
-            scrollbarColor: "rgba(255, 255, 255, 0.2) transparent",
-          },
-          "&::-webkit-scrollbar": {
-            width: "6px",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "transparent",
-            borderRadius: "10px",
-            transition: "background 0.2s",
-          },
-          "&:hover::-webkit-scrollbar-thumb": {
-            background: "rgba(255, 255, 255, 0.2)",
-          },
-        }}
+        className="custom-scroll"
       >
         {search ? (
           /* Search Results */
@@ -328,9 +311,9 @@ const LeftSidebar = ({ fetchAgain }) => {
                       <Text fontSize="xs" color="var(--text-secondary)" noOfLines={1} mt={1}>
                         <b>{chat.latestMessage.sender.name}: </b>
                         {chat.latestMessage.messageType === "image" ||
-                        (chat.latestMessage.content &&
-                          (chat.latestMessage.content.match(/\.(jpeg|jpg|gif|png)$/i) ||
-                            chat.latestMessage.content.includes("res.cloudinary.com")))
+                          (chat.latestMessage.content &&
+                            (chat.latestMessage.content.match(/\.(jpeg|jpg|gif|png)$/i) ||
+                              chat.latestMessage.content.includes("res.cloudinary.com")))
                           ? "📷 Photo"
                           : chat.latestMessage.content}
                       </Text>

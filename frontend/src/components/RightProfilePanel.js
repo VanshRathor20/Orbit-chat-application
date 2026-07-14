@@ -52,10 +52,10 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         { name: editedName },
         config
       );
-      
+
       setSelectedChat(data);
       setChats(chats.map((c) => (c._id === data._id ? data : c)));
-      
+
       toaster.create({
         title: "Group renamed successfully",
         type: "success",
@@ -64,7 +64,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
       // Revert on failure
       setSelectedChat({ ...selectedChat, chatName: oldName });
       setChats(chats.map((c) => (c._id === selectedChat._id ? { ...c, chatName: oldName } : c)));
-      
+
       toaster.create({
         title: "Failed to rename group",
         description: error.response?.data?.message || error.message,
@@ -188,7 +188,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
 
 
   // Filter messages that look like images (simple URL check for this demo)
-  const mediaMessages = messages.filter((m) => 
+  const mediaMessages = messages.filter((m) =>
     m.content && (m.content.match(/\.(jpeg|jpg|gif|png)$/i) || m.content.includes("res.cloudinary.com"))
   );
 
@@ -215,7 +215,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         top={{ base: 0, xl: "auto" }}
         right={{ base: 0, xl: "auto" }}
         zIndex={{ base: 1201, xl: 1 }}
-        w={{ base: "85%", sm: "320px", md: "60%", lg: "65%", xl: "340px" }}
+        w={{ base: "85%", sm: "320px", md: "60%", lg: "65%", xl: "360px" }}
         h="100%"
         transform={{ base: isOpen ? "translateX(0)" : "translateX(100%)", xl: "none" }}
         transition="transform 0.3s ease-out"
@@ -233,11 +233,11 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
             <LuX size={20} />
           </Button>
         </Box>
-        
+
         <Box order={1} display="flex" flexDir="column" alignItems="center" mb={{ base: 4, md: 6, xl: 4 }}>
-          <Avatar.Root 
-            w={{ base: "80px", md: "115px", xl: "80px" }} 
-            h={{ base: "80px", md: "115px", xl: "80px" }} 
+          <Avatar.Root
+            w={{ base: "80px", md: "115px", xl: "80px" }}
+            h={{ base: "80px", md: "115px", xl: "80px" }}
             border={{ base: "2px solid rgba(255, 255, 255, 0.1)", md: "3px solid rgba(255, 255, 255, 0.2)", xl: "2px solid rgba(255, 255, 255, 0.1)" }}
             mb={{ base: 4, md: 6, xl: 4 }}
             cursor="pointer"
@@ -250,7 +250,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
             <Avatar.Fallback name={chatName} fontSize={{ base: "2xl", md: "4xl", xl: "2xl" }} />
             {isCustomPic(chatPic) && <Avatar.Image src={chatPic} />}
           </Avatar.Root>
-          
+
           {isEditingName ? (
             <Input
               value={editedName}
@@ -270,15 +270,16 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
               border="var(--glass-border)"
               color="var(--text-primary)"
               _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
+              mb={2}
             />
           ) : (
             <Box display="flex" alignItems="center" justifyContent="center" gap={2} mb={{ base: 1, md: 2, xl: 1 }} w="100%" px={4}>
               {isGroup && (
                 <Box w="24px" flexShrink={0} />
               )}
-              <Text 
-                fontSize={{ base: "xl", md: "2xl", xl: "xl" }} 
-                fontWeight="bold" 
+              <Text
+                fontSize={{ base: "xl", md: "2xl", xl: "xl" }}
+                fontWeight="bold"
                 textAlign="center"
                 noOfLines={1}
                 flex="1"
@@ -302,7 +303,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
               )}
             </Box>
           )}
-          
+
           <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" textAlign="center">
             {chatEmail}
           </Text>
@@ -355,26 +356,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
           </SimpleGrid>
         )}
 
-        <Box flex="1" overflowY="auto" order={3} w="100%" pr={1}
-          css={{
-            scrollbarWidth: "thin",
-            scrollbarColor: "transparent transparent",
-            "&:hover": {
-              scrollbarColor: "rgba(255, 255, 255, 0.2) transparent",
-            },
-            "&::-webkit-scrollbar": {
-              width: "6px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              background: "transparent",
-              borderRadius: "10px",
-              transition: "background 0.2s",
-            },
-            "&:hover::-webkit-scrollbar-thumb": {
-              background: "rgba(255, 255, 255, 0.2)",
-            },
-          }}
-        >
+        <Box flex="1" overflowY="auto" order={3} w="100%" pr={1} className="custom-scroll">
           {isGroup ? (
             <>
               <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={3}>
@@ -386,10 +368,10 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                   const isCurrentUser = u._id === user._id;
 
                   return (
-                    <Box 
-                      key={u._id} 
-                      display="flex" 
-                      alignItems="center" 
+                    <Box
+                      key={u._id}
+                      display="flex"
+                      alignItems="center"
                       gap={3}
                       px={3}
                       py={2}
@@ -399,7 +381,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                       onClick={!isCurrentUser ? () => accessChat(u._id) : undefined}
                       color="var(--text-primary)"
                     >
-                      <Avatar.Root 
+                      <Avatar.Root
                         size="sm"
                         cursor="pointer"
                         _hover={{ opacity: 0.8 }}
@@ -426,31 +408,12 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
               {loading ? (
                 <Spinner size="sm" />
               ) : mediaMessages.length > 0 ? (
-                <SimpleGrid columns={3} gap={2} maxH="160px" overflowY="auto" pr={1}
-                  css={{
-                    scrollbarWidth: "thin",
-                    scrollbarColor: "transparent transparent",
-                    "&:hover": {
-                      scrollbarColor: "rgba(255, 255, 255, 0.2) transparent",
-                    },
-                    "&::-webkit-scrollbar": {
-                      width: "6px",
-                    },
-                    "&::-webkit-scrollbar-thumb": {
-                      background: "transparent",
-                      borderRadius: "10px",
-                      transition: "background 0.2s",
-                    },
-                    "&:hover::-webkit-scrollbar-thumb": {
-                      background: "rgba(255, 255, 255, 0.2)",
-                    },
-                  }}
-                >
+                <SimpleGrid columns={3} gap={2} maxH="160px" overflowY="auto" pr={1} className="custom-scroll">
                   {mediaMessages.map((m) => (
-                    <Box 
-                      key={m._id} 
-                      aspectRatio="1" 
-                      borderRadius="md" 
+                    <Box
+                      key={m._id}
+                      aspectRatio="1"
+                      borderRadius="md"
                       overflow="hidden"
                       cursor="pointer"
                       _hover={{ opacity: 0.8 }}
@@ -477,10 +440,10 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
               ) : mediaMessages.length > 0 ? (
                 <SimpleGrid columns={3} gap={2}>
                   {mediaMessages.map((m) => (
-                    <Box 
-                      key={m._id} 
-                      aspectRatio="1" 
-                      borderRadius="md" 
+                    <Box
+                      key={m._id}
+                      aspectRatio="1"
+                      borderRadius="md"
                       overflow="hidden"
                       cursor="pointer"
                       _hover={{ opacity: 0.8 }}
@@ -497,31 +460,33 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
           )}
         </Box>
 
-        {isGroup && (
-          <Box borderTop="var(--glass-border)" pt={4} pb={2} order={5} w="100%">
-            <Text fontSize="xs" color="var(--text-muted)" textAlign="center">
-              Group created by {selectedChat.createdBy?.name || selectedChat.groupAdmin?.name || "Unknown"}{selectedChat.createdAt ? ` on ${formatDate(selectedChat.createdAt)}` : ""}
-            </Text>
-          </Box>
-        )}
+        <Box borderTop="var(--glass-border)" pt={4} pb={2} order={5} w="100%">
+          <Text fontSize="xs" color="var(--text-muted)" textAlign="center">
+            {isGroup ? (
+              `Group created by ${selectedChat.createdBy?.name || selectedChat.groupAdmin?.name || "Unknown"}${selectedChat.createdAt ? ` on ${formatDate(selectedChat.createdAt)}` : ""}`
+            ) : (
+              selectedChat.createdAt ? `Chat started on ${formatDate(selectedChat.createdAt)}` : ""
+            )}
+          </Text>
+        </Box>
 
 
-        
 
 
-        <ImagePreviewModal 
-          src={previewUrl} 
+
+        <ImagePreviewModal
+          src={previewUrl}
           name={previewName}
-          isOpen={Boolean(previewUrl)} 
+          isOpen={Boolean(previewUrl)}
           onClose={() => {
             setPreviewUrl("");
             setPreviewName("");
-          }} 
+          }}
         />
 
-        <AddMemberModal 
-          isOpen={isAddMemberOpen} 
-          onClose={() => setIsAddMemberOpen(false)} 
+        <AddMemberModal
+          isOpen={isAddMemberOpen}
+          onClose={() => setIsAddMemberOpen(false)}
         />
       </Box>
     </>

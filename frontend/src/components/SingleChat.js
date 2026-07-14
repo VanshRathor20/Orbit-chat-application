@@ -417,30 +417,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
 
       <Box
         ref={messagesContainerRef}
-        className="messages"
+        className="messages custom-scroll"
         flex="1"
         p={3}
         w="100%"
         borderRadius="lg"
         overflowY="auto"
-        css={{
-          scrollbarWidth: "thin",
-          scrollbarColor: "transparent transparent",
-          "&:hover": {
-            scrollbarColor: "rgba(255, 255, 255, 0.2) transparent",
-          },
-          "&::-webkit-scrollbar": {
-            width: "6px",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "transparent",
-            borderRadius: "10px",
-            transition: "background 0.2s",
-          },
-          "&:hover::-webkit-scrollbar-thumb": {
-            background: "rgba(255, 255, 255, 0.2)",
-          },
-        }}
       >
         {loading ? (
           <Spinner size="xl" display="flex" mx="auto" mt={12} />
