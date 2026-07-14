@@ -614,7 +614,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
             {isGroup ? (
               `Group created by ${selectedChat.createdBy?.name || selectedChat.groupAdmin?.name || "Unknown"}${selectedChat.createdAt ? ` on ${formatDate(selectedChat.createdAt)}` : ""}`
             ) : (
-              selectedChat.createdAt ? `Chat started on ${formatDate(selectedChat.createdAt)}` : ""
+              selectedChat.createdAt ? `You became friends on ${formatDate(selectedChat.createdAt)}` : ""
             )}
           </Text>
         </Box>

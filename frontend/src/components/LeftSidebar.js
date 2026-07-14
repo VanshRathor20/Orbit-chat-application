@@ -320,7 +320,7 @@ const LeftSidebar = ({ fetchAgain }) => {
                     )}
                     {chat.latestMessage && (
                       <Text fontSize="xs" color="var(--text-secondary)" noOfLines={1} mt={1}>
-                        <b>{chat.latestMessage.sender.name}: </b>
+                        <b>{chat.latestMessage.sender?.name || "Unknown"}: </b>
                         {chat.latestMessage.messageType === "image" ||
                           (chat.latestMessage.content &&
                             (chat.latestMessage.content.match(/\.(jpeg|jpg|gif|png)$/i) ||
