@@ -21,6 +21,7 @@ export const ChatProvider = ({ children }) => {
   const [notification, setNotification] = useState([]);
   const [socket, setSocket] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   const socketRef = useRef(null);
   const disconnectTimeoutRef = useRef(null);
@@ -107,6 +108,38 @@ export const ChatProvider = ({ children }) => {
     };
   }, [socket]);
 
+  useEffect(() => {
+    if (!socket) {
+      setOnlineUsers([]);
+      return;
+    }
+
+    const handleOnlineUsersList = (users) => {
+      setOnlineUsers(users);
+    };
+
+    const handleUserOnline = ({ userId }) => {
+      setOnlineUsers((prev) => {
+        if (prev.includes(userId)) return prev;
+        return [...prev, userId];
+      });
+    };
+
+    const handleUserOffline = ({ userId }) => {
+      setOnlineUsers((prev) => prev.filter((id) => id !== userId));
+    };
+
+    socket.on("online-users-list", handleOnlineUsersList);
+    socket.on("user-online", handleUserOnline);
+    socket.on("user-offline", handleUserOffline);
+
+    return () => {
+      socket.off("online-users-list", handleOnlineUsersList);
+      socket.off("user-online", handleUserOnline);
+      socket.off("user-offline", handleUserOffline);
+    };
+  }, [socket]);
+
   const handleMessageReceived = useCallback((newMessageReceived) => {
     const chatOfMessage = newMessageReceived.chat;
     const currentSelectedChat = selectedChatRef.current;
@@ -186,6 +219,7 @@ export const ChatProvider = ({ children }) => {
         socket,
         messages,
         setMessages,
+        onlineUsers,
       }}
     >
       {children}

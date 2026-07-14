@@ -43,13 +43,26 @@ const io = new Server(server, {
 
 app.set("socketio", io);
 
+const onlineUsers = new Map();
+
 io.on("connection", (socket) => {
   console.log("Connected to socket.io");
 
   socket.on("setup", (userData) => {
     if (userData && userData._id) {
-      socket.join(userData._id);
+      const userId = userData._id;
+      socket.join(userId);
+      socket.userId = userId;
+
+      const currentCount = onlineUsers.get(userId) || 0;
+      onlineUsers.set(userId, currentCount + 1);
+
+      if (currentCount === 0) {
+        io.emit("user-online", { userId });
+      }
+
       socket.emit("connected");
+      socket.emit("online-users-list", Array.from(onlineUsers.keys()));
     }
   });
 
@@ -79,6 +92,19 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("USER DISCONNECTED");
+    if (socket.userId) {
+      const userId = socket.userId;
+      const currentCount = onlineUsers.get(userId);
+      if (currentCount !== undefined) {
+        const newCount = currentCount - 1;
+        if (newCount <= 0) {
+          onlineUsers.delete(userId);
+          io.emit("user-offline", { userId });
+        } else {
+          onlineUsers.set(userId, newCount);
+        }
+      }
+    }
   });
 });
 

@@ -9,7 +9,7 @@ import AddMemberModal from "./miscellaneous/AddMemberModal";
 import { toaster } from "./ui/toaster";
 
 const RightProfilePanel = ({ isOpen, onClose }) => {
-  const { user, setUser, selectedChat, setSelectedChat, chats, setChats } = ChatState();
+  const { user, setUser, selectedChat, setSelectedChat, chats, setChats, onlineUsers } = ChatState();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -456,6 +456,18 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
           <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" textAlign="center">
             {chatEmail}
           </Text>
+          {!isGroup && (() => {
+            const otherUser = selectedChat.users?.find((u) => u._id !== user._id);
+            const isOnline = otherUser && onlineUsers?.includes(otherUser._id);
+            return (
+              <Box display="flex" alignItems="center" justifyContent="center" gap={1.5} mt={1}>
+                <Box w="6px" h="6px" borderRadius="50%" bg={isOnline ? "#48BB78" : "#A0AEC0"} />
+                <Text fontSize="xs" color={isOnline ? "#48BB78" : "var(--text-muted)"}>
+                  {isOnline ? "Online" : "Offline"}
+                </Text>
+              </Box>
+            );
+          })()}
         </Box>
 
         {isGroup && (
@@ -543,6 +555,13 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                         <Avatar.Fallback name={u.name} />
                         {hasCustomPic && <Avatar.Image src={u.pic} />}
                       </Avatar.Root>
+                      <Box
+                        w="8px"
+                        h="8px"
+                        borderRadius="50%"
+                        bg={onlineUsers?.includes(u._id) ? "#48BB78" : "#A0AEC0"}
+                        flexShrink={0}
+                      />
                       <Text fontSize="sm" fontWeight="medium" noOfLines={1}>
                         {u.name}{isCurrentUser ? " (You)" : ""}
                       </Text>

@@ -39,6 +39,7 @@ const LeftSidebar = ({ fetchAgain }) => {
     selectedChat,
     notification,
     setNotification,
+    onlineUsers,
   } = ChatState();
 
   const navigate = useNavigate();
@@ -313,11 +314,18 @@ const LeftSidebar = ({ fetchAgain }) => {
                         ? getSender(user, chat.users)
                         : chat.chatName}
                     </Text>
-                    {!chat.isGroupChat && (
-                      <Text fontSize="xs" color="var(--text-muted)">
-                        Offline
-                      </Text>
-                    )}
+                    {!chat.isGroupChat && (() => {
+                      const otherUser = chat.users.find((u) => u._id !== user._id);
+                      const isOnline = otherUser && onlineUsers?.includes(otherUser._id);
+                      return (
+                        <Box display="flex" alignItems="center" gap={1.5} mt={0.5}>
+                          <Box w="6px" h="6px" borderRadius="50%" bg={isOnline ? "#48BB78" : "#A0AEC0"} />
+                          <Text fontSize="xs" color={isOnline ? "#48BB78" : "var(--text-muted)"}>
+                            {isOnline ? "Online" : "Offline"}
+                          </Text>
+                        </Box>
+                      );
+                    })()}
                     {chat.latestMessage && (
                       <Text fontSize="xs" color="var(--text-secondary)" noOfLines={1} mt={1}>
                         <b>{chat.latestMessage.sender?.name || "Unknown"}: </b>
