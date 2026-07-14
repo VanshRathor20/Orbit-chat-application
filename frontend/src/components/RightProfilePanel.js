@@ -308,7 +308,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         </Box>
 
         {isGroup && (
-          <SimpleGrid columns={4} gap={2} w="100%" my={4} order={{ base: 2, xl: 4 }}>
+          <SimpleGrid columns={2} gap={2} w="100%" my={4} order={{ base: 2, xl: 4 }}>
             <VStack gap={1}>
               <IconButton
                 aria-label="Message"
@@ -322,38 +322,6 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                 <LuMessageSquare size={16} />
               </IconButton>
               <Text fontSize="10px" color="var(--text-secondary)">Message</Text>
-            </VStack>
-            <VStack gap={1}>
-              <IconButton
-                aria-label="Mute"
-                size="sm"
-                borderRadius="full"
-                bg="rgba(255, 255, 255, 0.1)"
-                color="white"
-                _hover={{ bg: "rgba(255, 255, 255, 0.2)" }}
-                onClick={() => {
-                  toaster.create({ title: "Notifications Muted", type: "success" });
-                }}
-              >
-                <LuVolumeX size={16} />
-              </IconButton>
-              <Text fontSize="10px" color="var(--text-secondary)">Mute</Text>
-            </VStack>
-            <VStack gap={1}>
-              <IconButton
-                aria-label="Video Chat"
-                size="sm"
-                borderRadius="full"
-                bg="rgba(255, 255, 255, 0.1)"
-                color="white"
-                _hover={{ bg: "rgba(255, 255, 255, 0.2)" }}
-                onClick={() => {
-                  toaster.create({ title: "Starting Video Chat...", type: "success" });
-                }}
-              >
-                <LuVideo size={16} />
-              </IconButton>
-              <Text fontSize="10px" color="var(--text-secondary)">Video Chat</Text>
             </VStack>
             <VStack gap={1}>
               <IconButton
