@@ -365,7 +365,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
               <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={3}>
                 Group Members ({selectedChat.users.length})
               </Text>
-              <Stack gap={2}>
+              <Stack gap={2} mb={6}>
                 {selectedChat.users.map((u) => {
                   const hasCustomPic = isCustomPic(u.pic);
                   const isCurrentUser = u._id === user._id;
@@ -404,6 +404,39 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                   );
                 })}
               </Stack>
+
+              <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={3}>
+                Shared Media
+              </Text>
+              {loading ? (
+                <Spinner size="sm" />
+              ) : mediaMessages.length > 0 ? (
+                <SimpleGrid columns={3} gap={2} maxH="160px" overflowY="auto" pr={1}
+                  sx={{
+                    "&::-webkit-scrollbar": { width: "3px" },
+                    "&::-webkit-scrollbar-thumb": { background: "var(--text-muted)", borderRadius: "24px" },
+                  }}
+                >
+                  {mediaMessages.map((m) => (
+                    <Box 
+                      key={m._id} 
+                      aspectRatio="1" 
+                      borderRadius="md" 
+                      overflow="hidden"
+                      cursor="pointer"
+                      _hover={{ opacity: 0.8 }}
+                      onClick={() => {
+                        setPreviewUrl(m.content);
+                        setPreviewName(m.sender?.name || "Shared Media");
+                      }}
+                    >
+                      <Image src={m.content} alt="media" objectFit="cover" w="100%" h="100%" />
+                    </Box>
+                  ))}
+                </SimpleGrid>
+              ) : (
+                <Text fontSize={{ base: "xs", md: "sm", xl: "xs" }} color="var(--text-muted)">No media shared</Text>
+              )}
             </>
           ) : (
             <>
