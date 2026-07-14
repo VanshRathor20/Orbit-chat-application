@@ -294,7 +294,18 @@ const LeftSidebar = ({ fetchAgain }) => {
                 >
                   <Avatar.Root size="md">
                     <Avatar.Fallback name={!chat.isGroupChat ? getSender(user, chat.users) : chat.chatName} />
-                    {!chat.isGroupChat && <Avatar.Image src={chat.users.find((u) => u._id !== user._id)?.pic} />}
+                    {!chat.isGroupChat ? (
+                      (() => {
+                        const otherUser = chat.users.find((u) => u._id !== user._id);
+                        return otherUser?.pic && otherUser.pic !== "backend/Models/userProfileIcon.png" ? (
+                          <Avatar.Image src={otherUser.pic} />
+                        ) : null;
+                      })()
+                    ) : (
+                      chat.groupPic && chat.groupPic !== "backend/Models/userProfileIcon.png" && (
+                        <Avatar.Image src={chat.groupPic} />
+                      )
+                    )}
                   </Avatar.Root>
                   <Box flex="1" overflow="hidden">
                     <Text fontWeight="bold" noOfLines={1}>

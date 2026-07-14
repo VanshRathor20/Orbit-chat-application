@@ -86,10 +86,24 @@ export const ChatProvider = ({ children }) => {
       );
     };
 
+    const handleGroupPictureUpdated = ({ groupId, newPic }) => {
+      setSelectedChat((prev) => {
+        if (prev && prev._id === groupId) {
+          return { ...prev, groupPic: newPic };
+        }
+        return prev;
+      });
+      setChats((prevChats) =>
+        prevChats.map((c) => (c._id === groupId ? { ...c, groupPic: newPic } : c))
+      );
+    };
+
     socket.on("group-renamed", handleGroupRenamed);
+    socket.on("group-picture-updated", handleGroupPictureUpdated);
 
     return () => {
       socket.off("group-renamed", handleGroupRenamed);
+      socket.off("group-picture-updated", handleGroupPictureUpdated);
     };
   }, [socket]);
 

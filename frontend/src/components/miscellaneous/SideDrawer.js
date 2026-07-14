@@ -168,7 +168,9 @@ function SideDrawer() {
               <Button bg="white">
                 <Avatar.Root size="sm" cursor="pointer">
                   <Avatar.Fallback name={user.name} />
-                  <Avatar.Image src={user.pic} />
+                  {user.pic && user.pic !== "backend/Models/userProfileIcon.png" && (
+                    <Avatar.Image src={user.pic} />
+                  )}
                 </Avatar.Root>
                 <LuChevronDown />
               </Button>

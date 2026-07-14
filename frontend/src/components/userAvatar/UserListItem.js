@@ -15,7 +15,9 @@ const UserListItem = ({ user, handleFunction }) => {
     >
       <Avatar.Root size="sm">
         <Avatar.Fallback name={user.name} />
-        <Avatar.Image src={user.pic} />
+        {user.pic && user.pic !== "backend/Models/userProfileIcon.png" && (
+          <Avatar.Image src={user.pic} />
+        )}
       </Avatar.Root>
       <Box>
         <Text fontWeight="medium">{user.name}</Text>

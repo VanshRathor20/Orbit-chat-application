@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, SimpleGrid, Text, Spinner, Image, Stack, IconButton, Input, VStack } from "@chakra-ui/react";
 import { ChatState } from "../Context/ChatProvider";
 import { getSender, getSenderFull } from "../config/ChatLogics";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { LuX, LuPencil, LuPlus, LuMessageSquare, LuVolumeX, LuVideo, LuLogOut, LuUserPlus } from "react-icons/lu";
 import ImagePreviewModal from "./miscellaneous/ImagePreviewModal";
@@ -17,7 +17,9 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState("");
   const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
+  const [picLoading, setPicLoading] = useState(false);
 
+  const fileInputRef = useRef(null);
   const isGroup = selectedChat?.isGroupChat;
 
   useEffect(() => {
@@ -25,6 +27,71 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
       setEditedName(selectedChat.isGroupChat ? selectedChat.chatName : "");
     }
   }, [selectedChat]);
+
+  const handleGroupPicUpload = (file) => {
+    if (!file) return;
+    setPicLoading(true);
+    if (file.type.startsWith("image/")) {
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "yapp-chat-app");
+      data.append("cloud_name", "itcli5ya");
+
+      fetch("https://api.cloudinary.com/v1_1/itcli5ya/image/upload", {
+        method: "post",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then(async (uploadData) => {
+          const newPicUrl = uploadData.url.toString();
+          
+          try {
+            const config = {
+              headers: {
+                "Content-type": "application/json",
+                Authorization: `Bearer ${user?.token}`,
+              },
+            };
+            const { data } = await axios.patch(
+              `/api/groups/${selectedChat._id}/picture`,
+              { picture: newPicUrl },
+              config
+            );
+
+            setSelectedChat(data);
+            setChats(chats.map((c) => (c._id === data._id ? data : c)));
+            
+            toaster.create({
+              title: "Group picture updated successfully",
+              type: "success",
+            });
+          } catch (apiError) {
+            toaster.create({
+              title: "Failed to update group picture",
+              description: apiError.response?.data?.message || apiError.message,
+              type: "error",
+            });
+          } finally {
+            setPicLoading(false);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          setPicLoading(false);
+          toaster.create({
+            title: "Failed to upload image",
+            description: err.message,
+            type: "error",
+          });
+        });
+    } else {
+      toaster.create({
+        title: "Please Select an Image File",
+        type: "warning",
+      });
+      setPicLoading(false);
+    }
+  };
 
   const handleRename = async () => {
     if (!editedName.trim() || editedName === selectedChat.chatName) {
@@ -182,7 +249,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
   }
 
   const chatName = isGroup ? selectedChat?.chatName : getSender(user, selectedChat?.users || []);
-  const chatPic = isGroup ? "" : getSenderFull(user, selectedChat?.users || [])?.pic;
+  const chatPic = isGroup ? (selectedChat?.groupPic || "") : getSenderFull(user, selectedChat?.users || [])?.pic;
   const chatEmail = isGroup ? "Group Chat" : getSenderFull(user, selectedChat?.users || [])?.email;
 
 
@@ -235,21 +302,103 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         </Box>
 
         <Box order={1} display="flex" flexDir="column" alignItems="center" mb={{ base: 4, md: 6, xl: 4 }}>
-          <Avatar.Root
-            w={{ base: "80px", md: "115px", xl: "80px" }}
-            h={{ base: "80px", md: "115px", xl: "80px" }}
-            border={{ base: "2px solid rgba(255, 255, 255, 0.1)", md: "3px solid rgba(255, 255, 255, 0.2)", xl: "2px solid rgba(255, 255, 255, 0.1)" }}
-            mb={{ base: 4, md: 6, xl: 4 }}
-            cursor="pointer"
-            _hover={{ opacity: 0.8 }}
-            onClick={() => {
-              setPreviewUrl(chatPic || "backend/Models/userProfileIcon.png");
-              setPreviewName(chatName);
-            }}
-          >
-            <Avatar.Fallback name={chatName} fontSize={{ base: "2xl", md: "4xl", xl: "2xl" }} />
-            {isCustomPic(chatPic) && <Avatar.Image src={chatPic} />}
-          </Avatar.Root>
+          {isGroup ? (
+            <>
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={(e) => handleGroupPicUpload(e.target.files[0])}
+              />
+              
+              <Box 
+                position="relative" 
+                mb={{ base: 4, md: 6, xl: 4 }} 
+                cursor={picLoading ? "not-allowed" : "pointer"}
+                onClick={() => !picLoading && fileInputRef.current?.click()}
+                w={{ base: "80px", md: "115px", xl: "80px" }} 
+                h={{ base: "80px", md: "115px", xl: "80px" }}
+              >
+                <Avatar.Root
+                  w="100%"
+                  h="100%"
+                  border={{ base: "2px solid rgba(255, 255, 255, 0.1)", md: "3px solid rgba(255, 255, 255, 0.2)", xl: "2px solid rgba(255, 255, 255, 0.1)" }}
+                >
+                  <Avatar.Fallback name={chatName} fontSize={{ base: "2xl", md: "4xl", xl: "2xl" }} />
+                  {isCustomPic(chatPic) && <Avatar.Image src={chatPic} />}
+                </Avatar.Root>
+
+                {picLoading && (
+                  <Box
+                    position="absolute"
+                    inset={0}
+                    bg="rgba(0,0,0,0.6)"
+                    borderRadius="full"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    zIndex={2}
+                  >
+                    <Spinner size="sm" color="var(--accent-primary)" />
+                  </Box>
+                )}
+
+                {!picLoading && (
+                  <Box
+                    position="absolute"
+                    inset={0}
+                    bg="rgba(0,0,0,0.5)"
+                    borderRadius="full"
+                    display={{ base: "none", md: "flex" }}
+                    alignItems="center"
+                    justifyContent="center"
+                    opacity={0}
+                    _hover={{ opacity: 1 }}
+                    transition="opacity 0.2s ease"
+                    zIndex={1}
+                  >
+                    <LuPencil size={24} color="white" />
+                  </Box>
+                )}
+
+                {!picLoading && (
+                  <Box
+                    position="absolute"
+                    bottom={0}
+                    right={0}
+                    w="24px"
+                    h="24px"
+                    bg="var(--accent-gradient)"
+                    borderRadius="full"
+                    display={{ base: "flex", md: "none" }}
+                    alignItems="center"
+                    justifyContent="center"
+                    boxShadow="0 2px 6px rgba(0,0,0,0.3)"
+                    zIndex={1}
+                  >
+                    <LuPencil size={12} color="white" />
+                  </Box>
+                )}
+              </Box>
+            </>
+          ) : (
+            <Avatar.Root
+              w={{ base: "80px", md: "115px", xl: "80px" }}
+              h={{ base: "80px", md: "115px", xl: "80px" }}
+              border={{ base: "2px solid rgba(255, 255, 255, 0.1)", md: "3px solid rgba(255, 255, 255, 0.2)", xl: "2px solid rgba(255, 255, 255, 0.1)" }}
+              mb={{ base: 4, md: 6, xl: 4 }}
+              cursor="pointer"
+              _hover={{ opacity: 0.8 }}
+              onClick={() => {
+                setPreviewUrl(chatPic);
+                setPreviewName(chatName);
+              }}
+            >
+              <Avatar.Fallback name={chatName} fontSize={{ base: "2xl", md: "4xl", xl: "2xl" }} />
+              {isCustomPic(chatPic) && <Avatar.Image src={chatPic} />}
+            </Avatar.Root>
+          )}
 
           {isEditingName ? (
             <Input
@@ -387,7 +536,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                         _hover={{ opacity: 0.8 }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          setPreviewUrl(u.pic || "backend/Models/userProfileIcon.png");
+                          setPreviewUrl(u.pic);
                           setPreviewName(u.name);
                         }}
                       >

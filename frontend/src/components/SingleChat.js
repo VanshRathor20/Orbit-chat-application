@@ -383,9 +383,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
                 <Avatar.Fallback
                   name={getSender(user, selectedChat.users)}
                 />
-                <Avatar.Image
-                  src={getSenderFull(user, selectedChat.users)?.pic}
-                />
+                {(() => {
+                  const sender = getSenderFull(user, selectedChat.users);
+                  return sender?.pic && sender.pic !== "backend/Models/userProfileIcon.png" ? (
+                    <Avatar.Image src={sender.pic} />
+                  ) : null;
+                })()}
               </Avatar.Root>
               <Text noOfLines={1} maxW={{ base: "180px", md: "350px", lg: "500px" }}>
                 {getSender(user, selectedChat.users)}
@@ -394,8 +397,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
           ) : (
             <Box display="flex" alignItems="center" gap={3} overflow="hidden">
               <Avatar.Root size="sm" display="inline-flex" flexShrink={0}>
-                <Avatar.Fallback name={user.name} />
-                <Avatar.Image src={user.pic} />
+                <Avatar.Fallback name={selectedChat.chatName} />
+                {selectedChat.groupPic && selectedChat.groupPic !== "backend/Models/userProfileIcon.png" && (
+                  <Avatar.Image src={selectedChat.groupPic} />
+                )}
               </Avatar.Root>
               <Text noOfLines={1} maxW={{ base: "180px", md: "350px", lg: "500px" }}>
                 {selectedChat.chatName.toUpperCase()}

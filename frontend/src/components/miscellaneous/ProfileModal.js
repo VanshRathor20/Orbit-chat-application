@@ -153,7 +153,9 @@ const ProfileModal = ({ user, isOpen, onClose }) => {
               >
                 <Avatar.Root size="lg">
                   <Avatar.Fallback name={user.name} />
-                  <Avatar.Image src={pic || user.pic} />
+                  {pic && pic !== "backend/Models/userProfileIcon.png" && (
+                    <Avatar.Image src={pic} />
+                  )}
                 </Avatar.Root>
                 {picLoading ? (
                   <Box display="flex" alignItems="center" gap={2}>
