@@ -111,7 +111,12 @@ export const ChatProvider = ({ children }) => {
             shownMessageIdsRef.current.add(newMessageReceived._id);
             toaster.create({
               title: `New Message from ${newMessageReceived.sender.name}`,
-              description: newMessageReceived.content,
+              description: newMessageReceived.messageType === "image" ||
+                           (newMessageReceived.content &&
+                             (newMessageReceived.content.match(/\.(jpeg|jpg|gif|png)$/i) ||
+                              newMessageReceived.content.includes("res.cloudinary.com")))
+                            ? "📷 Photo"
+                            : newMessageReceived.content,
               type: "info",
             });
           }

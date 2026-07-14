@@ -98,7 +98,12 @@ const MyChats = ({ fetchAgain }) => {
                 {chat.latestMessage && (
                   <Text fontSize="xs">
                     <b>{chat.latestMessage.sender.name} : </b>
-                    {chat.latestMessage.content.length > 50
+                    {chat.latestMessage.messageType === "image" ||
+                    (chat.latestMessage.content &&
+                      (chat.latestMessage.content.match(/\.(jpeg|jpg|gif|png)$/i) ||
+                        chat.latestMessage.content.includes("res.cloudinary.com")))
+                      ? "📷 Photo"
+                      : chat.latestMessage.content.length > 50
                       ? chat.latestMessage.content.substring(0, 51) + "..."
                       : chat.latestMessage.content}
                   </Text>

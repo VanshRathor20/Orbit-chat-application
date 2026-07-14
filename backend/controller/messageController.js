@@ -29,10 +29,14 @@ const sendMessage = asyncHandler(async (req, res) => {
     return res.sendStatus(400);
   }
 
+  const isImage = content && (content.match(/\.(jpeg|jpg|gif|png)$/i) || content.includes("res.cloudinary.com"));
+  const messageType = isImage ? "image" : "text";
+
   var newMessage = {
     sender: req.user._id,
     content: content,
     chat: chatId,
+    messageType: messageType,
   };
 
   try {

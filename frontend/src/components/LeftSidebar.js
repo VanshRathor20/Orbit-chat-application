@@ -313,7 +313,12 @@ const LeftSidebar = ({ fetchAgain }) => {
                     {chat.latestMessage && (
                       <Text fontSize="xs" color="var(--text-secondary)" noOfLines={1} mt={1}>
                         <b>{chat.latestMessage.sender.name}: </b>
-                        {chat.latestMessage.content}
+                        {chat.latestMessage.messageType === "image" ||
+                        (chat.latestMessage.content &&
+                          (chat.latestMessage.content.match(/\.(jpeg|jpg|gif|png)$/i) ||
+                            chat.latestMessage.content.includes("res.cloudinary.com")))
+                          ? "📷 Photo"
+                          : chat.latestMessage.content}
                       </Text>
                     )}
                   </Box>
