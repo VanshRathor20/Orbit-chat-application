@@ -6,6 +6,7 @@ import {
   Spinner,
   Text,
   Image,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import EmojiPicker from "emoji-picker-react";
 import axios from "axios";
@@ -34,6 +35,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
+  useEffect(() => {
+    if (selectedChat && isMobile === false) {
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedChat, isMobile]);
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
