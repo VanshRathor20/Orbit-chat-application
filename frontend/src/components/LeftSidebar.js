@@ -1,5 +1,5 @@
 import { Avatar, Box, Button, Input, Menu, Spinner, Stack, Text } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { LuEllipsisVertical, LuSearch, LuPlus } from "react-icons/lu";
@@ -18,6 +18,17 @@ const LeftSidebar = ({ fetchAgain }) => {
   const [loadingChat, setLoadingChat] = useState(false);
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const searchTimerRef = useRef(null);
+  const latestQueryRef = useRef("");
+
+  useEffect(() => {
+    return () => {
+      if (searchTimerRef.current) {
+        clearTimeout(searchTimerRef.current);
+      }
+    };
+  }, []);
 
   const {
     setSelectedChat,
@@ -62,34 +73,49 @@ const LeftSidebar = ({ fetchAgain }) => {
     // eslint-disable-next-line
   }, [fetchAgain]);
 
-  const handleSearch = async (query) => {
+  const handleSearch = (query) => {
     setSearch(query);
+
+    if (searchTimerRef.current) {
+      clearTimeout(searchTimerRef.current);
+    }
+
     if (!query) {
+      latestQueryRef.current = "";
       setSearchResult([]);
+      setLoadingSearch(false);
       return;
     }
 
-    try {
-      setLoadingSearch(true);
+    latestQueryRef.current = query;
 
-      const config = {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      };
+    searchTimerRef.current = setTimeout(async () => {
+      try {
+        setLoadingSearch(true);
 
-      const { data } = await axios.get(`/api/user?search=${query}`, config);
+        const config = {
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
+          },
+        };
 
-      setLoadingSearch(false);
-      setSearchResult(data);
-    } catch (error) {
-      toaster.create({
-        title: "Error Occurred!",
-        description: "Failed to Load the Search Results",
-        type: "error",
-      });
-      setLoadingSearch(false);
-    }
+        const { data } = await axios.get(`/api/user?search=${query}`, config);
+
+        if (query === latestQueryRef.current) {
+          setSearchResult(data);
+          setLoadingSearch(false);
+        }
+      } catch (error) {
+        if (query === latestQueryRef.current) {
+          toaster.create({
+            title: "Error Occurred!",
+            description: "Failed to Load the Search Results",
+            type: "error",
+          });
+          setLoadingSearch(false);
+        }
+      }
+    }, 500);
   };
 
   const accessChat = async (userId) => {
