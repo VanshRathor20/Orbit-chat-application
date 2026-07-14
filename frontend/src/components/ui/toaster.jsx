@@ -19,7 +19,7 @@ export const Toaster = () => {
     <Portal>
       <ChakraToaster toaster={toaster} insetInline={{ mdDown: '4' }} zIndex={20000}>
         {(toast) => (
-          <Toast.Root 
+          <Toast.Root
             width={{ md: 'sm' }}
             bg="var(--glass-bg)"
             backdropFilter="var(--glass-blur)"

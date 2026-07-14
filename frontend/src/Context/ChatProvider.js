@@ -41,7 +41,7 @@ export const ChatProvider = ({ children }) => {
       if (!socketRef.current) {
         const socketInstance = io(ENDPOINT);
         socketInstance.emit("setup", user);
-        
+
         socketInstance.on("connected", () => {
           console.log("Socket connected successfully:", socketInstance.id);
         });
