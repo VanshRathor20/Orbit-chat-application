@@ -294,15 +294,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
             <LuArrowLeft size={22} strokeWidth={2.5} />
           </Button>
           
-          <Text
-            fontSize={{ base: "28px", md: "30px" }}
+          <Box
+            fontSize={{ base: "18px", md: "24px" }}
             fontFamily="Work sans"
+            fontWeight="bold"
             cursor="pointer"
             onClick={() => setIsRightPanelOpen(!isRightPanelOpen)}
           >
           {!selectedChat.isGroupChat ? (
-            <Box display="flex" alignItems="center" gap={3}>
-              <Avatar.Root size="sm" display="inline-flex">
+            <Box display="flex" alignItems="center" gap={3} overflow="hidden">
+              <Avatar.Root size="sm" display="inline-flex" flexShrink={0}>
                 <Avatar.Fallback
                   name={getSender(user, selectedChat.users)}
                 />
@@ -310,18 +311,22 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
                   src={getSenderFull(user, selectedChat.users)?.pic}
                 />
               </Avatar.Root>
-              <Text>{getSender(user, selectedChat.users)}</Text>
+              <Text noOfLines={1} maxW={{ base: "180px", md: "350px", lg: "500px" }}>
+                {getSender(user, selectedChat.users)}
+              </Text>
             </Box>
           ) : (
-            <Box display="flex" alignItems="center" gap={3}>
-              <Avatar.Root size="sm" display="inline-flex">
+            <Box display="flex" alignItems="center" gap={3} overflow="hidden">
+              <Avatar.Root size="sm" display="inline-flex" flexShrink={0}>
                 <Avatar.Fallback name={user.name} />
                 <Avatar.Image src={user.pic} />
               </Avatar.Root>
-              <Text>{selectedChat.chatName.toUpperCase()}</Text>
+              <Text noOfLines={1} maxW={{ base: "180px", md: "350px", lg: "500px" }}>
+                {selectedChat.chatName.toUpperCase()}
+              </Text>
             </Box>
           )}
-          </Text>
+          </Box>
         </Box>
         <Button
           variant="ghost"
