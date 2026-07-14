@@ -1,7 +1,6 @@
 import { Avatar, Box, Button, SimpleGrid, Text, Spinner, Image, Stack, IconButton, Input, VStack } from "@chakra-ui/react";
 import { ChatState } from "../Context/ChatProvider";
 import { getSender, getSenderFull } from "../config/ChatLogics";
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { LuX, LuPencil, LuPlus, LuMessageSquare, LuVolumeX, LuVideo, LuLogOut, LuUserPlus } from "react-icons/lu";
@@ -11,7 +10,6 @@ import { toaster } from "./ui/toaster";
 
 const RightProfilePanel = ({ isOpen, onClose }) => {
   const { user, setUser, selectedChat, setSelectedChat, chats, setChats } = ChatState();
-  const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -187,11 +185,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
   const chatPic = isGroup ? "" : getSenderFull(user, selectedChat?.users || [])?.pic;
   const chatEmail = isGroup ? "Group Chat" : getSenderFull(user, selectedChat?.users || [])?.email;
 
-  const logoutHandler = () => {
-    localStorage.removeItem("userInfo");
-    setUser(null);
-    navigate("/");
-  };
+
 
   // Filter messages that look like images (simple URL check for this demo)
   const mediaMessages = messages.filter((m) => 
@@ -221,7 +215,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         top={{ base: 0, xl: "auto" }}
         right={{ base: 0, xl: "auto" }}
         zIndex={{ base: 1201, xl: 1 }}
-        w={{ base: "85%", sm: "320px", md: "60%", lg: "65%", xl: "280px" }}
+        w={{ base: "85%", sm: "320px", md: "60%", lg: "65%", xl: "340px" }}
         h="100%"
         transform={{ base: isOpen ? "translateX(0)" : "translateX(100%)", xl: "none" }}
         transition="transform 0.3s ease-out"
@@ -276,14 +270,18 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
               border="var(--glass-border)"
               color="var(--text-primary)"
               _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
-              mb={2}
             />
           ) : (
-            <Box display="flex" alignItems="center" justifyContent="center" gap={2} mb={{ base: 1, md: 2, xl: 1 }}>
+            <Box display="flex" alignItems="center" justifyContent="center" gap={2} mb={{ base: 1, md: 2, xl: 1 }} w="100%" px={4}>
+              {isGroup && (
+                <Box w="24px" flexShrink={0} />
+              )}
               <Text 
                 fontSize={{ base: "xl", md: "2xl", xl: "xl" }} 
                 fontWeight="bold" 
                 textAlign="center"
+                noOfLines={1}
+                flex="1"
               >
                 {chatName}
               </Text>
@@ -292,6 +290,9 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                   aria-label="Rename Group"
                   variant="ghost"
                   size="xs"
+                  w="24px"
+                  h="24px"
+                  flexShrink={0}
                   onClick={() => setIsEditingName(true)}
                   color="var(--text-secondary)"
                   _hover={{ bg: "whiteAlpha.200", color: "white" }}
@@ -355,9 +356,23 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         )}
 
         <Box flex="1" overflowY="auto" order={3} w="100%" pr={1}
-          sx={{
-            "&::-webkit-scrollbar": { width: "4px" },
-            "&::-webkit-scrollbar-thumb": { background: "var(--text-muted)", borderRadius: "24px" },
+          css={{
+            scrollbarWidth: "thin",
+            scrollbarColor: "transparent transparent",
+            "&:hover": {
+              scrollbarColor: "rgba(255, 255, 255, 0.2) transparent",
+            },
+            "&::-webkit-scrollbar": {
+              width: "6px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: "transparent",
+              borderRadius: "10px",
+              transition: "background 0.2s",
+            },
+            "&:hover::-webkit-scrollbar-thumb": {
+              background: "rgba(255, 255, 255, 0.2)",
+            },
           }}
         >
           {isGroup ? (
@@ -412,9 +427,23 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                 <Spinner size="sm" />
               ) : mediaMessages.length > 0 ? (
                 <SimpleGrid columns={3} gap={2} maxH="160px" overflowY="auto" pr={1}
-                  sx={{
-                    "&::-webkit-scrollbar": { width: "3px" },
-                    "&::-webkit-scrollbar-thumb": { background: "var(--text-muted)", borderRadius: "24px" },
+                  css={{
+                    scrollbarWidth: "thin",
+                    scrollbarColor: "transparent transparent",
+                    "&:hover": {
+                      scrollbarColor: "rgba(255, 255, 255, 0.2) transparent",
+                    },
+                    "&::-webkit-scrollbar": {
+                      width: "6px",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      background: "transparent",
+                      borderRadius: "10px",
+                      transition: "background 0.2s",
+                    },
+                    "&:hover::-webkit-scrollbar-thumb": {
+                      background: "rgba(255, 255, 255, 0.2)",
+                    },
                   }}
                 >
                   {mediaMessages.map((m) => (
@@ -476,18 +505,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
           </Box>
         )}
 
-        <Button
-          mt={4}
-          w="100%"
-          bg="var(--accent-gradient)"
-          color="white"
-          borderRadius="full"
-          _hover={{ opacity: 0.9 }}
-          onClick={logoutHandler}
-          order={6}
-        >
-          Logout
-        </Button>
+
         
 
 

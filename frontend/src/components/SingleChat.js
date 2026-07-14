@@ -423,7 +423,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
         w="100%"
         borderRadius="lg"
         overflowY="auto"
-        sx={{
+        css={{
           scrollbarWidth: "thin",
           scrollbarColor: "transparent transparent",
           "&:hover": {

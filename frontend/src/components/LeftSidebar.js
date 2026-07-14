@@ -254,9 +254,23 @@ const LeftSidebar = ({ fetchAgain }) => {
       <Box
         flex="1"
         overflowY="auto"
-        sx={{
-          "&::-webkit-scrollbar": { width: "4px" },
-          "&::-webkit-scrollbar-thumb": { background: "var(--text-muted)", borderRadius: "24px" },
+        css={{
+          scrollbarWidth: "thin",
+          scrollbarColor: "transparent transparent",
+          "&:hover": {
+            scrollbarColor: "rgba(255, 255, 255, 0.2) transparent",
+          },
+          "&::-webkit-scrollbar": {
+            width: "6px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "transparent",
+            borderRadius: "10px",
+            transition: "background 0.2s",
+          },
+          "&:hover::-webkit-scrollbar-thumb": {
+            background: "rgba(255, 255, 255, 0.2)",
+          },
         }}
       >
         {search ? (
