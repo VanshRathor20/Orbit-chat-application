@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import EmojiPicker from "emoji-picker-react";
 import axios from "axios";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { LuCamera, LuPaperclip, LuSendHorizontal, LuImage, LuX, LuInfo, LuSmile, LuArrowLeft } from "react-icons/lu";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { ChatState } from "../Context/ChatProvider";
@@ -32,6 +32,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
   const inputRef = useRef(null);
   const emojiPickerRef = useRef(null);
   const emojiToggleButtonRef = useRef(null);
+  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
+  const lastScrolledChatIdRef = useRef(null);
+  const prevMessagesLengthRef = useRef(0);
+  const shouldScrollRef = useRef(false);
 
   const { user, selectedChat, setSelectedChat, setChats, socket, messages, setMessages } = ChatState();
   const [socketConnected, setSocketConnected] = useState(false);
@@ -48,6 +53,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
       return () => clearTimeout(timer);
     }
   }, [selectedChat, isMobile]);
+
+  useEffect(() => {
+    lastScrolledChatIdRef.current = null;
+    shouldScrollRef.current = false;
+  }, [selectedChat]);
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -68,6 +78,39 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
     };
   }, [isEmojiPickerOpen]);
 
+  useLayoutEffect(() => {
+    if (!selectedChat || loading) return;
+
+    if (shouldScrollRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
+      shouldScrollRef.current = false;
+      lastScrolledChatIdRef.current = selectedChat._id;
+      prevMessagesLengthRef.current = messages.length;
+    }
+  }, [messages, selectedChat, loading]);
+
+  useEffect(() => {
+    if (!selectedChat || loading) {
+      prevMessagesLengthRef.current = messages.length;
+      return;
+    }
+
+    const hasNewMessages = messages.length > prevMessagesLengthRef.current;
+    prevMessagesLengthRef.current = messages.length;
+
+    if (hasNewMessages && lastScrolledChatIdRef.current === selectedChat._id) {
+      const container = messagesContainerRef.current;
+      if (container) {
+        const isLastMessageFromMe = messages[messages.length - 1]?.sender._id === user._id;
+        const isNearBottom = container.scrollHeight - container.clientHeight - container.scrollTop < 200;
+
+        if (isLastMessageFromMe || isNearBottom) {
+          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }
+  }, [messages, selectedChat, loading, user._id]);
+
   const fetchMessages = async () => {
     if (!selectedChat) return;
 
@@ -82,6 +125,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
       );
       setMessages(data);
       setLoading(false);
+      shouldScrollRef.current = true;
     } catch (error) {
       toaster.create({
         title: "Error Occurred!",
@@ -372,6 +416,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
       </Box>
 
       <Box
+        ref={messagesContainerRef}
         className="messages"
         flex="1"
         p={3}
@@ -400,35 +445,38 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
         {loading ? (
           <Spinner size="xl" display="flex" mx="auto" mt={12} />
         ) : (
-          messages.map((m) => (
-            <Box
-              key={m._id}
-              display="flex"
-              justifyContent={
-                m.sender._id === user._id ? "flex-end" : "flex-start"
-              }
-              mb={2}
-            >
+          <>
+            {messages.map((m) => (
               <Box
-                bg={m.sender._id === user._id ? "var(--accent-gradient)" : "rgba(255, 255, 255, 0.05)"}
-                border={m.sender._id !== user._id ? "var(--glass-border)" : "none"}
-                color="white"
-                borderRadius="var(--glass-radius-sm)"
-                px={4}
-                py={2}
-                maxW="75%"
+                key={m._id}
+                display="flex"
+                justifyContent={
+                  m.sender._id === user._id ? "flex-end" : "flex-start"
+                }
+                mb={2}
               >
-                <Text fontSize="xs" fontWeight="bold" mb={1} color={m.sender._id === user._id ? "rgba(255,255,255,0.8)" : "var(--text-secondary)"}>
-                  {m.sender.name}
-                </Text>
-                {m.content && (m.content.match(/\.(jpeg|jpg|gif|png)$/i) || m.content.includes("res.cloudinary.com")) ? (
-                  <Image src={m.content} alt="chat media" maxW="100%" borderRadius="md" mt={1} />
-                ) : (
-                  <Text fontSize="sm">{m.content}</Text>
-                )}
+                <Box
+                  bg={m.sender._id === user._id ? "var(--accent-gradient)" : "rgba(255, 255, 255, 0.05)"}
+                  border={m.sender._id !== user._id ? "var(--glass-border)" : "none"}
+                  color="white"
+                  borderRadius="var(--glass-radius-sm)"
+                  px={4}
+                  py={2}
+                  maxW="75%"
+                >
+                  <Text fontSize="xs" fontWeight="bold" mb={1} color={m.sender._id === user._id ? "rgba(255,255,255,0.8)" : "var(--text-secondary)"}>
+                    {m.sender.name}
+                  </Text>
+                  {m.content && (m.content.match(/\.(jpeg|jpg|gif|png)$/i) || m.content.includes("res.cloudinary.com")) ? (
+                    <Image src={m.content} alt="chat media" maxW="100%" borderRadius="md" mt={1} />
+                  ) : (
+                    <Text fontSize="sm">{m.content}</Text>
+                  )}
+                </Box>
               </Box>
-            </Box>
-          ))
+            ))}
+            <div ref={messagesEndRef} />
+          </>
         )}
       </Box>
 
