@@ -6,14 +6,16 @@ import { Toaster } from "./components/ui/toaster";
 
 function App() {
   return (
-    <div className="App">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/chat" element={<ChatPage />} />
-      </Routes>
+    <>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/chat" element={<ChatPage />} />
+        </Routes>
+      </div>
 
       <Toaster />
-    </div>
+    </>
   );
 }
 
