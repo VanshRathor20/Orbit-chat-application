@@ -30,6 +30,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
   const cameraRef = useRef();
   const galleryRef = useRef();
   const inputRef = useRef(null);
+  const emojiPickerRef = useRef(null);
+  const emojiToggleButtonRef = useRef(null);
 
   const { user, selectedChat, setSelectedChat, setChats, socket, messages, setMessages } = ChatState();
   const [socketConnected, setSocketConnected] = useState(false);
@@ -46,6 +48,25 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
       return () => clearTimeout(timer);
     }
   }, [selectedChat, isMobile]);
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (
+        isEmojiPickerOpen &&
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(e.target) &&
+        emojiToggleButtonRef.current &&
+        !emojiToggleButtonRef.current.contains(e.target)
+      ) {
+        setIsEmojiPickerOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [isEmojiPickerOpen]);
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
@@ -76,7 +97,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
     const textBefore = newMessage.slice(0, cursor);
     const textAfter = newMessage.slice(cursor);
     setNewMessage(textBefore + emojiObject.emoji + textAfter);
-    setIsEmojiPickerOpen(false);
 
     // Optional: restore cursor position after render
     setTimeout(() => {
@@ -449,25 +469,24 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
           <input type="file" accept="image/*" style={{ display: "none" }} ref={galleryRef} onChange={handleImageUpload} />
           
           {isEmojiPickerOpen && (
-            <>
-              <Box position="fixed" inset={0} zIndex={10} onClick={() => setIsEmojiPickerOpen(false)} />
-              <Box
-                position="absolute"
-                bottom="100%"
-                left={0}
-                mb={2}
-                zIndex={11}
-                boxShadow="var(--glass-shadow)"
-                borderRadius="lg"
-                overflow="hidden"
-                border="var(--glass-border)"
-              >
-                <EmojiPicker theme="dark" onEmojiClick={handleEmojiClick} />
-              </Box>
-            </>
+            <Box
+              ref={emojiPickerRef}
+              position="absolute"
+              bottom="100%"
+              left={0}
+              mb={2}
+              zIndex={11}
+              boxShadow="var(--glass-shadow)"
+              borderRadius="lg"
+              overflow="hidden"
+              border="var(--glass-border)"
+            >
+              <EmojiPicker theme="dark" onEmojiClick={handleEmojiClick} />
+            </Box>
           )}
 
           <Box 
+            ref={emojiToggleButtonRef}
             position="absolute" 
             left={4} 
             top="50%" 
