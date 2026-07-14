@@ -293,15 +293,14 @@ const LeftSidebar = ({ fetchAgain }) => {
                   </Box>
                   {notification.filter((n) => n.chat._id === chat._id).length > 0 && (
                     <Box
-                      bg="red.500"
+                      bg="#FE6306"
                       color="white"
                       borderRadius="full"
-                      px={2}
-                      py={0.5}
+                      h="20px"
+                      minW="20px"
+                      px={1}
                       fontSize="10px"
                       fontWeight="bold"
-                      minW="18px"
-                      h="18px"
                       display="flex"
                       alignItems="center"
                       justifyContent="center"

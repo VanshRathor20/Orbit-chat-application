@@ -133,6 +133,7 @@ function SideDrawer() {
                 <NotificationBadge
                   count={notification.length}
                   effect={Effect.SCALE}
+                  style={{ backgroundColor: "#FE6306" }}
                 />
                 <LuBell size={24} />
               </Button>
