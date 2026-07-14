@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import io from "socket.io-client";
 import { toaster } from "../components/ui/toaster";
 
@@ -22,21 +22,51 @@ export const ChatProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [messages, setMessages] = useState([]);
 
+  const socketRef = useRef(null);
+  const disconnectTimeoutRef = useRef(null);
+  const shownMessageIdsRef = useRef(new Set());
+  const selectedChatRef = useRef(selectedChat);
+
+  useEffect(() => {
+    selectedChatRef.current = selectedChat;
+  }, [selectedChat]);
+
   useEffect(() => {
     if (user) {
-      const socketInstance = io(ENDPOINT);
-      socketInstance.emit("setup", user);
-      
-      socketInstance.on("connected", () => {
-        console.log("Socket connected successfully");
-      });
+      if (disconnectTimeoutRef.current) {
+        clearTimeout(disconnectTimeoutRef.current);
+        disconnectTimeoutRef.current = null;
+      }
 
-      setSocket(socketInstance);
+      if (!socketRef.current) {
+        const socketInstance = io(ENDPOINT);
+        socketInstance.emit("setup", user);
+        
+        socketInstance.on("connected", () => {
+          console.log("Socket connected successfully:", socketInstance.id);
+        });
+
+        socketRef.current = socketInstance;
+        setSocket(socketInstance);
+      } else {
+        setSocket(socketRef.current);
+      }
 
       return () => {
-        socketInstance.disconnect();
+        disconnectTimeoutRef.current = setTimeout(() => {
+          if (socketRef.current) {
+            console.log("Disconnecting socket:", socketRef.current.id);
+            socketRef.current.disconnect();
+            socketRef.current = null;
+            setSocket(null);
+          }
+        }, 100);
       };
     } else {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
       setSocket(null);
     }
   }, [user]);
@@ -63,64 +93,65 @@ export const ChatProvider = ({ children }) => {
     };
   }, [socket]);
 
+  const handleMessageReceived = useCallback((newMessageReceived) => {
+    const chatOfMessage = newMessageReceived.chat;
+    const currentSelectedChat = selectedChatRef.current;
+
+    if (currentSelectedChat && currentSelectedChat._id === chatOfMessage._id) {
+      setMessages((prev) => {
+        if (prev.some((m) => m._id === newMessageReceived._id)) {
+          return prev;
+        }
+        return [...prev, newMessageReceived];
+      });
+    } else {
+      setNotification((prevNotification) => {
+        if (!prevNotification.some((n) => n._id === newMessageReceived._id)) {
+          if (!shownMessageIdsRef.current.has(newMessageReceived._id)) {
+            shownMessageIdsRef.current.add(newMessageReceived._id);
+            toaster.create({
+              title: `New Message from ${newMessageReceived.sender.name}`,
+              description: newMessageReceived.content,
+              type: "info",
+            });
+          }
+          return [newMessageReceived, ...prevNotification];
+        }
+        return prevNotification;
+      });
+    }
+
+    setChats((prevChats) => {
+      const chatExists = prevChats.some((c) => c._id === chatOfMessage._id);
+
+      if (chatExists) {
+        const updatedChats = prevChats.map((c) => {
+          if (c._id === chatOfMessage._id) {
+            return { ...c, latestMessage: newMessageReceived };
+          }
+          return c;
+        });
+
+        const targetChat = updatedChats.find((c) => c._id === chatOfMessage._id);
+        const remainingChats = updatedChats.filter((c) => c._id !== chatOfMessage._id);
+
+        return [targetChat, ...remainingChats];
+      } else {
+        const newChat = { ...chatOfMessage, latestMessage: newMessageReceived };
+        return [newChat, ...prevChats];
+      }
+    });
+  }, []);
+
   useEffect(() => {
     if (!socket) return;
-
-    const handleMessageReceived = (newMessageReceived) => {
-      const chatOfMessage = newMessageReceived.chat;
-
-      setSelectedChat((currentSelectedChat) => {
-        if (currentSelectedChat && currentSelectedChat._id === chatOfMessage._id) {
-          setMessages((prev) => {
-            if (prev.some((m) => m._id === newMessageReceived._id)) {
-              return prev;
-            }
-            return [...prev, newMessageReceived];
-          });
-        } else {
-          setNotification((prevNotification) => {
-            if (!prevNotification.some((n) => n._id === newMessageReceived._id)) {
-              toaster.create({
-                title: `New Message from ${newMessageReceived.sender.name}`,
-                description: newMessageReceived.content,
-                type: "info",
-              });
-              return [newMessageReceived, ...prevNotification];
-            }
-            return prevNotification;
-          });
-        }
-        return currentSelectedChat;
-      });
-
-      setChats((prevChats) => {
-        const chatExists = prevChats.some((c) => c._id === chatOfMessage._id);
-
-        if (chatExists) {
-          const updatedChats = prevChats.map((c) => {
-            if (c._id === chatOfMessage._id) {
-              return { ...c, latestMessage: newMessageReceived };
-            }
-            return c;
-          });
-
-          const targetChat = updatedChats.find((c) => c._id === chatOfMessage._id);
-          const remainingChats = updatedChats.filter((c) => c._id !== chatOfMessage._id);
-
-          return [targetChat, ...remainingChats];
-        } else {
-          const newChat = { ...chatOfMessage, latestMessage: newMessageReceived };
-          return [newChat, ...prevChats];
-        }
-      });
-    };
 
     socket.on("message received", handleMessageReceived);
 
     return () => {
       socket.off("message received", handleMessageReceived);
     };
-  }, [socket]);
+  }, [socket, handleMessageReceived]);
 
   return (
     <ChatContext.Provider
