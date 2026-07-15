@@ -444,37 +444,59 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
                 key={m._id}
                 display="flex"
                 justifyContent={
-                  m.sender._id === user._id ? "flex-end" : "flex-start"
+                  m.messageType === "system"
+                    ? "center"
+                    : m.sender?._id === user._id
+                      ? "flex-end"
+                      : "flex-start"
                 }
                 mb={2}
               >
-                <Box
-                  bg={
-                    m.sender._id === user._id 
-                      ? "rgba(254, 99, 6, 0.25)" 
-                      : "rgba(255, 255, 255, 0.08)"
-                  }
-                  border={
-                    m.sender._id === user._id 
-                      ? "1px solid rgba(254, 99, 6, 0.4)" 
-                      : "1px solid rgba(255, 255, 255, 0.15)"
-                  }
-                  backdropFilter="blur(8px)"
-                  color="white"
-                  borderRadius="var(--glass-radius-sm)"
-                  px={4}
-                  py={2}
-                  maxW="75%"
-                >
-                  <Text fontSize="xs" fontWeight="bold" mb={1} color="rgba(255, 255, 255, 0.6)">
-                    {m.sender.name}
-                  </Text>
-                  {m.content && (m.content.match(/\.(jpeg|jpg|gif|png)$/i) || m.content.includes("res.cloudinary.com")) ? (
-                    <Image src={m.content} alt="chat media" maxW="100%" borderRadius="md" mt={1} />
-                  ) : (
-                    <Text fontSize="sm" color="rgba(255, 255, 255, 0.95)">{m.content}</Text>
-                  )}
-                </Box>
+                {m.messageType === "system" ? (
+                  <Box
+                    bg="rgba(255, 255, 255, 0.05)"
+                    border="1px dashed rgba(255, 255, 255, 0.15)"
+                    backdropFilter="blur(4px)"
+                    color="rgba(255, 255, 255, 0.6)"
+                    borderRadius="var(--glass-radius-sm)"
+                    px={3}
+                    py={1.5}
+                    fontSize="xs"
+                    fontStyle="italic"
+                    textAlign="center"
+                    maxW="85%"
+                  >
+                    {m.content}
+                  </Box>
+                ) : (
+                  <Box
+                    bg={
+                      m.sender?._id === user._id 
+                        ? "rgba(254, 99, 6, 0.25)" 
+                        : "rgba(255, 255, 255, 0.08)"
+                    }
+                    border={
+                      m.sender?._id === user._id 
+                        ? "1px solid rgba(254, 99, 6, 0.4)" 
+                        : "1px solid rgba(255, 255, 255, 0.15)"
+                    }
+                    backdropFilter="blur(8px)"
+                    color="white"
+                    borderRadius="var(--glass-radius-sm)"
+                    px={4}
+                    py={2}
+                    maxW="75%"
+                  >
+                    <Text fontSize="xs" fontWeight="bold" mb={1} color="rgba(255, 255, 255, 0.6)">
+                      {m.sender?.name || "User"}
+                    </Text>
+                    {m.content && (m.content.match(/\.(jpeg|jpg|gif|png)$/i) || m.content.includes("res.cloudinary.com")) ? (
+                      <Image src={m.content} alt="chat media" maxW="100%" borderRadius="md" mt={1} />
+                    ) : (
+                      <Text fontSize="sm" color="rgba(255, 255, 255, 0.95)">{m.content}</Text>
+                    )}
+                  </Box>
+                )}
               </Box>
             ))}
             <div ref={messagesEndRef} />

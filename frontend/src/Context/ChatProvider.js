@@ -99,12 +99,69 @@ export const ChatProvider = ({ children }) => {
       );
     };
 
+    const handleMemberRemoved = ({ groupId, removedMemberId, removedByAdmin }) => {
+      setSelectedChat((prev) => {
+        if (prev && prev._id === groupId) {
+          return {
+            ...prev,
+            users: prev.users.filter((u) => u._id !== removedMemberId),
+          };
+        }
+        return prev;
+      });
+      setChats((prevChats) =>
+        prevChats.map((c) => {
+          if (c._id === groupId) {
+            return {
+              ...c,
+              users: c.users.filter((u) => u._id !== removedMemberId),
+            };
+          }
+          return c;
+        })
+      );
+    };
+
+    const handleYouWereRemoved = ({ groupId }) => {
+      setSelectedChat((prev) => {
+        if (prev && prev._id === groupId) {
+          toaster.create({
+            title: "You were removed from this group",
+            type: "warning",
+          });
+          return null;
+        }
+        return prev;
+      });
+      setChats((prevChats) => prevChats.filter((c) => c._id !== groupId));
+    };
+
+    const handleGroupDeleted = ({ groupId }) => {
+      setSelectedChat((prev) => {
+        if (prev && prev._id === groupId) {
+          toaster.create({
+            title: "This group was deleted by the admin",
+            type: "info",
+          });
+          return null;
+        }
+        return prev;
+      });
+      setChats((prevChats) => prevChats.filter((c) => c._id !== groupId));
+    };
+
     socket.on("group-renamed", handleGroupRenamed);
     socket.on("group-picture-updated", handleGroupPictureUpdated);
+    socket.on("memberRemoved", handleMemberRemoved);
+    socket.on("youWereRemoved", handleYouWereRemoved);
+    socket.on("groupDeleted", handleGroupDeleted);
 
     return () => {
       socket.off("group-renamed", handleGroupRenamed);
       socket.off("group-picture-updated", handleGroupPictureUpdated);
+      socket.off("memberRemoved", handleMemberRemoved);
+      socket.off("youWereRemoved", handleYouWereRemoved);
+      socket.off("groupDeleted", handleGroupDeleted);
     };
   }, [socket]);
 

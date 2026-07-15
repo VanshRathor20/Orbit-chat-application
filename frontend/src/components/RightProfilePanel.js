@@ -3,7 +3,7 @@ import { ChatState } from "../Context/ChatProvider";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { LuX, LuPencil, LuPlus, LuMessageSquare, LuVolumeX, LuVideo, LuLogOut, LuUserPlus } from "react-icons/lu";
+import { LuX, LuPencil, LuPlus, LuMessageSquare, LuVolumeX, LuVideo, LuLogOut, LuUserPlus, LuTrash2, LuUserMinus } from "react-icons/lu";
 import ImagePreviewModal from "./miscellaneous/ImagePreviewModal";
 import AddMemberModal from "./miscellaneous/AddMemberModal";
 import { toaster } from "./ui/toaster";
@@ -21,6 +21,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
 
   const fileInputRef = useRef(null);
   const isGroup = selectedChat?.isGroupChat;
+  const isAdmin = selectedChat?.isGroupChat && (selectedChat.groupAdmin?._id === user?._id || selectedChat.groupAdmin === user?._id);
 
   useEffect(() => {
     if (selectedChat) {
@@ -166,6 +167,60 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
     } catch (error) {
       toaster.create({
         title: "Failed to leave group",
+        description: error.response?.data?.message || error.message,
+        type: "error",
+      });
+    }
+  };
+
+  const handleDeleteGroup = async () => {
+    if (!window.confirm("Are you sure you want to delete this group? This cannot be undone.")) return;
+
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${user?.token}` },
+      };
+      await axios.delete(`/api/groups/${selectedChat._id}`, config);
+
+      toaster.create({
+        title: "Group deleted successfully",
+        type: "success",
+      });
+      setSelectedChat(null);
+      setChats(chats.filter((c) => c._id !== selectedChat._id));
+      onClose();
+    } catch (error) {
+      toaster.create({
+        title: "Failed to delete group",
+        description: error.response?.data?.message || error.message,
+        type: "error",
+      });
+    }
+  };
+
+  const handleRemoveMember = async (memberToRemove) => {
+    if (!window.confirm(`Remove ${memberToRemove.name} from group?`)) return;
+
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${user?.token}` },
+      };
+      const { data } = await axios.patch(
+        `/api/groups/${selectedChat._id}/remove-member`,
+        { memberIdToRemove: memberToRemove._id },
+        config
+      );
+
+      setSelectedChat(data);
+      setChats(chats.map((c) => (c._id === data._id ? data : c)));
+
+      toaster.create({
+        title: `${memberToRemove.name} removed from group`,
+        type: "success",
+      });
+    } catch (error) {
+      toaster.create({
+        title: "Failed to remove member",
         description: error.response?.data?.message || error.message,
         type: "error",
       });
@@ -481,7 +536,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         </Box>
 
         {isGroup && (
-          <SimpleGrid columns={3} gap={2} w="100%" my={4} order={{ base: 2, xl: 4 }}>
+          <SimpleGrid columns={isAdmin ? 4 : 3} gap={2} w="100%" my={4} order={{ base: 2, xl: 4 }}>
             <VStack gap={1}>
               <IconButton
                 aria-label="Message"
@@ -524,6 +579,22 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
               </IconButton>
               <Text fontSize="10px" color="red.300">Exit</Text>
             </VStack>
+            {isAdmin && (
+              <VStack gap={1}>
+                <IconButton
+                  aria-label="Delete Group"
+                  size="sm"
+                  borderRadius="full"
+                  bg="rgba(255, 0, 0, 0.2)"
+                  color="red.300"
+                  _hover={{ bg: "rgba(255, 0, 0, 0.3)" }}
+                  onClick={handleDeleteGroup}
+                >
+                  <LuTrash2 size={16} />
+                </IconButton>
+                <Text fontSize="10px" color="red.300">Delete</Text>
+              </VStack>
+            )}
           </SimpleGrid>
         )}
 
@@ -543,7 +614,8 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                       key={u._id}
                       display="flex"
                       alignItems="center"
-                      gap={3}
+                      justifyContent="space-between"
+                      w="100%"
                       px={3}
                       py={2}
                       borderRadius="var(--glass-radius-sm)"
@@ -552,29 +624,46 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                       onClick={!isCurrentUser ? () => accessChat(u._id) : undefined}
                       color="var(--text-primary)"
                     >
-                      <Avatar.Root
-                        size="sm"
-                        cursor="pointer"
-                        _hover={{ opacity: 0.8 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setPreviewUrl(u.pic);
-                          setPreviewName(u.name);
-                        }}
-                      >
-                        <Avatar.Fallback name={u.name} />
-                        {hasCustomPic && <Avatar.Image src={u.pic} />}
-                      </Avatar.Root>
-                      <Box
-                        w="8px"
-                        h="8px"
-                        borderRadius="50%"
-                        bg={onlineUsers?.includes(u._id) ? "#48BB78" : "#A0AEC0"}
-                        flexShrink={0}
-                      />
-                      <Text fontSize="sm" fontWeight="medium" noOfLines={1}>
-                        {u.name}{isCurrentUser ? " (You)" : ""}
-                      </Text>
+                      <Box display="flex" alignItems="center" gap={3} overflow="hidden" flex="1">
+                        <Avatar.Root
+                          size="sm"
+                          cursor="pointer"
+                          _hover={{ opacity: 0.8 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPreviewUrl(u.pic);
+                            setPreviewName(u.name);
+                          }}
+                        >
+                          <Avatar.Fallback name={u.name} />
+                          {hasCustomPic && <Avatar.Image src={u.pic} />}
+                        </Avatar.Root>
+                        <Box
+                          w="8px"
+                          h="8px"
+                          borderRadius="50%"
+                          bg={onlineUsers?.includes(u._id) ? "#48BB78" : "#A0AEC0"}
+                          flexShrink={0}
+                        />
+                        <Text fontSize="sm" fontWeight="medium" noOfLines={1}>
+                          {u.name}{isCurrentUser ? " (You)" : ""}
+                        </Text>
+                      </Box>
+                      {isAdmin && u._id !== (selectedChat.groupAdmin?._id || selectedChat.groupAdmin) && (
+                        <IconButton
+                          aria-label={`Remove ${u.name}`}
+                          size="xs"
+                          variant="ghost"
+                          color="red.300"
+                          _hover={{ bg: "rgba(255, 0, 0, 0.15)", color: "red.200" }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveMember(u);
+                          }}
+                        >
+                          <LuUserMinus size={14} />
+                        </IconButton>
+                      )}
                     </Box>
                   );
                 })}
