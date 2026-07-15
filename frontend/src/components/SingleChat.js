@@ -449,21 +449,30 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
                 mb={2}
               >
                 <Box
-                  bg={m.sender._id === user._id ? "var(--accent-gradient)" : "rgba(255, 255, 255, 0.05)"}
-                  border={m.sender._id !== user._id ? "var(--glass-border)" : "none"}
+                  bg={
+                    m.sender._id === user._id 
+                      ? "rgba(254, 99, 6, 0.25)" 
+                      : "rgba(255, 255, 255, 0.08)"
+                  }
+                  border={
+                    m.sender._id === user._id 
+                      ? "1px solid rgba(254, 99, 6, 0.4)" 
+                      : "1px solid rgba(255, 255, 255, 0.15)"
+                  }
+                  backdropFilter="blur(8px)"
                   color="white"
                   borderRadius="var(--glass-radius-sm)"
                   px={4}
                   py={2}
                   maxW="75%"
                 >
-                  <Text fontSize="xs" fontWeight="bold" mb={1} color={m.sender._id === user._id ? "rgba(255,255,255,0.8)" : "var(--text-secondary)"}>
+                  <Text fontSize="xs" fontWeight="bold" mb={1} color="rgba(255, 255, 255, 0.6)">
                     {m.sender.name}
                   </Text>
                   {m.content && (m.content.match(/\.(jpeg|jpg|gif|png)$/i) || m.content.includes("res.cloudinary.com")) ? (
                     <Image src={m.content} alt="chat media" maxW="100%" borderRadius="md" mt={1} />
                   ) : (
-                    <Text fontSize="sm">{m.content}</Text>
+                    <Text fontSize="sm" color="rgba(255, 255, 255, 0.95)">{m.content}</Text>
                   )}
                 </Box>
               </Box>
