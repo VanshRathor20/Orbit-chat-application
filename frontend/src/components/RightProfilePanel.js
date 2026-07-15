@@ -268,27 +268,43 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         zIndex={1200}
         opacity={isOpen ? 1 : 0}
         pointerEvents={isOpen ? "auto" : "none"}
-        transition="opacity 0.3s ease-out"
+        transition="opacity 250ms cubic-bezier(0.16, 1, 0.3, 1)"
         onClick={onClose}
       />
 
-      {/* Main Drawer/Panel */}
+      {/* Main Drawer/Panel Wrapper */}
       <Box
-        display={{ base: "flex", xl: isOpen ? "flex" : "none" }}
+        display="flex"
         position={{ base: "fixed", xl: "relative" }}
         top={{ base: 0, xl: "auto" }}
         right={{ base: 0, xl: "auto" }}
         zIndex={{ base: 1201, xl: 1 }}
-        w={{ base: "85%", sm: "320px", md: "60%", lg: "65%", xl: "360px" }}
+        w={{ base: "85%", sm: "320px", md: "60%", lg: "65%", xl: isOpen ? "360px" : "0px" }}
         h="100%"
-        transform={{ base: isOpen ? "translateX(0)" : "translateX(100%)", xl: "none" }}
-        transition="transform 0.3s ease-out"
-        flexDir="column"
-        className="glass-panel"
-        borderRadius={{ base: "var(--glass-radius-lg) 0 0 var(--glass-radius-lg)", xl: "var(--glass-radius-lg)" }}
-        p={6}
-        color="var(--text-primary)"
+        ml={{ base: 0, xl: isOpen ? 0 : "-16px" }}
+        overflow="hidden"
+        flexShrink={0}
+        transition="width 250ms cubic-bezier(0.16, 1, 0.3, 1), margin-left 250ms cubic-bezier(0.16, 1, 0.3, 1), visibility 250ms"
+        visibility={{ base: isOpen ? "visible" : "hidden", xl: isOpen ? "visible" : "hidden" }}
+        pointerEvents={{ base: isOpen ? "auto" : "none", xl: isOpen ? "auto" : "none" }}
       >
+        {/* Inner Content Panel that actually slides/fades */}
+        <Box
+          display="flex"
+          flexDir="column"
+          w={{ base: "100%", xl: "360px" }}
+          h="100%"
+          transform={{
+            base: isOpen ? "translateX(0)" : "translateX(100%)",
+            xl: isOpen ? "translateX(0)" : "translateX(100%)"
+          }}
+          opacity={isOpen ? 1 : 0}
+          transition="transform 250ms cubic-bezier(0.16, 1, 0.3, 1), opacity 250ms cubic-bezier(0.16, 1, 0.3, 1)"
+          className="glass-panel"
+          borderRadius={{ base: "var(--glass-radius-lg) 0 0 var(--glass-radius-lg)", xl: "var(--glass-radius-lg)" }}
+          p={6}
+          color="var(--text-primary)"
+        >
         <Box order={0} justifyContent="flex-end" display={{ base: "flex", xl: "none" }} mb={2} mt={-2} mr={-2}>
           <Button variant="ghost" size="sm" onClick={onClose} color="var(--text-secondary)">
             <LuX size={20} />
@@ -650,6 +666,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
           isOpen={isAddMemberOpen}
           onClose={() => setIsAddMemberOpen(false)}
         />
+        </Box>
       </Box>
     </>
   );
