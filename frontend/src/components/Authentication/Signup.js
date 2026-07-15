@@ -108,54 +108,60 @@ const Signup = () => {
   };
 
   return (
-    <VStack gap="10px" align="stretch" w="100%">
+    <VStack gap="12px" align="stretch" w="100%">
       <Box w="100%">
-        <Text mb="2" color="black" fontWeight="medium">Name</Text>
+        <Text mb="2" color="whiteAlpha.900" fontWeight="medium">Name</Text>
         <Input
           w="100%"
           placeholder="Enter Your Name"
-          color="black"
-          borderColor="blackAlpha.300"
-          bg="whiteAlpha.700"
-          _placeholder={{ color: "blackAlpha.600" }}
+          color="white"
+          borderColor="whiteAlpha.200"
+          bg="rgba(255, 255, 255, 0.05)"
+          _placeholder={{ color: "rgba(255, 255, 255, 0.65)" }}
+          _focus={{ borderColor: "rgba(254, 99, 6, 0.6)", bg: "rgba(255, 255, 255, 0.08)" }}
+          transition="all 0.2s"
           onChange={(e) => setName(e.target.value)}
         />
       </Box>
 
       <Box w="100%">
-        <Text mb="2" color="black" fontWeight="medium">Email Address</Text>
+        <Text mb="2" color="whiteAlpha.900" fontWeight="medium">Email Address</Text>
         <Input
           type="email"
           placeholder="Enter Your Email Address"
           w="100%"
-          color="black"
-          borderColor="blackAlpha.300"
-          bg="whiteAlpha.700"
-          _placeholder={{ color: "blackAlpha.600" }}
+          color="white"
+          borderColor="whiteAlpha.200"
+          bg="rgba(255, 255, 255, 0.05)"
+          _placeholder={{ color: "rgba(255, 255, 255, 0.65)" }}
+          _focus={{ borderColor: "rgba(254, 99, 6, 0.6)", bg: "rgba(255, 255, 255, 0.08)" }}
+          transition="all 0.2s"
           onChange={(e) => setEmail(e.target.value)}
         />
       </Box>
 
       <Box w="100%">
-        <Text mb="2" color="black" fontWeight="medium">Password</Text>
+        <Text mb="2" color="whiteAlpha.900" fontWeight="medium">Password</Text>
         <Box position="relative" w="100%">
           <Input
             type={showPassword ? "text" : "password"}
             placeholder="Enter Password"
-            color="black"
-            borderColor="blackAlpha.300"
-            bg="whiteAlpha.700"
+            color="white"
+            borderColor="whiteAlpha.200"
+            bg="rgba(255, 255, 255, 0.05)"
             pr="3rem"
-            _placeholder={{ color: "blackAlpha.600" }}
+            _placeholder={{ color: "rgba(255, 255, 255, 0.65)" }}
+            _focus={{ borderColor: "rgba(254, 99, 6, 0.6)", bg: "rgba(255, 255, 255, 0.08)" }}
+            transition="all 0.2s"
             onChange={(e) => setPassword(e.target.value)}
           />
           <IconButton
             aria-label={showPassword ? "Hide password" : "Show password"}
             size="xs"
             variant="ghost"
-            color="black"
+            color="whiteAlpha.800"
             bg="transparent"
-            _hover={{ bg: "transparent" }}
+            _hover={{ bg: "transparent", color: "white" }}
             _active={{ bg: "transparent" }}
             position="absolute"
             right="0.4rem"
@@ -169,39 +175,51 @@ const Signup = () => {
       </Box>
 
       <Box w="100%">
-        <Text mb="2" color="black" fontWeight="medium">Confirm Password</Text>
+        <Text mb="2" color="whiteAlpha.900" fontWeight="medium">Confirm Password</Text>
         <Input
           type={showPassword ? "text" : "password"}
           placeholder="Confirm Password"
           w="100%"
-          color="black"
-          borderColor="blackAlpha.300"
-          bg="whiteAlpha.700"
-          _placeholder={{ color: "blackAlpha.600" }}
+          color="white"
+          borderColor="whiteAlpha.200"
+          bg="rgba(255, 255, 255, 0.05)"
+          _placeholder={{ color: "rgba(255, 255, 255, 0.65)" }}
+          _focus={{ borderColor: "rgba(254, 99, 6, 0.6)", bg: "rgba(255, 255, 255, 0.08)" }}
+          transition="all 0.2s"
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
       </Box>
 
       <Box w="100%">
-        <Text mb="2" color="black" fontWeight="medium">Upload Your Picture</Text>
+        <Text mb="2" color="whiteAlpha.900" fontWeight="medium">Upload Your Picture</Text>
         <Input
           type="file"
           p={1.5}
           accept="image/*"
           w="100%"
-          color="black"
-          borderColor="blackAlpha.300"
-          bg="whiteAlpha.700"
+          color="white"
+          borderColor="whiteAlpha.200"
+          bg="rgba(255, 255, 255, 0.05)"
+          _focus={{ borderColor: "rgba(254, 99, 6, 0.6)", bg: "rgba(255, 255, 255, 0.08)" }}
+          transition="all 0.2s"
           onChange={(e) => postDetails(e.target.files?.[0])}
         />
       </Box>
 
       <Button
-        colorPalette="gray"
         width="100%"
         mt="3"
         onClick={handleSubmit}
         loading={picLoading}
+        bg="#fe6306"
+        color="white"
+        fontWeight="semibold"
+        borderRadius="lg"
+        _hover={{ 
+          bg: "#e55905",
+          transform: "scale(1.02)"
+        }}
+        transition="all 0.2s"
       >
         Sign Up
       </Button>
