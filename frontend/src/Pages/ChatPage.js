@@ -108,30 +108,36 @@ const Chatpage = () => {
 
   return (
     <Box
-      w={{ base: "100%", md: "94vw" }}
-      h={{ base: "100vh", md: "92vh" }}
-      m={{ base: 0, md: "auto" }}
-      p={{ base: 0, md: 4 }}
+      w="100%"
+      h="100vh"
       display="flex"
-      gap={{ base: 0, md: 4 }}
-      overflow="hidden"
-      maxW={{ base: "100%", md: "1700px" }}
-      maxH={{ base: "100vh", md: "950px" }}
-      alignSelf="center"
+      alignItems="center"
+      justifyContent="center"
+      p={{ base: 0, md: 4 }}
     >
-      <LeftSidebar fetchAgain={fetchAgain} />
-      <Box flex="1" display="flex" overflow="hidden">
-        <Chatbox 
-          fetchAgain={fetchAgain} 
-          setFetchAgain={setFetchAgain} 
-          isRightPanelOpen={isRightPanelOpen}
-          setIsRightPanelOpen={setIsRightPanelOpen}
+      <Box
+        w={{ base: "100%", md: "94vw" }}
+        h={{ base: "100vh", md: "92vh" }}
+        display="flex"
+        gap={{ base: 0, md: 4 }}
+        overflow="hidden"
+        maxW={{ base: "100%", md: "1700px" }}
+        maxH={{ base: "100vh", md: "950px" }}
+      >
+        <LeftSidebar fetchAgain={fetchAgain} />
+        <Box flex="1" display="flex" overflow="hidden">
+          <Chatbox 
+            fetchAgain={fetchAgain} 
+            setFetchAgain={setFetchAgain} 
+            isRightPanelOpen={isRightPanelOpen}
+            setIsRightPanelOpen={setIsRightPanelOpen}
+          />
+        </Box>
+        <RightProfilePanel 
+          isOpen={isRightPanelOpen} 
+          onClose={() => setIsRightPanelOpen(false)} 
         />
       </Box>
-      <RightProfilePanel 
-        isOpen={isRightPanelOpen} 
-        onClose={() => setIsRightPanelOpen(false)} 
-      />
     </Box>
   );
 };

@@ -188,6 +188,9 @@ const LeftSidebar = ({ fetchAgain }) => {
             lineHeight="1"
             ml="2px"
             mt="-6px"
+            css={{
+              textShadow: '0 1px 2px rgba(254, 99, 6, 0.4)',
+            }}
           >
             rbit
           </Text>
@@ -278,13 +281,17 @@ const LeftSidebar = ({ fetchAgain }) => {
                     setNotification(notification.filter((n) => n.chat._id !== chat._id));
                   }}
                   cursor="pointer"
-                  bg={selectedChat === chat ? "var(--accent-primary)" : "transparent"}
-                  _hover={{ bg: selectedChat !== chat ? "rgba(255, 255, 255, 0.05)" : "var(--accent-primary)" }}
+                  bg={selectedChat === chat ? "rgba(255, 255, 255, 0.07)" : "transparent"}
+                  _hover={{
+                    bg: selectedChat !== chat ? "rgba(255, 255, 255, 0.04)" : "rgba(255, 255, 255, 0.09)",
+                    borderColor: selectedChat !== chat ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.22)",
+                  }}
+                  transition="background 0.15s ease, border-color 0.15s ease"
                   color="var(--text-primary)"
                   px={3}
                   py={3}
                   borderRadius="var(--glass-radius-sm)"
-                  border={selectedChat === chat ? "var(--glass-border)" : "1px solid transparent"}
+                  border={selectedChat === chat ? "1px solid rgba(255, 255, 255, 0.18)" : "1px solid transparent"}
                   key={chat._id}
                   display="flex"
                   alignItems="center"
