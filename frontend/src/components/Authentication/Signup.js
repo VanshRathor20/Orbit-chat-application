@@ -113,6 +113,7 @@ const Signup = () => {
         <Text mb="2" color="whiteAlpha.900" fontWeight="medium">Name</Text>
         <Input
           w="100%"
+          h={{ base: "48px", sm: "48px", md: "auto" }}
           placeholder="Enter Your Name"
           color="white"
           borderColor="whiteAlpha.200"
@@ -130,6 +131,7 @@ const Signup = () => {
           type="email"
           placeholder="Enter Your Email Address"
           w="100%"
+          h={{ base: "48px", sm: "48px", md: "auto" }}
           color="white"
           borderColor="whiteAlpha.200"
           bg="rgba(255, 255, 255, 0.05)"
@@ -146,6 +148,8 @@ const Signup = () => {
           <Input
             type={showPassword ? "text" : "password"}
             placeholder="Enter Password"
+            w="100%"
+            h={{ base: "48px", sm: "48px", md: "auto" }}
             color="white"
             borderColor="whiteAlpha.200"
             bg="rgba(255, 255, 255, 0.05)"
@@ -157,7 +161,7 @@ const Signup = () => {
           />
           <IconButton
             aria-label={showPassword ? "Hide password" : "Show password"}
-            size="xs"
+            size={{ base: "sm", sm: "sm", md: "xs" }}
             variant="ghost"
             color="whiteAlpha.800"
             bg="transparent"
@@ -180,6 +184,7 @@ const Signup = () => {
           type={showPassword ? "text" : "password"}
           placeholder="Confirm Password"
           w="100%"
+          h={{ base: "48px", sm: "48px", md: "auto" }}
           color="white"
           borderColor="whiteAlpha.200"
           bg="rgba(255, 255, 255, 0.05)"
@@ -197,6 +202,7 @@ const Signup = () => {
           p={1.5}
           accept="image/*"
           w="100%"
+          h={{ base: "48px", sm: "48px", md: "auto" }}
           color="white"
           borderColor="whiteAlpha.200"
           bg="rgba(255, 255, 255, 0.05)"
@@ -209,6 +215,7 @@ const Signup = () => {
       <Button
         width="100%"
         mt="3"
+        h={{ base: "48px", sm: "48px", md: "auto" }}
         onClick={handleSubmit}
         loading={picLoading}
         bg="#fe6306"

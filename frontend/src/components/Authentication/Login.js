@@ -67,6 +67,7 @@ const Login = () => {
           type="email"
           placeholder="Enter Your Email Address"
           w="100%"
+          h={{ base: "48px", sm: "48px", md: "auto" }}
           color="white"
           borderColor="whiteAlpha.200"
           bg="rgba(255, 255, 255, 0.05)"
@@ -84,6 +85,8 @@ const Login = () => {
             value={password}
             type={showPassword ? "text" : "password"}
             placeholder="Enter Password"
+            w="100%"
+            h={{ base: "48px", sm: "48px", md: "auto" }}
             color="white"
             borderColor="whiteAlpha.200"
             bg="rgba(255, 255, 255, 0.05)"
@@ -95,7 +98,7 @@ const Login = () => {
           />
           <IconButton
             aria-label={showPassword ? "Hide password" : "Show password"}
-            size="xs"
+            size={{ base: "sm", sm: "sm", md: "xs" }}
             variant="ghost"
             color="whiteAlpha.800"
             bg="transparent"
@@ -115,6 +118,7 @@ const Login = () => {
       <Button
         width="100%"
         mt="3"
+        h={{ base: "48px", sm: "48px", md: "auto" }}
         onClick={submitHandler}
         loading={loading}
         bg="#fe6306"
