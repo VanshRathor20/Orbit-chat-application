@@ -45,7 +45,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         .then((res) => res.json())
         .then(async (uploadData) => {
           const newPicUrl = uploadData.url.toString();
-          
+
           try {
             const config = {
               headers: {
@@ -61,7 +61,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
 
             setSelectedChat(data);
             setChats(chats.map((c) => (c._id === data._id ? data : c)));
-            
+
             toaster.create({
               title: "Group picture updated successfully",
               type: "success",
@@ -364,420 +364,425 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
           p={6}
           color="var(--text-primary)"
         >
-        <Box order={0} justifyContent="flex-end" display={{ base: "flex", xl: "none" }} mb={2} mt={-2} mr={-2}>
-          <Button variant="ghost" size="sm" onClick={onClose} color="var(--text-secondary)">
-            <LuX size={20} />
-          </Button>
-        </Box>
+          <Box order={0} justifyContent="flex-end" display={{ base: "flex", xl: "none" }} mb={2} mt={-2} mr={-2}>
+            <Button variant="ghost" size="sm" onClick={onClose} color="var(--text-secondary)">
+              <LuX size={20} />
+            </Button>
+          </Box>
 
-        <Box order={1} display="flex" flexDir="column" alignItems="center" mb={{ base: 4, md: 6, xl: 4 }}>
-          {isGroup ? (
-            <>
-              <input
-                type="file"
-                accept="image/*"
-                ref={fileInputRef}
-                style={{ display: "none" }}
-                onChange={(e) => handleGroupPicUpload(e.target.files[0])}
-              />
-              
-              <Box 
-                position="relative" 
-                mb={{ base: 4, md: 6, xl: 4 }} 
-                cursor={picLoading ? "not-allowed" : "pointer"}
-                onClick={() => !picLoading && fileInputRef.current?.click()}
-                w={{ base: "80px", md: "115px", xl: "80px" }} 
-                h={{ base: "80px", md: "115px", xl: "80px" }}
-              >
-                <Avatar.Root
-                  w="100%"
-                  h="100%"
-                  border={{ base: "2px solid rgba(255, 255, 255, 0.1)", md: "3px solid rgba(255, 255, 255, 0.2)", xl: "2px solid rgba(255, 255, 255, 0.1)" }}
+          <Box order={1} display="flex" flexDir="column" alignItems="center" mb={{ base: 4, md: 6, xl: 4 }}>
+            {isGroup ? (
+              <>
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  style={{ display: "none" }}
+                  onChange={(e) => handleGroupPicUpload(e.target.files[0])}
+                />
+
+                <Box
+                  position="relative"
+                  mb={{ base: 4, md: 6, xl: 4 }}
+                  cursor={picLoading ? "not-allowed" : "pointer"}
+                  onClick={() => !picLoading && fileInputRef.current?.click()}
+                  w={{ base: "80px", md: "115px", xl: "80px" }}
+                  h={{ base: "80px", md: "115px", xl: "80px" }}
                 >
-                  <Avatar.Fallback name={chatName} fontSize={{ base: "2xl", md: "4xl", xl: "2xl" }} />
-                  {isCustomPic(chatPic) && <Avatar.Image src={chatPic} />}
-                </Avatar.Root>
-
-                {picLoading && (
-                  <Box
-                    position="absolute"
-                    inset={0}
-                    bg="rgba(0,0,0,0.6)"
-                    borderRadius="full"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    zIndex={2}
+                  <Avatar.Root
+                    w="100%"
+                    h="100%"
+                    border={{ base: "2px solid rgba(255, 255, 255, 0.1)", md: "3px solid rgba(255, 255, 255, 0.2)", xl: "2px solid rgba(255, 255, 255, 0.1)" }}
                   >
-                    <Spinner size="sm" color="var(--accent-primary)" />
-                  </Box>
-                )}
+                    <Avatar.Fallback name={chatName} fontSize={{ base: "2xl", md: "4xl", xl: "2xl" }} />
+                    {isCustomPic(chatPic) && <Avatar.Image src={chatPic} />}
+                  </Avatar.Root>
 
-                {!picLoading && (
-                  <Box
-                    position="absolute"
-                    inset={0}
-                    bg="rgba(0,0,0,0.5)"
-                    borderRadius="full"
-                    display={{ base: "none", md: "flex" }}
-                    alignItems="center"
-                    justifyContent="center"
-                    opacity={0}
-                    _hover={{ opacity: 1 }}
-                    transition="opacity 0.2s ease"
-                    zIndex={1}
-                  >
-                    <LuPencil size={24} color="white" />
-                  </Box>
-                )}
+                  {picLoading && (
+                    <Box
+                      position="absolute"
+                      inset={0}
+                      bg="rgba(0,0,0,0.6)"
+                      borderRadius="full"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      zIndex={2}
+                    >
+                      <Spinner size="sm" color="var(--accent-primary)" />
+                    </Box>
+                  )}
 
-                {!picLoading && (
-                  <Box
-                    position="absolute"
-                    bottom={0}
-                    right={0}
+                  {!picLoading && (
+                    <Box
+                      position="absolute"
+                      inset={0}
+                      bg="rgba(0,0,0,0.5)"
+                      borderRadius="full"
+                      display={{ base: "none", md: "flex" }}
+                      alignItems="center"
+                      justifyContent="center"
+                      opacity={0}
+                      _hover={{ opacity: 1 }}
+                      transition="opacity 0.2s ease"
+                      zIndex={1}
+                    >
+                      <LuPencil size={24} color="white" />
+                    </Box>
+                  )}
+
+                  {!picLoading && (
+                    <Box
+                      position="absolute"
+                      bottom={0}
+                      right={0}
+                      w="24px"
+                      h="24px"
+                      bg="var(--accent-gradient)"
+                      borderRadius="full"
+                      display={{ base: "flex", md: "none" }}
+                      alignItems="center"
+                      justifyContent="center"
+                      boxShadow="0 2px 6px rgba(0,0,0,0.3)"
+                      zIndex={1}
+                    >
+                      <LuPencil size={12} color="white" />
+                    </Box>
+                  )}
+                </Box>
+              </>
+            ) : (
+              <Avatar.Root
+                w={{ base: "80px", md: "115px", xl: "80px" }}
+                h={{ base: "80px", md: "115px", xl: "80px" }}
+                border={{ base: "2px solid rgba(255, 255, 255, 0.1)", md: "3px solid rgba(255, 255, 255, 0.2)", xl: "2px solid rgba(255, 255, 255, 0.1)" }}
+                mb={{ base: 4, md: 6, xl: 4 }}
+                cursor="pointer"
+                _hover={{ opacity: 0.8 }}
+                onClick={() => {
+                  setPreviewUrl(chatPic);
+                  setPreviewName(chatName);
+                }}
+              >
+                <Avatar.Fallback name={chatName} fontSize={{ base: "2xl", md: "4xl", xl: "2xl" }} />
+                {isCustomPic(chatPic) && <Avatar.Image src={chatPic} />}
+              </Avatar.Root>
+            )}
+
+            {isEditingName ? (
+              <Input
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                onBlur={handleRename}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleRename();
+                  if (e.key === "Escape") {
+                    setEditedName(selectedChat.chatName);
+                    setIsEditingName(false);
+                  }
+                }}
+                autoFocus
+                size="sm"
+                textAlign="center"
+                bg="rgba(255, 255, 255, 0.05)"
+                border="var(--glass-border)"
+                color="var(--text-primary)"
+                _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
+                mb={2}
+              />
+            ) : (
+              <Box display="flex" alignItems="center" justifyContent="center" gap={2} mb={{ base: 1, md: 2, xl: 1 }} w="100%" px={4}>
+                {isGroup && (
+                  <Box w="24px" flexShrink={0} />
+                )}
+                <Text
+                  fontSize={{ base: "xl", md: "2xl", xl: "xl" }}
+                  fontWeight="bold"
+                  textAlign="center"
+                  noOfLines={1}
+                  flex="1"
+                >
+                  {chatName}
+                </Text>
+                {isGroup && (
+                  <IconButton
+                    aria-label="Rename Group"
+                    variant="ghost"
+                    size="xs"
                     w="24px"
                     h="24px"
-                    bg="var(--accent-gradient)"
-                    borderRadius="full"
-                    display={{ base: "flex", md: "none" }}
-                    alignItems="center"
-                    justifyContent="center"
-                    boxShadow="0 2px 6px rgba(0,0,0,0.3)"
-                    zIndex={1}
+                    flexShrink={0}
+                    onClick={() => setIsEditingName(true)}
+                    color="var(--text-secondary)"
+                    _hover={{ bg: "whiteAlpha.200", color: "white" }}
                   >
-                    <LuPencil size={12} color="white" />
-                  </Box>
+                    <LuPencil />
+                  </IconButton>
                 )}
               </Box>
-            </>
-          ) : (
-            <Avatar.Root
-              w={{ base: "80px", md: "115px", xl: "80px" }}
-              h={{ base: "80px", md: "115px", xl: "80px" }}
-              border={{ base: "2px solid rgba(255, 255, 255, 0.1)", md: "3px solid rgba(255, 255, 255, 0.2)", xl: "2px solid rgba(255, 255, 255, 0.1)" }}
-              mb={{ base: 4, md: 6, xl: 4 }}
-              cursor="pointer"
-              _hover={{ opacity: 0.8 }}
-              onClick={() => {
-                setPreviewUrl(chatPic);
-                setPreviewName(chatName);
-              }}
-            >
-              <Avatar.Fallback name={chatName} fontSize={{ base: "2xl", md: "4xl", xl: "2xl" }} />
-              {isCustomPic(chatPic) && <Avatar.Image src={chatPic} />}
-            </Avatar.Root>
-          )}
+            )}
 
-          {isEditingName ? (
-            <Input
-              value={editedName}
-              onChange={(e) => setEditedName(e.target.value)}
-              onBlur={handleRename}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleRename();
-                if (e.key === "Escape") {
-                  setEditedName(selectedChat.chatName);
-                  setIsEditingName(false);
-                }
-              }}
-              autoFocus
-              size="sm"
-              textAlign="center"
-              bg="rgba(255, 255, 255, 0.05)"
-              border="var(--glass-border)"
-              color="var(--text-primary)"
-              _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
-              mb={2}
-            />
-          ) : (
-            <Box display="flex" alignItems="center" justifyContent="center" gap={2} mb={{ base: 1, md: 2, xl: 1 }} w="100%" px={4}>
-              {isGroup && (
-                <Box w="24px" flexShrink={0} />
-              )}
-              <Text
-                fontSize={{ base: "xl", md: "2xl", xl: "xl" }}
-                fontWeight="bold"
-                textAlign="center"
-                noOfLines={1}
-                flex="1"
-              >
-                {chatName}
-              </Text>
-              {isGroup && (
-                <IconButton
-                  aria-label="Rename Group"
-                  variant="ghost"
-                  size="xs"
-                  w="24px"
-                  h="24px"
-                  flexShrink={0}
-                  onClick={() => setIsEditingName(true)}
-                  color="var(--text-secondary)"
-                  _hover={{ bg: "whiteAlpha.200", color: "white" }}
-                >
-                  <LuPencil />
-                </IconButton>
-              )}
-            </Box>
-          )}
+            <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" textAlign="center">
+              {chatEmail}
+            </Text>
+            {!isGroup && (() => {
+              const otherUser = selectedChat.users?.find((u) => u._id !== user._id);
+              const isOnline = otherUser && onlineUsers?.includes(otherUser._id);
+              return (
+                <Box display="flex" alignItems="center" justifyContent="center" gap={1.5} mt={1}>
+                  <Box w="6px" h="6px" borderRadius="50%" bg={isOnline ? "#48BB78" : "#A0AEC0"} />
+                  <Text fontSize="xs" color={isOnline ? "#48BB78" : "var(--text-muted)"}>
+                    {isOnline ? "Online" : "Offline"}
+                  </Text>
+                </Box>
+              );
+            })()}
+          </Box>
 
-          <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" textAlign="center">
-            {chatEmail}
-          </Text>
-          {!isGroup && (() => {
-            const otherUser = selectedChat.users?.find((u) => u._id !== user._id);
-            const isOnline = otherUser && onlineUsers?.includes(otherUser._id);
-            return (
-              <Box display="flex" alignItems="center" justifyContent="center" gap={1.5} mt={1}>
-                <Box w="6px" h="6px" borderRadius="50%" bg={isOnline ? "#48BB78" : "#A0AEC0"} />
-                <Text fontSize="xs" color={isOnline ? "#48BB78" : "var(--text-muted)"}>
-                  {isOnline ? "Online" : "Offline"}
-                </Text>
-              </Box>
-            );
-          })()}
-        </Box>
-
-        {isGroup && (
-          <SimpleGrid columns={isAdmin ? 4 : 3} gap={2} w="100%" my={4} order={{ base: 2, xl: 4 }}>
-            <VStack gap={1}>
-              <IconButton
-                aria-label="Message"
-                size="sm"
-                borderRadius="full"
-                bg="rgba(255, 255, 255, 0.1)"
-                color="white"
-                _hover={{ bg: "rgba(255, 255, 255, 0.2)" }}
-                onClick={onClose}
-              >
-                <LuMessageSquare size={16} />
-              </IconButton>
-              <Text fontSize="10px" color="var(--text-secondary)">Message</Text>
-            </VStack>
-            <VStack gap={1}>
-              <IconButton
-                aria-label="Add Member"
-                size="sm"
-                borderRadius="full"
-                bg="rgba(255, 255, 255, 0.1)"
-                color="white"
-                _hover={{ bg: "rgba(255, 255, 255, 0.2)" }}
-                onClick={() => setIsAddMemberOpen(true)}
-              >
-                <LuUserPlus size={16} />
-              </IconButton>
-              <Text fontSize="10px" color="var(--text-secondary)">Add Member</Text>
-            </VStack>
-            <VStack gap={1}>
-              <IconButton
-                aria-label="Exit"
-                size="sm"
-                borderRadius="full"
-                bg="rgba(255, 0, 0, 0.2)"
-                color="red.300"
-                _hover={{ bg: "rgba(255, 0, 0, 0.3)" }}
-                onClick={handleLeaveGroup}
-              >
-                <LuLogOut size={16} />
-              </IconButton>
-              <Text fontSize="10px" color="red.300">Exit</Text>
-            </VStack>
-            {isAdmin && (
+          {isGroup && (
+            <SimpleGrid columns={isAdmin ? 4 : 3} gap={2} w="100%" my={4} order={{ base: 2, xl: 4 }}>
               <VStack gap={1}>
                 <IconButton
-                  aria-label="Delete Group"
+                  aria-label="Message"
+                  size="sm"
+                  borderRadius="full"
+                  bg="rgba(255, 255, 255, 0.1)"
+                  color="white"
+                  _hover={{ bg: "rgba(255, 255, 255, 0.2)" }}
+                  onClick={onClose}
+                >
+                  <LuMessageSquare size={16} />
+                </IconButton>
+                <Text fontSize="10px" color="var(--text-secondary)">Message</Text>
+              </VStack>
+              <VStack gap={1}>
+                <IconButton
+                  aria-label="Add Member"
+                  size="sm"
+                  borderRadius="full"
+                  bg="rgba(255, 255, 255, 0.1)"
+                  color="white"
+                  _hover={{ bg: "rgba(255, 255, 255, 0.2)" }}
+                  onClick={() => setIsAddMemberOpen(true)}
+                >
+                  <LuUserPlus size={16} />
+                </IconButton>
+                <Text fontSize="10px" color="var(--text-secondary)">Add Member</Text>
+              </VStack>
+              <VStack gap={1}>
+                <IconButton
+                  aria-label="Exit"
                   size="sm"
                   borderRadius="full"
                   bg="rgba(255, 0, 0, 0.2)"
                   color="red.300"
                   _hover={{ bg: "rgba(255, 0, 0, 0.3)" }}
-                  onClick={handleDeleteGroup}
+                  onClick={handleLeaveGroup}
                 >
-                  <LuTrash2 size={16} />
+                  <LuLogOut size={16} />
                 </IconButton>
-                <Text fontSize="10px" color="red.300">Delete</Text>
+                <Text fontSize="10px" color="red.300">Exit</Text>
               </VStack>
-            )}
-          </SimpleGrid>
-        )}
-
-        <Box flex="1" overflowY="auto" order={3} w="100%" pr={1} className="custom-scroll">
-          {isGroup ? (
-            <>
-              <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={3}>
-                Group Members ({selectedChat.users.length})
-              </Text>
-              <Stack gap={2} mb={6}>
-                {selectedChat.users.map((u) => {
-                  const hasCustomPic = isCustomPic(u.pic);
-                  const isCurrentUser = u._id === user._id;
-
-                  return (
-                    <Box
-                      key={u._id}
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      w="100%"
-                      px={3}
-                      py={2}
-                      borderRadius="var(--glass-radius-sm)"
-                      _hover={!isCurrentUser ? { bg: "rgba(255, 255, 255, 0.05)" } : undefined}
-                      cursor={!isCurrentUser ? "pointer" : "default"}
-                      onClick={!isCurrentUser ? () => accessChat(u._id) : undefined}
-                      color="var(--text-primary)"
-                    >
-                      <Box display="flex" alignItems="center" gap={3} overflow="hidden" flex="1">
-                        <Avatar.Root
-                          size="sm"
-                          cursor="pointer"
-                          _hover={{ opacity: 0.8 }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setPreviewUrl(u.pic);
-                            setPreviewName(u.name);
-                          }}
-                        >
-                          <Avatar.Fallback name={u.name} />
-                          {hasCustomPic && <Avatar.Image src={u.pic} />}
-                        </Avatar.Root>
-                        <Box
-                          w="8px"
-                          h="8px"
-                          borderRadius="50%"
-                          bg={onlineUsers?.includes(u._id) ? "#48BB78" : "#A0AEC0"}
-                          flexShrink={0}
-                        />
-                        <Box display="flex" alignItems="center" gap={2} overflow="hidden">
-                          <Text fontSize="sm" fontWeight="medium" noOfLines={1}>
-                            {u.name}{isCurrentUser ? " (You)" : ""}
-                          </Text>
-                          {u._id === (selectedChat.groupAdmin?._id || selectedChat.groupAdmin) && (
-                            <Box
-                              fontSize="9px"
-                              fontWeight="bold"
-                              bg="rgba(254, 99, 6, 0.15)"
-                              color="rgb(254, 99, 6)"
-                              border="1px solid rgba(254, 99, 6, 0.3)"
-                              px={1.5}
-                              py={0.5}
-                              borderRadius="full"
-                              textTransform="uppercase"
-                              letterSpacing="0.5px"
-                              flexShrink={0}
-                            >
-                              Owner
-                            </Box>
-                          )}
-                        </Box>
-                      </Box>
-                      {isAdmin && u._id !== (selectedChat.groupAdmin?._id || selectedChat.groupAdmin) && (
-                        <IconButton
-                          aria-label={`Remove ${u.name}`}
-                          size="xs"
-                          variant="ghost"
-                          color="red.300"
-                          _hover={{ bg: "rgba(255, 0, 0, 0.15)", color: "red.200" }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveMember(u);
-                          }}
-                        >
-                          <LuUserMinus size={14} />
-                        </IconButton>
-                      )}
-                    </Box>
-                  );
-                })}
-              </Stack>
-
-              <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={3}>
-                Shared Media
-              </Text>
-              {loading ? (
-                <Spinner size="sm" />
-              ) : mediaMessages.length > 0 ? (
-                <SimpleGrid columns={3} gap={2} maxH="160px" overflowY="auto" pr={1} className="custom-scroll">
-                  {mediaMessages.map((m) => (
-                    <Box
-                      key={m._id}
-                      aspectRatio="1"
-                      borderRadius="md"
-                      overflow="hidden"
-                      cursor="pointer"
-                      _hover={{ opacity: 0.8 }}
-                      onClick={() => {
-                        setPreviewUrl(m.content);
-                        setPreviewName(m.sender?.name || "Shared Media");
-                      }}
-                    >
-                      <Image src={m.content} alt="media" objectFit="cover" w="100%" h="100%" />
-                    </Box>
-                  ))}
-                </SimpleGrid>
-              ) : (
-                <Text fontSize={{ base: "xs", md: "sm", xl: "xs" }} color="var(--text-muted)">No media shared</Text>
+              {isAdmin && (
+                <VStack gap={1}>
+                  <IconButton
+                    aria-label="Delete Group"
+                    size="sm"
+                    borderRadius="full"
+                    bg="rgba(255, 0, 0, 0.2)"
+                    color="red.300"
+                    _hover={{ bg: "rgba(255, 0, 0, 0.3)" }}
+                    onClick={handleDeleteGroup}
+                  >
+                    <LuTrash2 size={16} />
+                  </IconButton>
+                  <Text fontSize="10px" color="red.300">Delete</Text>
+                </VStack>
               )}
-            </>
-          ) : (
-            <>
-              <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={{ base: 3, md: 5, xl: 3 }}>
-                Media
-              </Text>
-              {loading ? (
-                <Spinner size="sm" />
-              ) : mediaMessages.length > 0 ? (
-                <SimpleGrid columns={3} gap={2}>
-                  {mediaMessages.map((m) => (
-                    <Box
-                      key={m._id}
-                      aspectRatio="1"
-                      borderRadius="md"
-                      overflow="hidden"
-                      cursor="pointer"
-                      _hover={{ opacity: 0.8 }}
-                      onClick={() => setPreviewUrl(m.content)}
-                    >
-                      <Image src={m.content} alt="media" objectFit="cover" w="100%" h="100%" />
-                    </Box>
-                  ))}
-                </SimpleGrid>
-              ) : (
-                <Text fontSize={{ base: "xs", md: "sm", xl: "xs" }} color="var(--text-muted)">No media shared</Text>
-              )}
-            </>
+            </SimpleGrid>
           )}
-        </Box>
 
-        <Box borderTop="var(--glass-border)" pt={4} pb={2} order={5} w="100%">
-          <Text fontSize="xs" color="var(--text-muted)" textAlign="center">
+          <Box flex="1" overflowY="auto" order={3} w="100%" pr={1} className="custom-scroll">
             {isGroup ? (
-              `Group created by ${creatorName}${selectedChat.createdAt ? ` on ${formatDate(selectedChat.createdAt)}` : ""}`
+              <>
+                <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={3}>
+                  Group Members ({selectedChat.users.length})
+                </Text>
+                <Stack gap={2} mb={6}>
+                  {selectedChat.users.map((u) => {
+                    const hasCustomPic = isCustomPic(u.pic);
+                    const isCurrentUser = u._id === user._id;
+
+                    return (
+                      <Box
+                        key={u._id}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        w="100%"
+                        px={3}
+                        py={2}
+                        borderRadius="var(--glass-radius-sm)"
+                        _hover={!isCurrentUser ? { bg: "rgba(255, 255, 255, 0.05)" } : undefined}
+                        cursor={!isCurrentUser ? "pointer" : "default"}
+                        onClick={!isCurrentUser ? () => accessChat(u._id) : undefined}
+                        color="var(--text-primary)"
+                      >
+                        <Box display="flex" alignItems="center" gap={3} overflow="hidden" flex="1">
+                          <Avatar.Root
+                            size="sm"
+                            cursor="pointer"
+                            _hover={{ opacity: 0.8 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPreviewUrl(u.pic);
+                              setPreviewName(u.name);
+                            }}
+                          >
+                            <Avatar.Fallback name={u.name} />
+                            {hasCustomPic && <Avatar.Image src={u.pic} />}
+                          </Avatar.Root>
+                          <Box
+                            w="8px"
+                            h="8px"
+                            borderRadius="50%"
+                            bg={onlineUsers?.includes(u._id) ? "#48BB78" : "#A0AEC0"}
+                            flexShrink={0}
+                          />
+                          <Box display="flex" alignItems="center" gap={2} overflow="hidden">
+                            <Text fontSize="sm" fontWeight="medium" noOfLines={1}>
+                              {u.name}{isCurrentUser ? " (You)" : ""}
+                            </Text>
+                            {u._id === (selectedChat.groupAdmin?._id || selectedChat.groupAdmin) && (
+                              <Box
+                                fontSize="9px"
+                                fontWeight="bold"
+                                bg="rgba(254, 99, 6, 0.15)"
+                                color="rgb(254, 99, 6)"
+                                border="1px solid rgba(254, 99, 6, 0.3)"
+                                px="6px"
+                                borderRadius="full"
+                                textTransform="uppercase"
+                                letterSpacing="0.5px"
+                                flexShrink={0}
+                                ml={4}
+                                display="inline-flex"
+                                alignItems="center"
+                                justifyContent="center"
+                                lineHeight="1"
+                                h="16px"
+                              >
+                                Owner
+                              </Box>
+                            )}
+                          </Box>
+                        </Box>
+                        {isAdmin && u._id !== (selectedChat.groupAdmin?._id || selectedChat.groupAdmin) && (
+                          <IconButton
+                            aria-label={`Remove ${u.name}`}
+                            size="xs"
+                            variant="ghost"
+                            color="red.300"
+                            _hover={{ bg: "rgba(255, 0, 0, 0.15)", color: "red.200" }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveMember(u);
+                            }}
+                          >
+                            <LuUserMinus size={14} />
+                          </IconButton>
+                        )}
+                      </Box>
+                    );
+                  })}
+                </Stack>
+
+                <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={3}>
+                  Shared Media
+                </Text>
+                {loading ? (
+                  <Spinner size="sm" />
+                ) : mediaMessages.length > 0 ? (
+                  <SimpleGrid columns={3} gap={2} maxH="160px" overflowY="auto" pr={1} className="custom-scroll">
+                    {mediaMessages.map((m) => (
+                      <Box
+                        key={m._id}
+                        aspectRatio="1"
+                        borderRadius="md"
+                        overflow="hidden"
+                        cursor="pointer"
+                        _hover={{ opacity: 0.8 }}
+                        onClick={() => {
+                          setPreviewUrl(m.content);
+                          setPreviewName(m.sender?.name || "Shared Media");
+                        }}
+                      >
+                        <Image src={m.content} alt="media" objectFit="cover" w="100%" h="100%" />
+                      </Box>
+                    ))}
+                  </SimpleGrid>
+                ) : (
+                  <Text fontSize={{ base: "xs", md: "sm", xl: "xs" }} color="var(--text-muted)">No media shared</Text>
+                )}
+              </>
             ) : (
-              selectedChat.createdAt ? `You became friends on ${formatDate(selectedChat.createdAt)}` : ""
+              <>
+                <Text fontSize={{ base: "sm", md: "md", xl: "sm" }} color="var(--text-secondary)" fontWeight="bold" mb={{ base: 3, md: 5, xl: 3 }}>
+                  Media
+                </Text>
+                {loading ? (
+                  <Spinner size="sm" />
+                ) : mediaMessages.length > 0 ? (
+                  <SimpleGrid columns={3} gap={2}>
+                    {mediaMessages.map((m) => (
+                      <Box
+                        key={m._id}
+                        aspectRatio="1"
+                        borderRadius="md"
+                        overflow="hidden"
+                        cursor="pointer"
+                        _hover={{ opacity: 0.8 }}
+                        onClick={() => setPreviewUrl(m.content)}
+                      >
+                        <Image src={m.content} alt="media" objectFit="cover" w="100%" h="100%" />
+                      </Box>
+                    ))}
+                  </SimpleGrid>
+                ) : (
+                  <Text fontSize={{ base: "xs", md: "sm", xl: "xs" }} color="var(--text-muted)">No media shared</Text>
+                )}
+              </>
             )}
-          </Text>
-        </Box>
+          </Box>
+
+          <Box borderTop="var(--glass-border)" pt={4} pb={2} order={5} w="100%">
+            <Text fontSize="xs" color="var(--text-muted)" textAlign="center">
+              {isGroup ? (
+                `Group created by ${creatorName}${selectedChat.createdAt ? ` on ${formatDate(selectedChat.createdAt)}` : ""}`
+              ) : (
+                selectedChat.createdAt ? `You became friends on ${formatDate(selectedChat.createdAt)}` : ""
+              )}
+            </Text>
+          </Box>
 
 
 
 
 
-        <ImagePreviewModal
-          src={previewUrl}
-          name={previewName}
-          isOpen={Boolean(previewUrl)}
-          onClose={() => {
-            setPreviewUrl("");
-            setPreviewName("");
-          }}
-        />
+          <ImagePreviewModal
+            src={previewUrl}
+            name={previewName}
+            isOpen={Boolean(previewUrl)}
+            onClose={() => {
+              setPreviewUrl("");
+              setPreviewName("");
+            }}
+          />
 
-        <AddMemberModal
-          isOpen={isAddMemberOpen}
-          onClose={() => setIsAddMemberOpen(false)}
-        />
+          <AddMemberModal
+            isOpen={isAddMemberOpen}
+            onClose={() => setIsAddMemberOpen(false)}
+          />
         </Box>
       </Box>
     </>
