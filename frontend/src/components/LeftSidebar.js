@@ -5,6 +5,7 @@ import axios from "axios";
 import { LuEllipsisVertical, LuSearch, LuPlus } from "react-icons/lu";
 import ChatLoading from "./ChatLoading";
 import ProfileModal from "./miscellaneous/ProfileModal";
+import WallpaperModal from "./miscellaneous/WallpaperModal";
 import UserListItem from "./userAvatar/UserListItem";
 import GroupChatModal from "./miscellaneous/GroupChatModal";
 import { getSender } from "../config/ChatLogics";
@@ -18,6 +19,7 @@ const LeftSidebar = ({ fetchAgain }) => {
   const [loadingChat, setLoadingChat] = useState(false);
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isWallpaperOpen, setIsWallpaperOpen] = useState(false);
 
   const searchTimerRef = useRef(null);
   const latestQueryRef = useRef("");
@@ -200,6 +202,7 @@ const LeftSidebar = ({ fetchAgain }) => {
             positioning={{ placement: "bottom-end" }}
             onSelect={(e) => {
               if (e.value === "profile") setIsProfileOpen(true);
+              if (e.value === "wallpaper") setIsWallpaperOpen(true);
               if (e.value === "logout") logoutHandler();
             }}
           >
@@ -213,6 +216,9 @@ const LeftSidebar = ({ fetchAgain }) => {
                 <Menu.Item value="profile" _hover={{ bg: "var(--accent-primary)" }}>
                   Edit Profile
                 </Menu.Item>
+                <Menu.Item value="wallpaper" _hover={{ bg: "var(--accent-primary)" }}>
+                  Change Wallpaper
+                </Menu.Item>
                 <Menu.Item value="logout" _hover={{ bg: "var(--accent-primary)" }}>
                   Logout
                 </Menu.Item>
@@ -220,6 +226,7 @@ const LeftSidebar = ({ fetchAgain }) => {
             </Menu.Positioner>
           </Menu.Root>
           <ProfileModal user={user} isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
+          <WallpaperModal isOpen={isWallpaperOpen} onClose={() => setIsWallpaperOpen(false)} />
         </Box>
       </Box>
 

@@ -12,6 +12,10 @@ const userSchema = mongoose.Schema({
   bio: {
     type: String,
     default: "",
+  },
+  wallpaper: {
+    type: String,
+    default: "preset_1"
   }
 }, {
   timestamps: true

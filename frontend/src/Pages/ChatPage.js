@@ -5,6 +5,7 @@ import Chatbox from "../components/Chatbox";
 import LeftSidebar from "../components/LeftSidebar";
 import RightProfilePanel from "../components/RightProfilePanel";
 import { ChatState } from "../Context/ChatProvider";
+import { wallpaperPresets } from "../config/wallpaperPresets";
 
 const Chatpage = () => {
   const [fetchAgain, setFetchAgain] = useState(false);
@@ -106,6 +107,8 @@ const Chatpage = () => {
     return null;
   }
 
+  const selectedPreset = wallpaperPresets[user.wallpaper || "preset_1"] || wallpaperPresets.preset_1;
+
   return (
     <Box
       w="100%"
@@ -114,6 +117,10 @@ const Chatpage = () => {
       alignItems="center"
       justifyContent="center"
       p={{ base: 0, md: 4 }}
+      style={{
+        ...selectedPreset.appStyle,
+        transition: "background 0.3s ease-in-out"
+      }}
     >
       <Box
         w={{ base: "100%", md: "94vw" }}

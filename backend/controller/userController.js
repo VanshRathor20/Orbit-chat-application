@@ -26,6 +26,7 @@ const registerUser=asyncHandler(async(req,res)=>{
             email:userCreated.email,
             pic:userCreated.pic,
             bio:userCreated.bio,
+            wallpaper:userCreated.wallpaper,
             token:generateToken(userCreated._id) 
         })
     }else{
@@ -44,6 +45,7 @@ const authUser=asyncHandler(async(req,res)=>{
             email:userFound.email,
             pic:userFound.pic,
             bio:userFound.bio,
+            wallpaper:userFound.wallpaper,
             token:generateToken(userFound._id)
         })
     }else{
@@ -75,6 +77,9 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     if (req.body.bio !== undefined) {
       userToUpdate.bio = req.body.bio;
     }
+    if (req.body.wallpaper !== undefined) {
+      userToUpdate.wallpaper = req.body.wallpaper;
+    }
 
     if (req.body.password) {
       userToUpdate.password = req.body.password;
@@ -88,6 +93,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       email: updatedUser.email,
       pic: updatedUser.pic,
       bio: updatedUser.bio,
+      wallpaper: updatedUser.wallpaper,
       token: generateToken(updatedUser._id),
     });
   } else {
