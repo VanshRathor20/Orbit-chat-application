@@ -304,6 +304,10 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
   const chatPic = isGroup ? (selectedChat?.groupPic || "") : getSenderFull(user, selectedChat?.users || [])?.pic;
   const chatEmail = isGroup ? "Group Chat" : getSenderFull(user, selectedChat?.users || [])?.email;
 
+  const adminId = selectedChat?.groupAdmin?._id || selectedChat?.groupAdmin;
+  const adminUser = selectedChat?.users?.find((u) => u._id === adminId);
+  const creatorName = selectedChat?.createdBy?.name || adminUser?.name || selectedChat?.groupAdmin?.name || "Unknown";
+
 
 
   // Filter messages that look like images (simple URL check for this demo)
@@ -645,9 +649,28 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                           bg={onlineUsers?.includes(u._id) ? "#48BB78" : "#A0AEC0"}
                           flexShrink={0}
                         />
-                        <Text fontSize="sm" fontWeight="medium" noOfLines={1}>
-                          {u.name}{isCurrentUser ? " (You)" : ""}
-                        </Text>
+                        <Box display="flex" alignItems="center" gap={2} overflow="hidden">
+                          <Text fontSize="sm" fontWeight="medium" noOfLines={1}>
+                            {u.name}{isCurrentUser ? " (You)" : ""}
+                          </Text>
+                          {u._id === (selectedChat.groupAdmin?._id || selectedChat.groupAdmin) && (
+                            <Box
+                              fontSize="9px"
+                              fontWeight="bold"
+                              bg="rgba(254, 99, 6, 0.15)"
+                              color="rgb(254, 99, 6)"
+                              border="1px solid rgba(254, 99, 6, 0.3)"
+                              px={1.5}
+                              py={0.5}
+                              borderRadius="full"
+                              textTransform="uppercase"
+                              letterSpacing="0.5px"
+                              flexShrink={0}
+                            >
+                              Owner
+                            </Box>
+                          )}
+                        </Box>
                       </Box>
                       {isAdmin && u._id !== (selectedChat.groupAdmin?._id || selectedChat.groupAdmin) && (
                         <IconButton
@@ -730,7 +753,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
         <Box borderTop="var(--glass-border)" pt={4} pb={2} order={5} w="100%">
           <Text fontSize="xs" color="var(--text-muted)" textAlign="center">
             {isGroup ? (
-              `Group created by ${selectedChat.createdBy?.name || selectedChat.groupAdmin?.name || "Unknown"}${selectedChat.createdAt ? ` on ${formatDate(selectedChat.createdAt)}` : ""}`
+              `Group created by ${creatorName}${selectedChat.createdAt ? ` on ${formatDate(selectedChat.createdAt)}` : ""}`
             ) : (
               selectedChat.createdAt ? `You became friends on ${formatDate(selectedChat.createdAt)}` : ""
             )}

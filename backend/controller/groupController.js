@@ -248,7 +248,7 @@ const removeMemberPatch = asyncHandler(async (req, res) => {
   // Create a system message
   let systemMsg = await Message.create({
     sender: req.user._id,
-    content: `Admin removed ${username} from the group`,
+    content: `Owner removed ${username} from the group`,
     chat: groupId,
     messageType: "system",
   });
