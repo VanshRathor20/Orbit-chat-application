@@ -356,12 +356,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
         pb={3}
         px={2}
         borderBottom="var(--glass-border)"
+        cursor="pointer"
+        onClick={() => setIsRightPanelOpen(!isRightPanelOpen)}
       >
         <Box display="flex" alignItems="center" gap={1}>
           <Button
             display={{ base: "flex", md: "none" }}
             variant="ghost"
-            onClick={() => setSelectedChat(null)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedChat(null);
+            }}
             color="rgba(255, 255, 255, 0.9)"
             _hover={{ bg: "whiteAlpha.200", color: "white" }}
             p={2}
@@ -374,8 +379,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
             fontSize={{ base: "18px", md: "24px" }}
             fontFamily="Work sans"
             fontWeight="bold"
-            cursor="pointer"
-            onClick={() => setIsRightPanelOpen(!isRightPanelOpen)}
           >
           {!selectedChat.isGroupChat ? (
             <Box display="flex" alignItems="center" gap={3} overflow="hidden">
@@ -411,7 +414,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
         </Box>
         <Button
           variant="ghost"
-          onClick={() => setIsRightPanelOpen(!isRightPanelOpen)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsRightPanelOpen(!isRightPanelOpen);
+          }}
           color="rgba(255, 255, 255, 0.9)"
           _hover={{ bg: "whiteAlpha.200", color: "white" }}
           p={2}
