@@ -18,6 +18,38 @@ const Signup = () => {
   const navigate = useNavigate();
   const { setUser } = ChatState();
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isEmailEmpty = email === "";
+  const isEmailValid = emailRegex.test(email);
+  const showEmailError = !isEmailEmpty && !isEmailValid;
+
+  const isPasswordEmpty = password === "";
+  const isConfirmPasswordEmpty = confirmPassword === "";
+  const passwordsMatch = password === confirmPassword;
+  const showPasswordMismatchError = !isPasswordEmpty && !isConfirmPasswordEmpty && !passwordsMatch;
+
+  const getPasswordStrength = (pwd) => {
+    if (!pwd) return { level: "weak", score: 0 };
+    const hasMinLength = pwd.length >= 8;
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasLower = /[a-z]/.test(pwd);
+    const hasNumber = /[0-9]/.test(pwd);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pwd);
+
+    const criteria = [hasMinLength, hasUpper, hasLower, hasNumber, hasSpecial];
+    const score = criteria.filter(Boolean).length;
+
+    let level = "weak";
+    if (score >= 5) {
+      level = "strong";
+    } else if (score >= 3) {
+      level = "medium";
+    }
+    return { level, score };
+  };
+
+  const { level: strengthLevel } = getPasswordStrength(password);
+
   const postDetails = (pics) => {
     setPicLoading(true);
     if (pics === undefined) {
@@ -67,6 +99,25 @@ const Signup = () => {
       setPicLoading(false);
       return;
     }
+
+    if (!isEmailValid) {
+      toaster.create({
+        title: "Please enter a valid email address",
+        type: "warning",
+      });
+      setPicLoading(false);
+      return;
+    }
+
+    if (strengthLevel === "weak") {
+      toaster.create({
+        title: "Please choose a stronger password",
+        type: "warning",
+      });
+      setPicLoading(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       toaster.create({
         title: "Passwords Do Not Match",
@@ -144,6 +195,7 @@ const Signup = () => {
         <Box w="100%">
           <Text mb="2" color="whiteAlpha.900" fontWeight="medium">Email Address</Text>
           <Input
+            value={email}
             type="email"
             placeholder="Enter Your Email Address"
             w="100%"
@@ -151,19 +203,45 @@ const Signup = () => {
             minH={{ base: "48px", sm: "44px", md: "44px" }}
             py={{ base: "0", sm: "10px", md: "10px" }}
             color="white"
-            borderColor="whiteAlpha.200"
+            borderColor={
+              showEmailError 
+                ? "rgba(239, 68, 68, 0.8)" 
+                : (!isEmailEmpty && isEmailValid) 
+                  ? "rgba(34, 197, 94, 0.8)" 
+                  : "whiteAlpha.200"
+            }
             bg="rgba(255, 255, 255, 0.05)"
             _placeholder={{ color: "rgba(255, 255, 255, 0.65)" }}
-            _focus={{ borderColor: "rgba(254, 99, 6, 0.6)", bg: "rgba(255, 255, 255, 0.08)" }}
+            _hover={{
+              borderColor: showEmailError 
+                ? "rgba(239, 68, 68, 0.8)" 
+                : (!isEmailEmpty && isEmailValid) 
+                  ? "rgba(34, 197, 94, 0.8)" 
+                  : "whiteAlpha.300"
+            }}
+            _focus={{ 
+              borderColor: showEmailError 
+                ? "rgba(239, 68, 68, 0.8)" 
+                : (!isEmailEmpty && isEmailValid) 
+                  ? "rgba(34, 197, 94, 0.8)" 
+                  : "rgba(254, 99, 6, 0.6)", 
+              bg: "rgba(255, 255, 255, 0.08)" 
+            }}
             transition="all 0.2s"
             onChange={(e) => setEmail(e.target.value)}
           />
+          {showEmailError && (
+            <Text color="rgba(239, 68, 68, 0.8)" fontSize="xs" mt="1.5">
+              Please enter a valid email address
+            </Text>
+          )}
         </Box>
 
         <Box w="100%">
           <Text mb="2" color="whiteAlpha.900" fontWeight="medium">Password</Text>
           <Box position="relative" w="100%">
             <Input
+              value={password}
               type={showPassword ? "text" : "password"}
               placeholder="Enter Password"
               w="100%"
@@ -196,11 +274,57 @@ const Signup = () => {
               {showPassword ? <LuEyeOff /> : <LuEye />}
             </IconButton>
           </Box>
+          {password && (
+            <Box mt="2" transition="all 0.3s ease">
+              <Box 
+                w="100%" 
+                h="4px" 
+                bg="whiteAlpha.100" 
+                borderRadius="full" 
+                overflow="hidden"
+              >
+                <Box
+                  h="100%"
+                  w={
+                    strengthLevel === "weak" 
+                      ? "33%" 
+                      : strengthLevel === "medium" 
+                        ? "66%" 
+                        : "100%"
+                  }
+                  bg={
+                    strengthLevel === "weak"
+                      ? "rgba(239, 68, 68, 0.8)"
+                      : strengthLevel === "medium"
+                        ? "rgba(245, 158, 11, 0.8)"
+                        : "rgba(34, 197, 94, 0.8)"
+                  }
+                  transition="width 0.3s ease-in-out, background-color 0.3s ease-in-out"
+                />
+              </Box>
+              <Text 
+                mt="1.5" 
+                fontSize="xs" 
+                fontWeight="medium"
+                color={
+                  strengthLevel === "weak"
+                    ? "rgba(239, 68, 68, 0.9)"
+                    : strengthLevel === "medium"
+                      ? "rgba(245, 158, 11, 0.9)"
+                      : "rgba(34, 197, 94, 0.9)"
+                }
+                transition="color 0.3s ease"
+              >
+                Password Strength: {strengthLevel.charAt(0).toUpperCase() + strengthLevel.slice(1)}
+              </Text>
+            </Box>
+          )}
         </Box>
 
         <Box w="100%">
           <Text mb="2" color="whiteAlpha.900" fontWeight="medium">Confirm Password</Text>
           <Input
+            value={confirmPassword}
             type={showPassword ? "text" : "password"}
             placeholder="Confirm Password"
             w="100%"
@@ -208,13 +332,38 @@ const Signup = () => {
             minH={{ base: "48px", sm: "44px", md: "44px" }}
             py={{ base: "0", sm: "10px", md: "10px" }}
             color="white"
-            borderColor="whiteAlpha.200"
+            borderColor={
+              showPasswordMismatchError 
+                ? "rgba(239, 68, 68, 0.8)" 
+                : (!isConfirmPasswordEmpty && passwordsMatch) 
+                  ? "rgba(34, 197, 94, 0.8)" 
+                  : "whiteAlpha.200"
+            }
             bg="rgba(255, 255, 255, 0.05)"
             _placeholder={{ color: "rgba(255, 255, 255, 0.65)" }}
-            _focus={{ borderColor: "rgba(254, 99, 6, 0.6)", bg: "rgba(255, 255, 255, 0.08)" }}
+            _hover={{
+              borderColor: showPasswordMismatchError 
+                ? "rgba(239, 68, 68, 0.8)" 
+                : (!isConfirmPasswordEmpty && passwordsMatch) 
+                  ? "rgba(34, 197, 94, 0.8)" 
+                  : "whiteAlpha.300"
+            }}
+            _focus={{ 
+              borderColor: showPasswordMismatchError 
+                ? "rgba(239, 68, 68, 0.8)" 
+                : (!isConfirmPasswordEmpty && passwordsMatch) 
+                  ? "rgba(34, 197, 94, 0.8)" 
+                  : "rgba(254, 99, 6, 0.6)", 
+              bg: "rgba(255, 255, 255, 0.08)" 
+            }}
             transition="all 0.2s"
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
+          {showPasswordMismatchError && (
+            <Text color="rgba(239, 68, 68, 0.8)" fontSize="xs" mt="1.5">
+              Passwords do not match
+            </Text>
+          )}
         </Box>
 
         <Box w="100%">

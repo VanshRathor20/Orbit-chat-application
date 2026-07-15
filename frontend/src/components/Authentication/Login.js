@@ -15,11 +15,25 @@ const Login = () => {
   const navigate = useNavigate();
   const { setUser } = ChatState();
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isEmailEmpty = email === "";
+  const isEmailValid = emailRegex.test(email);
+  const showEmailError = !isEmailEmpty && !isEmailValid;
+
   const submitHandler = async () => {
     setLoading(true);
     if (!email || !password) {
       toaster.create({
         title: "Please Fill all the Fields",
+        type: "warning",
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (!isEmailValid) {
+      toaster.create({
+        title: "Please enter a valid email address",
         type: "warning",
       });
       setLoading(false);
@@ -85,13 +99,38 @@ const Login = () => {
             minH={{ base: "48px", sm: "44px", md: "44px" }}
             py={{ base: "0", sm: "10px", md: "10px" }}
             color="white"
-            borderColor="whiteAlpha.200"
+            borderColor={
+              showEmailError 
+                ? "rgba(239, 68, 68, 0.8)" 
+                : (!isEmailEmpty && isEmailValid) 
+                  ? "rgba(34, 197, 94, 0.8)" 
+                  : "whiteAlpha.200"
+            }
             bg="rgba(255, 255, 255, 0.05)"
             _placeholder={{ color: "rgba(255, 255, 255, 0.65)" }}
-            _focus={{ borderColor: "rgba(254, 99, 6, 0.6)", bg: "rgba(255, 255, 255, 0.08)" }}
+            _hover={{
+              borderColor: showEmailError 
+                ? "rgba(239, 68, 68, 0.8)" 
+                : (!isEmailEmpty && isEmailValid) 
+                  ? "rgba(34, 197, 94, 0.8)" 
+                  : "whiteAlpha.300"
+            }}
+            _focus={{ 
+              borderColor: showEmailError 
+                ? "rgba(239, 68, 68, 0.8)" 
+                : (!isEmailEmpty && isEmailValid) 
+                  ? "rgba(34, 197, 94, 0.8)" 
+                  : "rgba(254, 99, 6, 0.6)", 
+              bg: "rgba(255, 255, 255, 0.08)" 
+            }}
             transition="all 0.2s"
             onChange={(e) => setEmail(e.target.value)}
           />
+          {showEmailError && (
+            <Text color="rgba(239, 68, 68, 0.8)" fontSize="xs" mt="1.5">
+              Please enter a valid email address
+            </Text>
+          )}
         </Box>
 
         <Box w="100%">
