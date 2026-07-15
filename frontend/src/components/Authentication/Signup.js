@@ -117,16 +117,19 @@ const Signup = () => {
       <VStack
         gap="12px"
         align="stretch"
+        w={{ base: 'auto', sm: '100%', md: '100%' }}
         flex={{ base: "1", sm: "none", md: "none" }}
         overflowY={{ base: "auto", sm: "visible", md: "visible" }}
         pr={{ base: "1", sm: "0", md: "0" }}
-        pb="1"
+        pb={{ base: "1", sm: "0", md: "0" }}
       >
         <Box w="100%">
           <Text mb="2" color="whiteAlpha.900" fontWeight="medium">Name</Text>
           <Input
             w="100%"
             h={{ base: "48px", sm: "auto", md: "auto" }}
+            minH={{ base: "48px", sm: "44px", md: "44px" }}
+            py={{ base: "0", sm: "10px", md: "10px" }}
             placeholder="Enter Your Name"
             color="white"
             borderColor="whiteAlpha.200"
@@ -145,6 +148,8 @@ const Signup = () => {
             placeholder="Enter Your Email Address"
             w="100%"
             h={{ base: "48px", sm: "auto", md: "auto" }}
+            minH={{ base: "48px", sm: "44px", md: "44px" }}
+            py={{ base: "0", sm: "10px", md: "10px" }}
             color="white"
             borderColor="whiteAlpha.200"
             bg="rgba(255, 255, 255, 0.05)"
@@ -163,6 +168,8 @@ const Signup = () => {
               placeholder="Enter Password"
               w="100%"
               h={{ base: "48px", sm: "auto", md: "auto" }}
+              minH={{ base: "48px", sm: "44px", md: "44px" }}
+              py={{ base: "0", sm: "10px", md: "10px" }}
               color="white"
               borderColor="whiteAlpha.200"
               bg="rgba(255, 255, 255, 0.05)"
@@ -198,6 +205,8 @@ const Signup = () => {
             placeholder="Confirm Password"
             w="100%"
             h={{ base: "48px", sm: "auto", md: "auto" }}
+            minH={{ base: "48px", sm: "44px", md: "44px" }}
+            py={{ base: "0", sm: "10px", md: "10px" }}
             color="white"
             borderColor="whiteAlpha.200"
             bg="rgba(255, 255, 255, 0.05)"
@@ -216,6 +225,7 @@ const Signup = () => {
             accept="image/*"
             w="100%"
             h={{ base: "48px", sm: "auto", md: "auto" }}
+            minH={{ base: "48px", sm: "44px", md: "44px" }}
             color="white"
             borderColor="whiteAlpha.200"
             bg="rgba(255, 255, 255, 0.05)"
@@ -227,14 +237,16 @@ const Signup = () => {
       </VStack>
 
       <Box
-        pt="3"
-        mt="1"
+        pt={{ base: "3", sm: "0", md: "0" }}
+        mt={{ base: "1", sm: "3", md: "3" }}
         borderTop={{ base: "1px solid rgba(255, 255, 255, 0.1)", sm: "none", md: "none" }}
         flexShrink={0}
       >
         <Button
           width="100%"
           h={{ base: "48px", sm: "auto", md: "auto" }}
+          minH={{ base: "48px", sm: "44px", md: "44px" }}
+          py={{ base: "0", sm: "12px", md: "12px" }}
           onClick={handleSubmit}
           loading={picLoading}
           bg="#fe6306"

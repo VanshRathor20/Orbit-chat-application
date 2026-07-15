@@ -18,7 +18,7 @@ const Home = () => {
 
   return (
     <Container
-      maxW={{ base: 'md', sm: 'xl', md: 'xl' }}
+      maxW={{ base: 'md', sm: 'md', md: 'md' }}
       minH={{ base: '100dvh', sm: '100vh', md: '100vh' }}
       h={{ base: '100dvh', sm: 'auto', md: 'auto' }}
       overflow={{ base: 'hidden', sm: 'visible', md: 'visible' }}
