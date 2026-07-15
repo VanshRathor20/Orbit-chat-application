@@ -639,10 +639,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
         </Box>
 
         <Button
-          bg="var(--accent-gradient)"
+          bg="#fe6306"
           color="white"
           borderRadius="full"
-          _hover={{ opacity: 0.9 }}
+          _hover={{ 
+            bg: "#e55905",
+            transform: "scale(1.02)"
+          }}
+          transition="all 0.2s"
           onClick={() => sendMessage()}
           loading={sending}
           px={{ base: 4, md: 6 }}
