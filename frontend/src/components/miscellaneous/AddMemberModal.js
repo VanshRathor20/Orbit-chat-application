@@ -5,7 +5,7 @@ import {
   Portal,
   Spinner,
 } from "@chakra-ui/react";
-import axios from "axios";
+import axios from "../../config/axiosInstance";
 import { useState, useEffect } from "react";
 import { ChatState } from "../../Context/ChatProvider";
 import { toaster } from "../ui/toaster";
@@ -73,7 +73,7 @@ const AddMemberModal = ({ isOpen, onClose }) => {
           Authorization: `Bearer ${user?.token}`,
         },
       };
-      
+
       const { data } = await axios.put(
         "/api/chat/groupadd",
         {
@@ -91,7 +91,7 @@ const AddMemberModal = ({ isOpen, onClose }) => {
         title: `${userToAdd.name} added successfully!`,
         type: "success",
       });
-      
+
       onClose();
       setSearch("");
       setSearchResult([]);
@@ -127,7 +127,7 @@ const AddMemberModal = ({ isOpen, onClose }) => {
                 _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
                 disabled={adding}
               />
-              
+
               {loading ? (
                 <Spinner size="md" display="flex" mx="auto" my={4} />
               ) : (

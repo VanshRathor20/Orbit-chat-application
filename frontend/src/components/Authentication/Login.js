@@ -2,7 +2,7 @@ import { Box, Button, IconButton, Input, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../../config/axiosInstance";
 import { toaster } from "../ui/toaster";
 import { ChatState } from "../../Context/ChatProvider";
 
@@ -100,28 +100,28 @@ const Login = () => {
             py={{ base: "0", sm: "10px", md: "10px" }}
             color="white"
             borderColor={
-              showEmailError 
-                ? "rgba(239, 68, 68, 0.8)" 
-                : (!isEmailEmpty && isEmailValid) 
-                  ? "rgba(34, 197, 94, 0.8)" 
+              showEmailError
+                ? "rgba(239, 68, 68, 0.8)"
+                : (!isEmailEmpty && isEmailValid)
+                  ? "rgba(34, 197, 94, 0.8)"
                   : "whiteAlpha.200"
             }
             bg="rgba(255, 255, 255, 0.05)"
             _placeholder={{ color: "rgba(255, 255, 255, 0.65)" }}
             _hover={{
-              borderColor: showEmailError 
-                ? "rgba(239, 68, 68, 0.8)" 
-                : (!isEmailEmpty && isEmailValid) 
-                  ? "rgba(34, 197, 94, 0.8)" 
+              borderColor: showEmailError
+                ? "rgba(239, 68, 68, 0.8)"
+                : (!isEmailEmpty && isEmailValid)
+                  ? "rgba(34, 197, 94, 0.8)"
                   : "whiteAlpha.300"
             }}
-            _focus={{ 
-              borderColor: showEmailError 
-                ? "rgba(239, 68, 68, 0.8)" 
-                : (!isEmailEmpty && isEmailValid) 
-                  ? "rgba(34, 197, 94, 0.8)" 
-                  : "rgba(254, 99, 6, 0.6)", 
-              bg: "rgba(255, 255, 255, 0.08)" 
+            _focus={{
+              borderColor: showEmailError
+                ? "rgba(239, 68, 68, 0.8)"
+                : (!isEmailEmpty && isEmailValid)
+                  ? "rgba(34, 197, 94, 0.8)"
+                  : "rgba(254, 99, 6, 0.6)",
+              bg: "rgba(255, 255, 255, 0.08)"
             }}
             transition="all 0.2s"
             onChange={(e) => setEmail(e.target.value)}
@@ -190,7 +190,7 @@ const Login = () => {
           color="white"
           fontWeight="semibold"
           borderRadius="lg"
-          _hover={{ 
+          _hover={{
             bg: "#e55905",
             transform: "scale(1.02)"
           }}

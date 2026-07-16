@@ -2,7 +2,7 @@ import { Avatar, Box, Button, SimpleGrid, Text, Spinner, Image, Stack, IconButto
 import { ChatState } from "../Context/ChatProvider";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import axios from "../../config/axiosInstance";
 import { LuX, LuPencil, LuMessageSquare, LuLogOut, LuUserPlus, LuTrash2, LuUserMinus } from "react-icons/lu";
 import ImagePreviewModal from "./miscellaneous/ImagePreviewModal";
 import AddMemberModal from "./miscellaneous/AddMemberModal";

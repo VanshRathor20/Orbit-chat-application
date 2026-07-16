@@ -2,8 +2,8 @@ import { Box, Button, IconButton, Input, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { toaster } from "../ui/toaster"; 
+import axios from "../../config/axiosInstance";
+import { toaster } from "../ui/toaster";
 import { ChatState } from "../../Context/ChatProvider";
 
 const Signup = () => {
@@ -64,7 +64,7 @@ const Signup = () => {
     if (pics.type === "image/jpeg" || pics.type === "image/png") {
       const data = new FormData();
       data.append("file", pics);
-      data.append("upload_preset", "yapp-chat-app"); 
+      data.append("upload_preset", "yapp-chat-app");
       data.append("cloud_name", "itcli5ya");
       fetch("https://api.cloudinary.com/v1_1/itcli5ya/image/upload", {
         method: "post",
@@ -72,7 +72,7 @@ const Signup = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data); 
+          console.log(data);
           setPic(data.url.toString());
           setPicLoading(false);
         })
@@ -204,28 +204,28 @@ const Signup = () => {
             py={{ base: "0", sm: "10px", md: "10px" }}
             color="white"
             borderColor={
-              showEmailError 
-                ? "rgba(239, 68, 68, 0.8)" 
-                : (!isEmailEmpty && isEmailValid) 
-                  ? "rgba(34, 197, 94, 0.8)" 
+              showEmailError
+                ? "rgba(239, 68, 68, 0.8)"
+                : (!isEmailEmpty && isEmailValid)
+                  ? "rgba(34, 197, 94, 0.8)"
                   : "whiteAlpha.200"
             }
             bg="rgba(255, 255, 255, 0.05)"
             _placeholder={{ color: "rgba(255, 255, 255, 0.65)" }}
             _hover={{
-              borderColor: showEmailError 
-                ? "rgba(239, 68, 68, 0.8)" 
-                : (!isEmailEmpty && isEmailValid) 
-                  ? "rgba(34, 197, 94, 0.8)" 
+              borderColor: showEmailError
+                ? "rgba(239, 68, 68, 0.8)"
+                : (!isEmailEmpty && isEmailValid)
+                  ? "rgba(34, 197, 94, 0.8)"
                   : "whiteAlpha.300"
             }}
-            _focus={{ 
-              borderColor: showEmailError 
-                ? "rgba(239, 68, 68, 0.8)" 
-                : (!isEmailEmpty && isEmailValid) 
-                  ? "rgba(34, 197, 94, 0.8)" 
-                  : "rgba(254, 99, 6, 0.6)", 
-              bg: "rgba(255, 255, 255, 0.08)" 
+            _focus={{
+              borderColor: showEmailError
+                ? "rgba(239, 68, 68, 0.8)"
+                : (!isEmailEmpty && isEmailValid)
+                  ? "rgba(34, 197, 94, 0.8)"
+                  : "rgba(254, 99, 6, 0.6)",
+              bg: "rgba(255, 255, 255, 0.08)"
             }}
             transition="all 0.2s"
             onChange={(e) => setEmail(e.target.value)}
@@ -276,20 +276,20 @@ const Signup = () => {
           </Box>
           {password && (
             <Box mt="2" transition="all 0.3s ease">
-              <Box 
-                w="100%" 
-                h="4px" 
-                bg="whiteAlpha.100" 
-                borderRadius="full" 
+              <Box
+                w="100%"
+                h="4px"
+                bg="whiteAlpha.100"
+                borderRadius="full"
                 overflow="hidden"
               >
                 <Box
                   h="100%"
                   w={
-                    strengthLevel === "weak" 
-                      ? "33%" 
-                      : strengthLevel === "medium" 
-                        ? "66%" 
+                    strengthLevel === "weak"
+                      ? "33%"
+                      : strengthLevel === "medium"
+                        ? "66%"
                         : "100%"
                   }
                   bg={
@@ -302,9 +302,9 @@ const Signup = () => {
                   transition="width 0.3s ease-in-out, background-color 0.3s ease-in-out"
                 />
               </Box>
-              <Text 
-                mt="1.5" 
-                fontSize="xs" 
+              <Text
+                mt="1.5"
+                fontSize="xs"
                 fontWeight="medium"
                 color={
                   strengthLevel === "weak"
@@ -333,28 +333,28 @@ const Signup = () => {
             py={{ base: "0", sm: "10px", md: "10px" }}
             color="white"
             borderColor={
-              showPasswordMismatchError 
-                ? "rgba(239, 68, 68, 0.8)" 
-                : (!isConfirmPasswordEmpty && passwordsMatch) 
-                  ? "rgba(34, 197, 94, 0.8)" 
+              showPasswordMismatchError
+                ? "rgba(239, 68, 68, 0.8)"
+                : (!isConfirmPasswordEmpty && passwordsMatch)
+                  ? "rgba(34, 197, 94, 0.8)"
                   : "whiteAlpha.200"
             }
             bg="rgba(255, 255, 255, 0.05)"
             _placeholder={{ color: "rgba(255, 255, 255, 0.65)" }}
             _hover={{
-              borderColor: showPasswordMismatchError 
-                ? "rgba(239, 68, 68, 0.8)" 
-                : (!isConfirmPasswordEmpty && passwordsMatch) 
-                  ? "rgba(34, 197, 94, 0.8)" 
+              borderColor: showPasswordMismatchError
+                ? "rgba(239, 68, 68, 0.8)"
+                : (!isConfirmPasswordEmpty && passwordsMatch)
+                  ? "rgba(34, 197, 94, 0.8)"
                   : "whiteAlpha.300"
             }}
-            _focus={{ 
-              borderColor: showPasswordMismatchError 
-                ? "rgba(239, 68, 68, 0.8)" 
-                : (!isConfirmPasswordEmpty && passwordsMatch) 
-                  ? "rgba(34, 197, 94, 0.8)" 
-                  : "rgba(254, 99, 6, 0.6)", 
-              bg: "rgba(255, 255, 255, 0.08)" 
+            _focus={{
+              borderColor: showPasswordMismatchError
+                ? "rgba(239, 68, 68, 0.8)"
+                : (!isConfirmPasswordEmpty && passwordsMatch)
+                  ? "rgba(34, 197, 94, 0.8)"
+                  : "rgba(254, 99, 6, 0.6)",
+              bg: "rgba(255, 255, 255, 0.08)"
             }}
             transition="all 0.2s"
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -402,7 +402,7 @@ const Signup = () => {
           color="white"
           fontWeight="semibold"
           borderRadius="lg"
-          _hover={{ 
+          _hover={{
             bg: "#e55905",
             transform: "scale(1.02)"
           }}

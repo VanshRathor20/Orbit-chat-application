@@ -10,7 +10,7 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
-import axios from "axios";
+import axios from "../../config/axiosInstance";
 import { toaster } from "../ui/toaster";
 import { ChatState } from "../../Context/ChatProvider";
 
@@ -134,7 +134,7 @@ const ProfileModal = ({ user, isOpen, onClose }) => {
               <Dialog.CloseTrigger />
             </Dialog.Header>
             <Dialog.Body px={0} pb={0} display="flex" flexDir="column" gap={4}>
-              
+
               <input
                 type="file"
                 accept="image/*"
@@ -143,11 +143,11 @@ const ProfileModal = ({ user, isOpen, onClose }) => {
                 onChange={(e) => handleImageUpload(e.target.files[0])}
               />
 
-              <Box 
-                display="flex" 
-                alignItems="center" 
-                gap={4} 
-                cursor={picLoading ? "not-allowed" : "pointer"} 
+              <Box
+                display="flex"
+                alignItems="center"
+                gap={4}
+                cursor={picLoading ? "not-allowed" : "pointer"}
                 _hover={{ opacity: picLoading ? 1 : 0.8 }}
                 onClick={() => !picLoading && fileInputRef.current?.click()}
               >
@@ -167,20 +167,20 @@ const ProfileModal = ({ user, isOpen, onClose }) => {
                 )}
               </Box>
 
-              <Input 
+              <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Name" 
+                placeholder="Name"
                 bg="rgba(255, 255, 255, 0.05)"
                 border="var(--glass-border)"
                 color="var(--text-primary)"
                 _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
               />
 
-              <Textarea 
+              <Textarea
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                placeholder="Bio" 
+                placeholder="Bio"
                 bg="rgba(255, 255, 255, 0.05)"
                 border="var(--glass-border)"
                 color="var(--text-primary)"
@@ -195,7 +195,7 @@ const ProfileModal = ({ user, isOpen, onClose }) => {
               >
                 Save
               </Button>
-              
+
             </Dialog.Body>
           </Dialog.Content>
         </Dialog.Positioner>

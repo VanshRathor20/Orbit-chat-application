@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../../config/axiosInstance";
 import { LuBell, LuChevronDown, LuSearch } from "react-icons/lu";
 import NotificationBadge, { Effect } from "react-notification-badge";
 import ChatLoading from "../ChatLoading";

@@ -9,7 +9,7 @@ import {
 import { LuCheck } from "react-icons/lu";
 import { ChatState } from "../../Context/ChatProvider";
 import { wallpaperPresets } from "../../config/wallpaperPresets";
-import axios from "axios";
+import axios from "../../config/axiosInstance";
 import { toaster } from "../ui/toaster";
 
 const WallpaperModal = ({ isOpen, onClose }) => {
@@ -82,9 +82,9 @@ const WallpaperModal = ({ isOpen, onClose }) => {
                         display="flex"
                         alignItems="center"
                         justifyContent="center"
-                        _hover={{ 
-                          transform: "scale(1.05)", 
-                          borderColor: isSelected ? "#fe6306" : "rgba(255, 255, 255, 0.4)" 
+                        _hover={{
+                          transform: "scale(1.05)",
+                          borderColor: isSelected ? "#fe6306" : "rgba(255, 255, 255, 0.4)"
                         }}
                         transition="all 0.2s"
                         boxShadow={isSelected ? "0 0 10px rgba(254, 99, 6, 0.4)" : "none"}

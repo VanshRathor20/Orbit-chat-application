@@ -9,7 +9,7 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import EmojiPicker from "emoji-picker-react";
-import axios from "axios";
+import axios from "../../config/axiosInstance";
 import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { LuCamera, LuPaperclip, LuSendHorizontal, LuImage, LuX, LuInfo, LuSmile, LuArrowLeft } from "react-icons/lu";
 import { getSender, getSenderFull } from "../config/ChatLogics";
@@ -315,7 +315,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
 
   useEffect(() => {
     fetchMessages();
-    
+
     if (socket && selectedChat) {
       socket.emit("join chat", selectedChat._id);
     }
@@ -374,42 +374,42 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
           >
             <LuArrowLeft size={22} strokeWidth={2.5} />
           </Button>
-          
+
           <Box
             fontSize={{ base: "18px", md: "24px" }}
             fontFamily="Work sans"
             fontWeight="bold"
           >
-          {!selectedChat.isGroupChat ? (
-            <Box display="flex" alignItems="center" gap={3} overflow="hidden">
-              <Avatar.Root size="sm" display="inline-flex" flexShrink={0}>
-                <Avatar.Fallback
-                  name={getSender(user, selectedChat.users)}
-                />
-                {(() => {
-                  const sender = getSenderFull(user, selectedChat.users);
-                  return sender?.pic && sender.pic !== "backend/Models/userProfileIcon.png" ? (
-                    <Avatar.Image src={sender.pic} />
-                  ) : null;
-                })()}
-              </Avatar.Root>
-              <Text noOfLines={1} maxW={{ base: "180px", md: "350px", lg: "500px" }}>
-                {getSender(user, selectedChat.users)}
-              </Text>
-            </Box>
-          ) : (
-            <Box display="flex" alignItems="center" gap={3} overflow="hidden">
-              <Avatar.Root size="sm" display="inline-flex" flexShrink={0}>
-                <Avatar.Fallback name={selectedChat.chatName} />
-                {selectedChat.groupPic && selectedChat.groupPic !== "backend/Models/userProfileIcon.png" && (
-                  <Avatar.Image src={selectedChat.groupPic} />
-                )}
-              </Avatar.Root>
-              <Text noOfLines={1} maxW={{ base: "180px", md: "350px", lg: "500px" }}>
-                {selectedChat.chatName.toUpperCase()}
-              </Text>
-            </Box>
-          )}
+            {!selectedChat.isGroupChat ? (
+              <Box display="flex" alignItems="center" gap={3} overflow="hidden">
+                <Avatar.Root size="sm" display="inline-flex" flexShrink={0}>
+                  <Avatar.Fallback
+                    name={getSender(user, selectedChat.users)}
+                  />
+                  {(() => {
+                    const sender = getSenderFull(user, selectedChat.users);
+                    return sender?.pic && sender.pic !== "backend/Models/userProfileIcon.png" ? (
+                      <Avatar.Image src={sender.pic} />
+                    ) : null;
+                  })()}
+                </Avatar.Root>
+                <Text noOfLines={1} maxW={{ base: "180px", md: "350px", lg: "500px" }}>
+                  {getSender(user, selectedChat.users)}
+                </Text>
+              </Box>
+            ) : (
+              <Box display="flex" alignItems="center" gap={3} overflow="hidden">
+                <Avatar.Root size="sm" display="inline-flex" flexShrink={0}>
+                  <Avatar.Fallback name={selectedChat.chatName} />
+                  {selectedChat.groupPic && selectedChat.groupPic !== "backend/Models/userProfileIcon.png" && (
+                    <Avatar.Image src={selectedChat.groupPic} />
+                  )}
+                </Avatar.Root>
+                <Text noOfLines={1} maxW={{ base: "180px", md: "350px", lg: "500px" }}>
+                  {selectedChat.chatName.toUpperCase()}
+                </Text>
+              </Box>
+            )}
           </Box>
         </Box>
         <Button
@@ -471,13 +471,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
                 ) : (
                   <Box
                     bg={
-                      m.sender?._id === user._id 
-                        ? "rgba(254, 99, 6, 0.25)" 
+                      m.sender?._id === user._id
+                        ? "rgba(254, 99, 6, 0.25)"
                         : "rgba(255, 255, 255, 0.08)"
                     }
                     border={
-                      m.sender?._id === user._id 
-                        ? "1px solid rgba(254, 99, 6, 0.4)" 
+                      m.sender?._id === user._id
+                        ? "1px solid rgba(254, 99, 6, 0.4)"
                         : "1px solid rgba(255, 255, 255, 0.15)"
                     }
                     backdropFilter="blur(8px)"
@@ -507,21 +507,21 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
       <Box display="flex" flexDir="column" w="100%" mt={2}>
         {imagePreviewUrl && (
           <Box position="relative" mb={2} w="fit-content" alignSelf="flex-start">
-            <Image 
-              src={imagePreviewUrl} 
-              alt="Preview" 
-              maxH="150px" 
-              borderRadius="md" 
-              border="var(--glass-border)" 
+            <Image
+              src={imagePreviewUrl}
+              alt="Preview"
+              maxH="150px"
+              borderRadius="md"
+              border="var(--glass-border)"
               boxShadow="var(--glass-shadow)"
             />
-            <Box 
-              position="absolute" 
-              top={-2} 
-              right={-2} 
-              bg="rgba(0,0,0,0.6)" 
-              borderRadius="full" 
-              p={1} 
+            <Box
+              position="absolute"
+              top={-2}
+              right={-2}
+              bg="rgba(0,0,0,0.6)"
+              borderRadius="full"
+              p={1}
               cursor="pointer"
               backdropFilter="blur(4px)"
               onClick={() => {
@@ -534,151 +534,151 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
             </Box>
           </Box>
         )}
-        
+
         <Box display="flex" w="100%" gap={2} alignItems="center">
-        <Box position="relative" flex="1">
-          <input type="file" accept="image/*" capture="environment" style={{ display: "none" }} ref={cameraRef} onChange={handleImageUpload} />
-          <input type="file" accept="image/*" style={{ display: "none" }} ref={galleryRef} onChange={handleImageUpload} />
-          
-          {isEmojiPickerOpen && (
-            <Box
-              ref={emojiPickerRef}
-              position="absolute"
-              bottom="100%"
-              left={0}
-              mb={2}
-              zIndex={11}
-              boxShadow="var(--glass-shadow)"
-              borderRadius="lg"
-              overflow="hidden"
-              border="var(--glass-border)"
-            >
-              <EmojiPicker theme="dark" onEmojiClick={handleEmojiClick} />
-            </Box>
-          )}
+          <Box position="relative" flex="1">
+            <input type="file" accept="image/*" capture="environment" style={{ display: "none" }} ref={cameraRef} onChange={handleImageUpload} />
+            <input type="file" accept="image/*" style={{ display: "none" }} ref={galleryRef} onChange={handleImageUpload} />
 
-          <Box 
-            ref={emojiToggleButtonRef}
-            position="absolute" 
-            left={4} 
-            top="50%" 
-            transform="translateY(-50%)" 
-            zIndex={2} 
-            cursor="pointer" 
-            onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)} 
-            color="var(--text-muted)" 
-            _hover={{ color: "var(--text-primary)" }}
-          >
-            <LuSmile size={20} />
-          </Box>
-
-          {isAttachmentOpen && (
-            <>
-              <Box position="fixed" inset={0} zIndex={10} onClick={() => setIsAttachmentOpen(false)} />
+            {isEmojiPickerOpen && (
               <Box
+                ref={emojiPickerRef}
                 position="absolute"
                 bottom="100%"
-                right={0}
+                left={0}
                 mb={2}
-                p={2}
-                className="glass-panel"
-                borderRadius="var(--glass-radius-lg)"
                 zIndex={11}
-                display="flex"
-                gap={2}
+                boxShadow="var(--glass-shadow)"
+                borderRadius="lg"
+                overflow="hidden"
+                border="var(--glass-border)"
               >
-                <Box
-                  display="flex"
-                  flexDir="column"
-                  alignItems="center"
-                  justifyContent="center"
-                  p={3}
-                  bg="rgba(255, 255, 255, 0.05)"
-                  borderRadius="md"
-                  cursor="pointer"
-                  _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
-                  onClick={() => { setIsAttachmentOpen(false); cameraRef.current.click(); }}
-                >
-                  <LuCamera size={24} color="var(--text-primary)" />
-                  <Text fontSize="xs" mt={1} color="var(--text-secondary)">Camera</Text>
-                </Box>
-                <Box
-                  display="flex"
-                  flexDir="column"
-                  alignItems="center"
-                  justifyContent="center"
-                  p={3}
-                  bg="rgba(255, 255, 255, 0.05)"
-                  borderRadius="md"
-                  cursor="pointer"
-                  _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
-                  onClick={() => { setIsAttachmentOpen(false); galleryRef.current.click(); }}
-                >
-                  <LuImage size={24} color="var(--text-primary)" />
-                  <Text fontSize="xs" mt={1} color="var(--text-secondary)">Gallery</Text>
-                </Box>
+                <EmojiPicker theme="dark" onEmojiClick={handleEmojiClick} />
               </Box>
-            </>
-          )}
+            )}
 
-          {isTyping && (
-            <Box position="absolute" bottom="100%" left={4} mb={1} zIndex={2}>
-              <Text fontSize="xs" color="var(--text-muted)" fontStyle="italic">
-                typing...
-              </Text>
+            <Box
+              ref={emojiToggleButtonRef}
+              position="absolute"
+              left={4}
+              top="50%"
+              transform="translateY(-50%)"
+              zIndex={2}
+              cursor="pointer"
+              onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}
+              color="var(--text-muted)"
+              _hover={{ color: "var(--text-primary)" }}
+            >
+              <LuSmile size={20} />
             </Box>
-          )}
 
-          <Input
-            ref={inputRef}
-            placeholder="Message..."
-            value={newMessage}
-            onChange={typingHandler}
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            bg="rgba(255, 255, 255, 0.05)"
-            border="var(--glass-border)"
-            borderRadius="full"
-            color="var(--text-primary)"
-            pl={12}
-            pr={12}
-            h="46px"
-            _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
-          />
+            {isAttachmentOpen && (
+              <>
+                <Box position="fixed" inset={0} zIndex={10} onClick={() => setIsAttachmentOpen(false)} />
+                <Box
+                  position="absolute"
+                  bottom="100%"
+                  right={0}
+                  mb={2}
+                  p={2}
+                  className="glass-panel"
+                  borderRadius="var(--glass-radius-lg)"
+                  zIndex={11}
+                  display="flex"
+                  gap={2}
+                >
+                  <Box
+                    display="flex"
+                    flexDir="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    p={3}
+                    bg="rgba(255, 255, 255, 0.05)"
+                    borderRadius="md"
+                    cursor="pointer"
+                    _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
+                    onClick={() => { setIsAttachmentOpen(false); cameraRef.current.click(); }}
+                  >
+                    <LuCamera size={24} color="var(--text-primary)" />
+                    <Text fontSize="xs" mt={1} color="var(--text-secondary)">Camera</Text>
+                  </Box>
+                  <Box
+                    display="flex"
+                    flexDir="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    p={3}
+                    bg="rgba(255, 255, 255, 0.05)"
+                    borderRadius="md"
+                    cursor="pointer"
+                    _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
+                    onClick={() => { setIsAttachmentOpen(false); galleryRef.current.click(); }}
+                  >
+                    <LuImage size={24} color="var(--text-primary)" />
+                    <Text fontSize="xs" mt={1} color="var(--text-secondary)">Gallery</Text>
+                  </Box>
+                </Box>
+              </>
+            )}
 
-          <Box 
-            position="absolute" 
-            right={3} 
-            top="50%" 
-            transform="translateY(-50%)" 
-            zIndex={2} 
-            cursor="pointer" 
-            onClick={() => setIsAttachmentOpen(!isAttachmentOpen)} 
-            color="var(--text-muted)" 
-            _hover={{ color: "var(--text-primary)" }}
-          >
-            <LuPaperclip size={20} />
+            {isTyping && (
+              <Box position="absolute" bottom="100%" left={4} mb={1} zIndex={2}>
+                <Text fontSize="xs" color="var(--text-muted)" fontStyle="italic">
+                  typing...
+                </Text>
+              </Box>
+            )}
+
+            <Input
+              ref={inputRef}
+              placeholder="Message..."
+              value={newMessage}
+              onChange={typingHandler}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              bg="rgba(255, 255, 255, 0.05)"
+              border="var(--glass-border)"
+              borderRadius="full"
+              color="var(--text-primary)"
+              pl={12}
+              pr={12}
+              h="46px"
+              _focus={{ borderColor: "var(--text-muted)", boxShadow: "none" }}
+            />
+
+            <Box
+              position="absolute"
+              right={3}
+              top="50%"
+              transform="translateY(-50%)"
+              zIndex={2}
+              cursor="pointer"
+              onClick={() => setIsAttachmentOpen(!isAttachmentOpen)}
+              color="var(--text-muted)"
+              _hover={{ color: "var(--text-primary)" }}
+            >
+              <LuPaperclip size={20} />
+            </Box>
           </Box>
-        </Box>
 
-        <Button
-          bg="#fe6306"
-          color="white"
-          borderRadius="full"
-          _hover={{ 
-            bg: "#e55905",
-            transform: "scale(1.02)"
-          }}
-          transition="all 0.2s"
-          onClick={() => sendMessage()}
-          loading={sending}
-          px={{ base: 4, md: 6 }}
-          h="46px"
-        >
-          <LuSendHorizontal size={20} style={{ transform: "rotate(-35deg) translate(2px, -2px)" }} />
-          {/* <Text display={{ base: "none", md: "block" }} ml={2}></Text> */}
-        </Button>
+          <Button
+            bg="#fe6306"
+            color="white"
+            borderRadius="full"
+            _hover={{
+              bg: "#e55905",
+              transform: "scale(1.02)"
+            }}
+            transition="all 0.2s"
+            onClick={() => sendMessage()}
+            loading={sending}
+            px={{ base: 4, md: 6 }}
+            h="46px"
+          >
+            <LuSendHorizontal size={20} style={{ transform: "rotate(-35deg) translate(2px, -2px)" }} />
+            {/* <Text display={{ base: "none", md: "block" }} ml={2}></Text> */}
+          </Button>
+        </Box>
       </Box>
-    </Box>
     </Box>
   );
 };

@@ -1,5 +1,5 @@
 import { Box, Button, Stack, Text } from "@chakra-ui/react";
-import axios from "axios";
+import axios from "../../config/axiosInstance";
 import { useEffect } from "react";
 import { LuPlus } from "react-icons/lu";
 import { getSender } from "../config/ChatLogics";
@@ -99,13 +99,13 @@ const MyChats = ({ fetchAgain }) => {
                   <Text fontSize="xs">
                     <b>{chat.latestMessage.sender.name} : </b>
                     {chat.latestMessage.messageType === "image" ||
-                    (chat.latestMessage.content &&
-                      (chat.latestMessage.content.match(/\.(jpeg|jpg|gif|png)$/i) ||
-                        chat.latestMessage.content.includes("res.cloudinary.com")))
+                      (chat.latestMessage.content &&
+                        (chat.latestMessage.content.match(/\.(jpeg|jpg|gif|png)$/i) ||
+                          chat.latestMessage.content.includes("res.cloudinary.com")))
                       ? "📷 Photo"
                       : chat.latestMessage.content.length > 50
-                      ? chat.latestMessage.content.substring(0, 51) + "..."
-                      : chat.latestMessage.content}
+                        ? chat.latestMessage.content.substring(0, 51) + "..."
+                        : chat.latestMessage.content}
                   </Text>
                 )}
               </Box>
