@@ -57,7 +57,6 @@ Orbit ships dedicated layouts for desktop and mobile. Expand a section below to 
 
 </details>
 
-> **Maintainer note:** create `screenshots/desktop/` and `screenshots/mobile/` folders in the repo root and drop your PNGs in with the filenames above (or update the paths to match your files).
 
 ---
 
@@ -78,13 +77,11 @@ Orbit ships dedicated layouts for desktop and mobile. Expand a section below to 
 
 ---
 
-## 🚧 Known Limitations / In Progress
+## 🔮 Future Enhancements
 
-- **Chat selection highlighting** — currently uses object reference equality (`selectedChat === chat`) instead of `_id` comparison, so the highlight can drop when the chat list re-renders with new objects on incoming messages
-- **Avatar path validation is fragile** — default-vs-custom detection does a strict string match against `backend/Models/userProfileIcon.png`, but the actual file on disk is `userProfileIcon.jpg` — a mismatch that can misclassify avatars
-- **Message editing/deletion/reactions/pins/replies** — not yet implemented; message CRUD is currently create + retrieve only
-- **Group role promotion** — no way to promote another member to admin; only the group creator holds admin rights
-- **Voice messages** — recording/playback not implemented
+- **Message interactions** — editing, deletion, reactions, pins, and replies (currently CRUD is create + retrieve only)
+- **Group role promotion** — ability to promote another member to admin (currently only the group creator holds admin rights)
+- **Voice messages** — recording and playback support
 
 ---
 
@@ -196,17 +193,6 @@ npm start
 ```
 Runs on `http://localhost:5173` (or next available port) and proxies requests to the backend.
 
----
-
-## 🗺️ Roadmap
-
-- [ ] Fix chat selection to use `_id` comparison instead of object reference
-- [ ] Fix avatar default-detection path mismatch (`.png` vs `.jpg`)
-- [ ] Message interactions — reply, react, edit, pin, delete
-- [ ] Group admin role promotion
-- [ ] Voice recording & message UI polish
-- [ ] Move Cloudinary upload preset to environment config
-- [ ] Deployment + full project audit
 
 ---
 
@@ -233,8 +219,8 @@ Distributed under the MIT License. See `LICENSE` for more information.
 **Vansh Rathor**
 
 - Portfolio: [vanshrathorportfolio.netlify.app](https://vanshrathorportfolio.netlify.app/)
-- LinkedIn: [your-linkedin-url](#)
-- GitHub: [@your-github-username](#)
+- LinkedIn: [vansh-kumar-20-codes](https://www.linkedin.com/in/vansh-kumar-20-codes/)
+- GitHub: [@VanshRathor20](https://github.com/VanshRathor20)
 
 <div align="center">
   <sub>Built with ❤️ using the MERN stack</sub>
