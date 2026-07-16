@@ -3,13 +3,13 @@ import { ChatState } from "../Context/ChatProvider";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { LuX, LuPencil, LuPlus, LuMessageSquare, LuVolumeX, LuVideo, LuLogOut, LuUserPlus, LuTrash2, LuUserMinus } from "react-icons/lu";
+import { LuX, LuPencil, LuMessageSquare, LuLogOut, LuUserPlus, LuTrash2, LuUserMinus } from "react-icons/lu";
 import ImagePreviewModal from "./miscellaneous/ImagePreviewModal";
 import AddMemberModal from "./miscellaneous/AddMemberModal";
 import { toaster } from "./ui/toaster";
 
 const RightProfilePanel = ({ isOpen, onClose }) => {
-  const { user, setUser, selectedChat, setSelectedChat, chats, setChats, onlineUsers } = ChatState();
+  const { user, selectedChat, setSelectedChat, chats, setChats, onlineUsers } = ChatState();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
