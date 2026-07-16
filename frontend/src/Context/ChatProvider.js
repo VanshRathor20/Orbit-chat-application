@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, useRef } f
 import io from "socket.io-client";
 import { toaster } from "../components/ui/toaster";
 
-const ENDPOINT = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://localhost:3000" : window.location.origin;
+const ENDPOINT = process.env.REACT_APP_BACKEND_URL || "http://localhost:3000";
 
 const ChatContext = createContext(null);
 
@@ -216,11 +216,11 @@ export const ChatProvider = ({ children }) => {
             toaster.create({
               title: `New Message from ${newMessageReceived.sender.name}`,
               description: newMessageReceived.messageType === "image" ||
-                           (newMessageReceived.content &&
-                             (newMessageReceived.content.match(/\.(jpeg|jpg|gif|png)$/i) ||
-                              newMessageReceived.content.includes("res.cloudinary.com")))
-                            ? "📷 Photo"
-                            : newMessageReceived.content,
+                (newMessageReceived.content &&
+                  (newMessageReceived.content.match(/\.(jpeg|jpg|gif|png)$/i) ||
+                    newMessageReceived.content.includes("res.cloudinary.com")))
+                ? "📷 Photo"
+                : newMessageReceived.content,
               type: "info",
             });
           }
