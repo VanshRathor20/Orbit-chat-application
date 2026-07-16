@@ -5,7 +5,7 @@ import {
   Input,
   Portal,
 } from "@chakra-ui/react";
-import axiosInstance from "../config/axiosInstance";
+import axiosInstance from "../../config/axiosInstance";
 import { useState, useEffect } from "react";
 import { ChatState } from "../../Context/ChatProvider";
 import { toaster } from "../ui/toaster";
@@ -27,7 +27,7 @@ const GroupChatModal = ({ children }) => {
       const config = {
         headers: { Authorization: `Bearer ${user?.token}` },
       };
-      const { data } = await axios.get(`/api/user?search=${query}`, config);
+      const { data } = await axiosInstance.get(`/api/user?search=${query}`, config);
       setSearchResult(data);
     } catch (error) {
       toaster.create({
@@ -65,7 +65,7 @@ const GroupChatModal = ({ children }) => {
       const config = {
         headers: { Authorization: `Bearer ${user?.token}` },
       };
-      const { data } = await axios.post(
+      const { data } = await axiosInstance.post(
         "/api/chat/group",
         {
           name: groupChatName,

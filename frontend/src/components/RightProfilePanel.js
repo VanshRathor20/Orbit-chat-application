@@ -53,7 +53,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                 Authorization: `Bearer ${user?.token}`,
               },
             };
-            const { data } = await axios.patch(
+            const { data } = await axiosInstance.patch(
               `/api/groups/${selectedChat._id}/picture`,
               { picture: newPicUrl },
               config
@@ -115,7 +115,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
           Authorization: `Bearer ${user?.token}`,
         },
       };
-      const { data } = await axios.patch(
+      const { data } = await axiosInstance.patch(
         `/api/groups/${selectedChat._id}/rename`,
         { name: editedName },
         config
@@ -148,7 +148,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
       const config = {
         headers: { Authorization: `Bearer ${user?.token}` },
       };
-      await axios.put(
+      await axiosInstance.put(
         "/api/chat/groupremove",
         {
           chatId: selectedChat._id,
@@ -180,7 +180,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
       const config = {
         headers: { Authorization: `Bearer ${user?.token}` },
       };
-      await axios.delete(`/api/groups/${selectedChat._id}`, config);
+      await axiosInstance.delete(`/api/groups/${selectedChat._id}`, config);
 
       toaster.create({
         title: "Group deleted successfully",
@@ -205,7 +205,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
       const config = {
         headers: { Authorization: `Bearer ${user?.token}` },
       };
-      const { data } = await axios.patch(
+      const { data } = await axiosInstance.patch(
         `/api/groups/${selectedChat._id}/remove-member`,
         { memberIdToRemove: memberToRemove._id },
         config
@@ -254,7 +254,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
           Authorization: `Bearer ${user?.token}`,
         },
       };
-      const { data } = await axios.post(`/api/chat`, { userId }, config);
+      const { data } = await axiosInstance.post(`/api/chat`, { userId }, config);
 
       if (!chats.find((c) => c._id === data._id)) {
         setChats([data, ...chats]);
@@ -271,7 +271,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
       try {
         setLoading(true);
         const config = { headers: { Authorization: `Bearer ${user?.token}` } };
-        const { data } = await axios.get(`/api/message/${selectedChat._id}`, config);
+        const { data } = await axiosInstance.get(`/api/message/${selectedChat._id}`, config);
         setMessages(data);
         setLoading(false);
       } catch (error) {

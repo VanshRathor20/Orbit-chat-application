@@ -9,7 +9,7 @@ import {
 import { LuCheck } from "react-icons/lu";
 import { ChatState } from "../../Context/ChatProvider";
 import { wallpaperPresets } from "../../config/wallpaperPresets";
-import axiosInstance from "../config/axiosInstance";
+import axiosInstance from "../../config/axiosInstance";
 import { toaster } from "../ui/toaster";
 
 const WallpaperModal = ({ isOpen, onClose }) => {
@@ -24,7 +24,7 @@ const WallpaperModal = ({ isOpen, onClose }) => {
         },
       };
 
-      const { data } = await axios.put(
+      const { data } = await axiosInstance.put(
         "/api/user",
         { wallpaper: presetId },
         config

@@ -60,7 +60,7 @@ const LeftSidebar = ({ fetchAgain }) => {
         },
       };
 
-      const { data } = await axios.get("/api/chat", config);
+      const { data } = await axiosInstance.get("/api/chat", config);
       setChats(data);
     } catch (error) {
       toaster.create({
@@ -102,7 +102,7 @@ const LeftSidebar = ({ fetchAgain }) => {
           },
         };
 
-        const { data } = await axios.get(`/api/user?search=${query}`, config);
+        const { data } = await axiosInstance.get(`/api/user?search=${query}`, config);
 
         if (query === latestQueryRef.current) {
           setSearchResult(data);
@@ -130,7 +130,7 @@ const LeftSidebar = ({ fetchAgain }) => {
           Authorization: `Bearer ${user?.token}`,
         },
       };
-      const { data } = await axios.post(`/api/chat`, { userId }, config);
+      const { data } = await axiosInstance.post(`/api/chat`, { userId }, config);
 
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
       setSelectedChat(data);

@@ -119,7 +119,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
       const config = {
         headers: { Authorization: `Bearer ${user?.token}` },
       };
-      const { data } = await axios.get(
+      const { data } = await axiosInstance.get(
         `/api/message/${selectedChat._id}`,
         config
       );
@@ -184,7 +184,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
 
       // Send image message if exists
       if (imageUrl) {
-        const { data: imgData } = await axios.post(
+        const { data: imgData } = await axiosInstance.post(
           "/api/message",
           { content: imageUrl, chatId: selectedChat._id },
           config
@@ -194,7 +194,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, isRightPanelOpen, setIsRightPan
 
       // Send text message (caption) if exists
       if (newMessage.trim()) {
-        const { data: txtData } = await axios.post(
+        const { data: txtData } = await axiosInstance.post(
           "/api/message",
           { content: newMessage, chatId: selectedChat._id },
           config

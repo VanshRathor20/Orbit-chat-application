@@ -10,7 +10,7 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
-import axiosInstance from "../config/axiosInstance";
+import axiosInstance from "../../config/axiosInstance";
 import { toaster } from "../ui/toaster";
 import { ChatState } from "../../Context/ChatProvider";
 
@@ -98,7 +98,7 @@ const ProfileModal = ({ user, isOpen, onClose }) => {
         },
       };
 
-      const { data } = await axios.put(
+      const { data } = await axiosInstance.put(
         "/api/user",
         { name, pic, bio },
         config
