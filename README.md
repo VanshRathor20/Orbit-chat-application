@@ -15,7 +15,7 @@
 [![Chakra UI](https://img.shields.io/badge/Chakra%20UI-v3-319795?logo=chakraui&logoColor=white)](https://chakra-ui.com/)
 [![Cloudinary](https://img.shields.io/badge/Cloudinary-Media-3448C5?logo=cloudinary&logoColor=white)](https://cloudinary.com/)
 
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-orange?style=for-the-badge)](#)
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-orange?style=for-the-badge)](orbit-chat-application-beta.vercel.app)
 [![Report Bug](https://img.shields.io/badge/🐛_Report_Bug-red?style=for-the-badge)](https://github.com/VanshRathor20/Yapp-chat-application/issues)
 [![Request Feature](https://img.shields.io/badge/✨_Request_Feature-blue?style=for-the-badge)](https://github.com/VanshRathor20/Yapp-chat-application/issues)
 </div>
