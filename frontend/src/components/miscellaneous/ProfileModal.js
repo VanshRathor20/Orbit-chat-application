@@ -10,7 +10,7 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
-import axios from "../../config/axiosInstance";
+import axiosInstance from "../config/axiosInstance";
 import { toaster } from "../ui/toaster";
 import { ChatState } from "../../Context/ChatProvider";
 

@@ -1,5 +1,5 @@
 import { Box, Button, Stack, Text } from "@chakra-ui/react";
-import axios from "../../config/axiosInstance";
+import axiosInstance from "../config/axiosInstance";
 import { useEffect } from "react";
 import { LuPlus } from "react-icons/lu";
 import { getSender } from "../config/ChatLogics";

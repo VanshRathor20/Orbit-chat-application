@@ -2,7 +2,7 @@ import { Box, Button, IconButton, Input, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import axios from "../../config/axiosInstance";
+import axiosInstance from "../config/axiosInstance";
 import { toaster } from "../ui/toaster";
 import { ChatState } from "../../Context/ChatProvider";
 

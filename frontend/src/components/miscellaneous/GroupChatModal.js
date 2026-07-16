@@ -5,7 +5,7 @@ import {
   Input,
   Portal,
 } from "@chakra-ui/react";
-import axios from "../../config/axiosInstance";
+import axiosInstance from "../config/axiosInstance";
 import { useState, useEffect } from "react";
 import { ChatState } from "../../Context/ChatProvider";
 import { toaster } from "../ui/toaster";

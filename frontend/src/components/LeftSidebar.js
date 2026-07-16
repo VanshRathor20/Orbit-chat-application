@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Input, Menu, Spinner, Stack, Text } from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../../config/axiosInstance";
+import axiosInstance from "../config/axiosInstance";
 import { LuEllipsisVertical, LuSearch, LuPlus } from "react-icons/lu";
 import ChatLoading from "./ChatLoading";
 import ProfileModal from "./miscellaneous/ProfileModal";

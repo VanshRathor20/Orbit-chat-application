@@ -9,7 +9,7 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import EmojiPicker from "emoji-picker-react";
-import axios from "../../config/axiosInstance";
+import axiosInstance from "../config/axiosInstance";
 import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { LuCamera, LuPaperclip, LuSendHorizontal, LuImage, LuX, LuInfo, LuSmile, LuArrowLeft } from "react-icons/lu";
 import { getSender, getSenderFull } from "../config/ChatLogics";
