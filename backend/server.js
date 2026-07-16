@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const chats = require("./data/data");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
@@ -15,14 +16,25 @@ connectDB();
 
 const app = express();
 
-app.use(express.json()); // to accept json data 
+app.use(express.json()); // to accept json data
+
+// CORS configuration
+app.use(cors({
+  origin: [
+    "http://localhost:3001",
+    "http://localhost:3000",
+    "https://orbit-chat-application-beta.vercel.app"
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
+}));
 
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
 
-app.use('/api/user', userRoutes); 
-app.use('/api/chat', chatRoutes); 
+app.use('/api/user', userRoutes);
+app.use('/api/chat', chatRoutes);
 app.use('/api/message', messageRoutes);
 app.use('/api/groups', groupRoutes);
 
@@ -36,7 +48,12 @@ const server = http.createServer(app);
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "*",
+    origin: [
+      "http://localhost:3001",
+      "http://localhost:3000",
+      "https://orbit-chat-application-beta.vercel.app"
+    ],
+    credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   },
 });
@@ -74,7 +91,7 @@ io.on("connection", (socket) => {
   socket.on("typing", (room) => {
     socket.in(room).emit("typing", room);
   });
-  
+
   socket.on("stop typing", (room) => {
     socket.in(room).emit("stop typing", room);
   });
