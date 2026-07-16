@@ -15,8 +15,9 @@
 [![Chakra UI](https://img.shields.io/badge/Chakra%20UI-v3-319795?logo=chakraui&logoColor=white)](https://chakra-ui.com/)
 [![Cloudinary](https://img.shields.io/badge/Cloudinary-Media-3448C5?logo=cloudinary&logoColor=white)](https://cloudinary.com/)
 
-[Live Demo](#) · [Report Bug](#) · [Request Feature](#)
-
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-orange?style=for-the-badge)](#)
+[![Report Bug](https://img.shields.io/badge/🐛_Report_Bug-red?style=for-the-badge)](https://github.com/VanshRathor20/Yapp-chat-application/issues)
+[![Request Feature](https://img.shields.io/badge/✨_Request_Feature-blue?style=for-the-badge)](https://github.com/VanshRathor20/Yapp-chat-application/issues)
 </div>
 
 ---
@@ -57,7 +58,6 @@ Orbit ships dedicated layouts for desktop and mobile. Expand a section below to 
 
 </details>
 
-> **Maintainer note:** create `screenshots/desktop/` and `screenshots/mobile/` folders in the repo root and drop your PNGs in with the filenames above (or update the paths to match your files).
 
 ---
 
@@ -78,13 +78,11 @@ Orbit ships dedicated layouts for desktop and mobile. Expand a section below to 
 
 ---
 
-## 🚧 Known Limitations / In Progress
+## 🔮 Future Enhancements
 
-- **Chat selection highlighting** — currently uses object reference equality (`selectedChat === chat`) instead of `_id` comparison, so the highlight can drop when the chat list re-renders with new objects on incoming messages
-- **Avatar path validation is fragile** — default-vs-custom detection does a strict string match against `backend/Models/userProfileIcon.png`, but the actual file on disk is `userProfileIcon.jpg` — a mismatch that can misclassify avatars
-- **Message editing/deletion/reactions/pins/replies** — not yet implemented; message CRUD is currently create + retrieve only
-- **Group role promotion** — no way to promote another member to admin; only the group creator holds admin rights
-- **Voice messages** — recording/playback not implemented
+- **Message interactions** — editing, deletion, reactions, pins, and replies (currently CRUD is create + retrieve only)
+- **Group role promotion** — ability to promote another member to admin (currently only the group creator holds admin rights)
+- **Voice messages** — recording and playback support
 
 ---
 
@@ -153,8 +151,8 @@ Orbit ships dedicated layouts for desktop and mobile. Expand a section below to 
 ### Installation
 
 ```bash
-git clone <repository-url>
-cd Orbit
+git clone https://github.com/VanshRathor20/Orbit-chat-application.git
+cd Orbit-chat-application
 
 npm install
 
@@ -179,7 +177,7 @@ CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
 
-> **Note:** The frontend currently uses a hardcoded Cloudinary unsigned upload preset for profile pictures and media messages. To use your own Cloudinary account for uploads, update the preset/cloud name in `Signup.js`, `ProfileModal.js`, `SingleChat.js`, and `RightProfilePanel.js`.
+> **Note:** Cloudinary uploads currently use an unsigned upload preset configured directly in the frontend. To use your own Cloudinary account, update the preset name and cloud name in `Signup.js`, `ProfileModal.js`, `SingleChat.js`, and `RightProfilePanel.js`.
 
 ### Running the Application
 
@@ -194,19 +192,8 @@ Runs on `http://localhost:3000` by default.
 cd frontend
 npm start
 ```
-Runs on `http://localhost:5173` (or next available port) and proxies requests to the backend.
+Runs on `http://localhost:3001` (backend occupies port 3000, so CRA automatically shifts to the next available port).
 
----
-
-## 🗺️ Roadmap
-
-- [ ] Fix chat selection to use `_id` comparison instead of object reference
-- [ ] Fix avatar default-detection path mismatch (`.png` vs `.jpg`)
-- [ ] Message interactions — reply, react, edit, pin, delete
-- [ ] Group admin role promotion
-- [ ] Voice recording & message UI polish
-- [ ] Move Cloudinary upload preset to environment config
-- [ ] Deployment + full project audit
 
 ---
 
@@ -222,19 +209,14 @@ Contributions are welcome! Feel free to open an issue or submit a pull request.
 
 ---
 
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
 
 ## 👤 Author
 
 **Vansh Rathor**
 
 - Portfolio: [vanshrathorportfolio.netlify.app](https://vanshrathorportfolio.netlify.app/)
-- LinkedIn: [your-linkedin-url](#)
-- GitHub: [@your-github-username](#)
+- LinkedIn: [vansh-kumar-20-codes](https://www.linkedin.com/in/vansh-kumar-20-codes/)
+- GitHub: [@VanshRathor20](https://github.com/VanshRathor20)
 
 <div align="center">
   <sub>Built with ❤️ using the MERN stack</sub>
