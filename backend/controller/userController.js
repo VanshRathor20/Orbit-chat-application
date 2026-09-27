@@ -72,6 +72,11 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   const userToUpdate = await user.findById(req.user._id);
 
   if (userToUpdate) {
+    if ((userToUpdate.isBot || userToUpdate.email === "ai-bot@orbit.internal") && req.body.pic && req.body.pic !== userToUpdate.pic) {
+      res.status(400);
+      throw new Error("Bot profile picture cannot be changed");
+    }
+
     userToUpdate.name = req.body.name || userToUpdate.name;
     userToUpdate.pic = req.body.pic || userToUpdate.pic;
     if (req.body.bio !== undefined) {
