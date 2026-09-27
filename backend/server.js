@@ -11,7 +11,11 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const http = require("http");
 const { Server } = require("socket.io");
 
-dotenv.config();
+const path = require("path");
+
+dotenv.config({ path: path.resolve(__dirname, ".env") });
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+
 connectDB();
 
 const app = express();

@@ -7,3 +7,10 @@ export const getSenderFull = (loggedUser, users) => {
   if (!users || users.length < 2) return null;
   return users[0]._id === loggedUser?._id ? users[1] : users[0];
 };
+
+export const isUserOnline = (targetUser, onlineUsers) => {
+  if (!targetUser) return false;
+  if (targetUser.isBot || targetUser.email === "ai-bot@orbit.internal") return true;
+  return Boolean(onlineUsers?.includes(targetUser._id));
+};
+

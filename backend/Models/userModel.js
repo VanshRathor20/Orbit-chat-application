@@ -16,6 +16,10 @@ const userSchema = mongoose.Schema({
   wallpaper: {
     type: String,
     default: "preset_1"
+  },
+  isBot: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true
