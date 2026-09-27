@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, SimpleGrid, Text, Spinner, Image, Stack, IconButton, Input, VStack } from "@chakra-ui/react";
 import { ChatState } from "../Context/ChatProvider";
-import { getSender, getSenderFull } from "../config/ChatLogics";
+import { getSender, getSenderFull, isUserOnline } from "../config/ChatLogics";
 import { useState, useEffect, useRef } from "react";
 import axiosInstance from "../config/axiosInstance";
 import { LuX, LuPencil, LuMessageSquare, LuLogOut, LuUserPlus, LuTrash2, LuUserMinus } from "react-icons/lu";
@@ -527,7 +527,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
             </Text>
             {!isGroup && (() => {
               const otherUser = selectedChat.users?.find((u) => u._id !== user._id);
-              const isOnline = otherUser && onlineUsers?.includes(otherUser._id);
+              const isOnline = isUserOnline(otherUser, onlineUsers);
               return (
                 <Box display="flex" alignItems="center" justifyContent="center" gap={1.5} mt={1}>
                   <Box w="6px" h="6px" borderRadius="50%" bg={isOnline ? "#48BB78" : "#A0AEC0"} />
@@ -646,7 +646,7 @@ const RightProfilePanel = ({ isOpen, onClose }) => {
                             w="8px"
                             h="8px"
                             borderRadius="50%"
-                            bg={onlineUsers?.includes(u._id) ? "#48BB78" : "#A0AEC0"}
+                            bg={isUserOnline(u, onlineUsers) ? "#48BB78" : "#A0AEC0"}
                             flexShrink={0}
                           />
                           <Box display="flex" alignItems="center" gap={2} overflow="hidden">

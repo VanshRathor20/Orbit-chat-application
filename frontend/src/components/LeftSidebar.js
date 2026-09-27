@@ -8,7 +8,7 @@ import ProfileModal from "./miscellaneous/ProfileModal";
 import WallpaperModal from "./miscellaneous/WallpaperModal";
 import UserListItem from "./userAvatar/UserListItem";
 import GroupChatModal from "./miscellaneous/GroupChatModal";
-import { getSender } from "../config/ChatLogics";
+import { getSender, isUserOnline } from "../config/ChatLogics";
 import { ChatState } from "../Context/ChatProvider";
 import { toaster } from "./ui/toaster";
 
@@ -327,7 +327,7 @@ const LeftSidebar = ({ fetchAgain }) => {
                     </Text>
                     {!chat.isGroupChat && (() => {
                       const otherUser = chat.users.find((u) => u._id !== user._id);
-                      const isOnline = otherUser && onlineUsers?.includes(otherUser._id);
+                      const isOnline = isUserOnline(otherUser, onlineUsers);
                       return (
                         <Box display="flex" alignItems="center" gap={1.5} mt={0.5}>
                           <Box w="6px" h="6px" borderRadius="50%" bg={isOnline ? "#48BB78" : "#A0AEC0"} />
